@@ -1,0 +1,7 @@
+[
+  {
+    "name": "Dummy Service",
+    "path": "feature/services/dummy-service",
+    "enabled": true
+  }
+]

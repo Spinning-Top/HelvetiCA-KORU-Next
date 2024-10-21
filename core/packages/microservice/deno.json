@@ -1,0 +1,13 @@
+{
+  "name": "@koru/microservice",
+  "version": "0.1.0",
+  "exports": "./src/index.ts",
+  "imports": {
+    "@std/log": "jsr:@std/log@^0.224.9",
+
+    "amqplib": "npm:amqplib@^0.10.4",
+    "class-validator": "npm:class-validator@^0.14.1",
+    "express": "npm:express@^4.19.2",
+    "typeorm": "npm:typeorm@^0.3.20"
+  }
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "name": "API Gateway",
+    "path": "core/services/api-gateway",
+    "port": 9100,
+    "enabled": true
+  },
+  {
+    "name": "Auth Service",
+    "path": "core/services/auth-service",
+    "enabled": true
+  },
+  {
+    "name": "Cron Service",
+    "path": "core/services/cron-service",
+    "enabled": false
+  },
+  {
+    "name": "Mail Service",
+    "path": "core/services/mail-service",
+    "enabled": false
+  },
+  {
+    "name": "Notification Service",
+    "path": "core/services/notification-service",
+    "enabled": false
+  },
+  {
+    "name": "Role Service",
+    "path": "core/services/role-service",
+    "enabled": true
+  },
+  {
+    "name": "User Service",
+    "path": "core/services/user-service",
+    "enabled": true
+  }
+]
