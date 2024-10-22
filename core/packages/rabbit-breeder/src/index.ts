@@ -63,17 +63,15 @@ export class RabbitBreeder {
     await this.channel.assertQueue(randomResponseQueue, { autoDelete: true, exclusive: true });
 
     const result: T = await new Promise((resolve, reject) => {
-      // TODO
       const timeout = setTimeout(() => {
-        reject(new Error("Timeout nel ricevere la risposta."));
+        reject(new Error("timeout"));
       }, this.globalConfig.rabbitMq.requestTimeout);
 
       this.channel!.consume(
         randomResponseQueue,
         (msg: ConsumeMessage | null) => {
-          if (msg === null) {
-            return;
-          }
+          if (msg === null) return;
+
           if (msg.properties.correlationId === correlationId) {
             clearTimeout(timeout);
 

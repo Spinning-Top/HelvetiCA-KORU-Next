@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "exports": "./src/index.ts",
   "imports": {
+    "@std/datetime": "jsr:@std/datetime@^0.225.2",
     "@std/log": "jsr:@std/log@^0.224.9",
 
     "amqplib": "npm:amqplib@^0.10.4",

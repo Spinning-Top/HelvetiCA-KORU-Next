@@ -1,6 +1,7 @@
 {
   "tasks": {
-    "dev": "deno task run-api-gateway & deno task run-auth-service",
+    "dev": "./scripts/start-dev.sh",
+
     "run-api-gateway": "deno run --allow-env --allow-net --allow-read --allow-write ./core/services/api-gateway/src/index.ts",
     "run-auth-service": "deno run --allow-env --allow-net --allow-read --allow-write ./core/services/auth-service/src/index.ts",
     "test": "deno test --allow-env --allow-read"
@@ -21,14 +22,15 @@
     "core/packages/microservice",
     "core/packages/rabbit-breeder",
     "core/services/api-gateway",
-    "core/services/auth-service"
+    "core/services/auth-service",
+
+    "feature/packages/feature-models"
   ],
   "fmt": {
     "lineWidth": 150,
     "semiColons": true
   },
   "compilerOptions": {
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "experimentalDecorators": true
   }
 }

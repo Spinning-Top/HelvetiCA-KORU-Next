@@ -1,0 +1,11 @@
+{
+  "name": "@koru/feature-models",
+  "version": "0.1.0",
+  "exports": "./src/index.ts",
+  "imports": {
+    "class-transformer": "npm:class-transformer@^0.4.0",
+    "es6-shim": "npm:es6-shim@^0.35.8",
+    "reflect-metadata": "npm:reflect-metadata@^0.2.2",
+    "typeorm": "npm:typeorm@^0.3.20"
+  }
+}

@@ -9,7 +9,7 @@ import {
 } from "typeorm";
 
 import { coreModels } from "@koru/core-models";
-// import { featureModels } from "@koru/feature-models";
+import { featureModels } from "@koru/feature-models";
 import type { GlobalConfig } from "@koru/global-config";
 import { DatabaseConnection } from "./database-connection.ts";
 
@@ -22,55 +22,27 @@ export class Database {
 
     if (this.globalConfig.environment === "production") {
       this.dataSource = new DataSource({
-        // TODO: database: `${globalConfig.database.name}_prod`,
         database: this.globalConfig.database.name,
         host: this.globalConfig.database.host,
         password: this.globalConfig.database.password,
         port: this.globalConfig.database.port,
         username: this.globalConfig.database.username,
-        // entities: [...coreModels, ...featureModels] as MixedList<string>,
-        entities: coreModels as MixedList<string>,
+        entities: [...coreModels, ...featureModels] as MixedList<string>,
         synchronize: true,
         type: "postgres",
       });
     } else {
       this.dataSource = new DataSource({
-        // TODO: database: `${globalConfig.database.name}_dev`,
         database: this.globalConfig.database.name,
         host: this.globalConfig.database.host,
         password: this.globalConfig.database.password,
         port: this.globalConfig.database.port,
         username: this.globalConfig.database.username,
-        // entities: [...coreModels, ...featureModels] as MixedList<string>,
-        entities: coreModels as MixedList<string>,
+        entities: [...coreModels, ...featureModels] as MixedList<string>,
         synchronize: true,
         type: "postgres",
       });
     }
-    /* TODO
-    } else if (this.globalConfig.environment === "development") {
-      this.dataSource = new DataSource({
-        // TODO: database: `${globalConfig.database.name}_dev`,
-        database: this.globalConfig.database.name,
-        host: "localhost",
-        password: this.globalConfig.database.password,
-        port: this.globalConfig.database.port,
-        username: this.globalConfig.database.username,
-        entities: coreModels as MixedList<string>,
-        synchronize: true,
-        type: "postgres",
-      });
-    } else {
-      this.dataSource = new DataSource({
-        database: ":memory:",
-        dropSchema: true,
-        entities: coreModels as MixedList<string>,
-        logging: false,
-        synchronize: true,
-        type: "sqlite",
-      });
-    }
-    */
   }
 
   public async connect(): Promise<DataSource> {

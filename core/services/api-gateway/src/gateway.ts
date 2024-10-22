@@ -1,3 +1,4 @@
+import type { ConsumeMessage } from "amqplib";
 import express from "express";
 
 import { AuthHelpers } from "@koru/auth-helpers";
@@ -28,7 +29,7 @@ export class Gateway {
       this.handler.getExpress().use((req: Request, _res: Response, next: () => void) => {
         this.handler.getLog().info(`Received ${req.method} request for ${req.url}`);
         const endpoint: Endpoint | undefined = this.endpoints.find((e) => e.getUrl() === req.url && e.getMethod() === req.method);
-        console.log(endpoint);
+        console.log(endpoint); // TODO?
         next();
       });
 
@@ -52,7 +53,7 @@ export class Gateway {
 
       if (this.handler.getGlobalConfig().environment === "development") {
         // delay 5 seconds to wait for all endpoints to be received
-        await new Promise((resolve) => setTimeout(resolve, 5000));
+        await new Promise((resolve) => setTimeout(resolve, 20000));
       } else {
         // delay 10 seconds to wait for all endpoints to be received
         await new Promise((resolve) => setTimeout(resolve, 10000));
@@ -108,37 +109,37 @@ export class Gateway {
   }
 
   private async startRabbitServiceListeners(): Promise<void> {
-    const responseHandler = (response: Record<string, unknown>): Promise<Record<string, unknown> | undefined> => {
-      return new Promise((resolve) => {
-        const port: number = this.nextServicePort++;
-        // get the endpoint data json from the message
-        const data: Record<string, unknown> = response;
-        if (data === undefined) return undefined;
-        if (data.endpoints === undefined) return undefined;
-        if (!Array.isArray(data.endpoints)) return undefined;
-        if (data.sender === undefined) return undefined;
-        if (data.baseUrl === undefined) return undefined;
-        if (data.serviceRoot === undefined) return undefined;
+    // deno-lint-ignore require-await
+    const responseHandler = async (msg: ConsumeMessage): Promise<Record<string, unknown> | undefined> => {
+      const port: number = this.nextServicePort++;
+      // get the endpoint data json from the message
+      const data: Record<string, unknown> = JSON.parse(msg.content.toString());
+      if (data === undefined) return undefined;
+      if (data.endpoints === undefined) return undefined;
+      if (!Array.isArray(data.endpoints)) return undefined;
+      if (data.sender === undefined) return undefined;
+      if (data.baseUrl === undefined) return undefined;
+      if (data.serviceRoot === undefined) return undefined;
 
-        const baseUrl: string = String(data.baseUrl);
-        const serviceRoot: string = `${String(data.serviceRoot)}:${port}`;
+      const baseUrl: string = String(data.baseUrl);
+      const serviceRoot: string = `${String(data.serviceRoot)}:${port}`;
 
-        let endpointCount: number = 0;
-        for (const endpointData of data.endpoints) {
-          const endpoint: Endpoint | undefined = createEndpoint(endpointData, baseUrl, serviceRoot);
-          // if the endpoint is valid and not already registered
-          if (
-            endpoint !== undefined &&
-            this.endpoints.find((e) => e.getUrl() === endpoint.getUrl() && e.getMethod() === endpoint.getMethod()) === undefined
-          ) {
-            this.endpoints.push(endpoint);
-            endpointCount++;
-          }
+      let endpointCount: number = 0;
+      for (const endpointData of data.endpoints) {
+        const endpoint: Endpoint | undefined = createEndpoint(endpointData, baseUrl, serviceRoot);
+        // if the endpoint is valid and not already registered
+        if (
+          endpoint !== undefined &&
+          this.endpoints.find((e) => e.getUrl() === endpoint.getUrl() && e.getMethod() === endpoint.getMethod()) === undefined
+        ) {
+          this.endpoints.push(endpoint);
+          endpointCount++;
         }
+      }
 
-        this.getHandler().getLog().info(`${endpointCount} endpoints received from ${data.sender} for service url ${serviceRoot}`);
-        resolve({ port });
-      });
+      this.getHandler().getLog().info(`${endpointCount} endpoints received from ${data.sender} for service url ${serviceRoot}`);
+
+      return { port };
     };
 
     const rabbitTag: string | undefined = await this.handler.getRabbitBreeder().startRequestListener("apiGatewayServiceRequest", responseHandler);

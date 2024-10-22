@@ -145,14 +145,28 @@ export class Microservice {
       serviceRoot: this.serviceRoot,
     };
 
-    const port: number | undefined = await this.handler
-      .getRabbitBreeder()
-      .sendRequestAndAwaitResponse<number>("apiGatewayServiceRequest", "apiGatewayPortResponse", data, (response: Record<string, unknown>) => {
-        return Number(response.port);
-      });
-
-    if (port === undefined) throw new Error("Failed to get service port from the gateway");
-    this.port = port;
+    try {
+      const port: number | undefined = await this.handler
+        .getRabbitBreeder()
+        .sendRequestAndAwaitResponse<number>("apiGatewayServiceRequest", "apiGatewayPortResponse", data, (response: Record<string, unknown>) => {
+          return Number(response.port);
+        });
+      if (port === undefined) throw new Error("portUndefined");
+      this.port = port;
+    } catch (error: unknown) {
+      const message: string = (error as Error).message;
+      if (message === "portUndefined") {
+        this.handler.getLog().error("Failed to get service port from the gateway: value undefined");
+      } else if (message === "timeout") {
+        this.handler.getLog().error("Failed to get service port from the gateway: request timeout");
+      } else {
+        this.handler.getLog().error("Failed to get service port from the gateway: unknown error");
+      }
+      // stop services
+      await this.stop();
+      // quit
+      Deno.exit(0);
+    }
   }
 
   private bootServer(): void {
