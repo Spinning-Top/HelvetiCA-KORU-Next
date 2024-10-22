@@ -1,8 +1,9 @@
 import { ConsoleHandler, error, FileHandler, info, type LogRecord, setup, warn } from "@std/log";
 import { format } from "@std/datetime";
+import { resolve } from "@std/path";
 
 export class Log {
-  public constructor() {
+  public constructor() {    
     setup({
       handlers: {
         console: new ConsoleHandler("DEBUG", {
@@ -12,14 +13,14 @@ export class Log {
           },
         }),
         fileError: new FileHandler("WARN", {
-          filename: "./logs/error.log",
+          filename: resolve(Deno.cwd(), "./logs/error.log"),
           formatter: (logRecord: LogRecord) => {
             const timestamp = format(new Date(), "yyyy-MM-dd HH:mm:ss.SSS");
             return `${timestamp} [${logRecord.levelName.toUpperCase()}]: ${logRecord.msg}`;
           },
         }),
         fileCombined: new FileHandler("DEBUG", {
-          filename: "./logs/combined.log",
+          filename: resolve(Deno.cwd(), "./logs/combined.log"),
           formatter: (logRecord: LogRecord) => {
             const timestamp = format(new Date(), "yyyy-MM-dd HH:mm:ss.SSS");
             return `${timestamp} [${logRecord.levelName.toUpperCase()}]: ${logRecord.msg}`;

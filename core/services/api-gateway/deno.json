@@ -4,7 +4,7 @@
   "exports": "./src/index.ts",
   "tasks": {
     "build": "deno bundle ./src/index.ts ./dist/index.js",
-    "run": "deno run --allow-env --allow-read --allow-net --allow-write ./src/index.ts"
+    "run": "deno run -ENRW ./src/index.ts"
   },
   "imports": {
     "amqplib": "npm:amqplib@^0.10.4",
