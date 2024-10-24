@@ -20,6 +20,6 @@ jobs:
 
       - name: Copy code to server
         run: |
-          scp -r ./docker ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/var/www/helvetica-test/docker
+          scp -r ./docker ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_SERVER }}:/var/www/helvetica-test/docker
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
