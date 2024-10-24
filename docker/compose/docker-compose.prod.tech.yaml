@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     ports:
-      - "${DB_PORT}:${DB_PORT}"
+      - "127.0.0.1:${DB_PORT}:${DB_PORT}"
     command: postgres -c 'port=${DB_PORT}'
     networks:
       - koru-network
@@ -31,7 +31,7 @@ services:
     container_name: RabbitMQ
     image: rabbitmq:3-management
     ports:
-      - "${RABBITMQ_SERVICE_PORT}:${RABBITMQ_SERVICE_PORT}"  # service port
+      - "127.0.0.1:${RABBITMQ_SERVICE_PORT}:${RABBITMQ_SERVICE_PORT}"  # service port
       - "${RABBITMQ_UI_PORT}:15672" # UI port
     networks:
       - koru-network

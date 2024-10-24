@@ -20,12 +20,6 @@ jobs:
 
       - name: Copy code to server
         run: |
-          scp -r ./path/to/your/folder username@your-server:/remote/path/
+          scp -r ./docker ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/var/www/helvetica-test/docker
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          REMOTE_SERVER: ${{ secrets.REMOTE_SERVER }}
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-
-      - name: Restart services on the server
-        run: |
-          ssh username@your-server "pm2 restart all"

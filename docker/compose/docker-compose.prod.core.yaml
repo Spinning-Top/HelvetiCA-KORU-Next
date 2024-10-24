@@ -10,33 +10,6 @@ services:
       - "9100:9100"
     networks:
       - koru-network
-  auth-service:
-    container_name: Auth-Service
-    image: koru-core-auth-service:latest
-    environment:
-      - ENV_PATH=/service/.env
-    ports:
-      - "9201:9201"
-    networks:
-      - koru-network
-  role-service:
-    container_name: Role-Service
-    image: koru-core-role-service:latest
-    environment:
-      - ENV_PATH=/service/.env
-    ports:
-      - "9205:9205"
-    networks:
-      - koru-network
-  user-service:
-    container_name: User-Service
-    image: koru-core-user-service:latest
-    environment:
-      - ENV_PATH=/service/.env
-    ports:
-      - "9206:9206"
-    networks:
-      - koru-network
 
 networks:
   koru-network:

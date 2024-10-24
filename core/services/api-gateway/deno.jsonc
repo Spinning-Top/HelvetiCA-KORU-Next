@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "exports": "./src/index.ts",
   "tasks": {
-    "compile": "deno compile -ENRW --target x86_64-unknown-linux-gnu --output ./build/service ./src/index.ts",
+    "compile": "deno compile -ENRW --target aarch64-unknown-linux-gnu --output ./build/service ./src/index.ts",
+    "compile-mac": "deno compile -ENRW --output ./build/service ./src/index.ts",
+    "docker:build": "deno task compile && docker build -f ./Dockerfile -t koru-core-api-gateway . && docker save koru-core-api-gateway -o ../../../docker/images/koru-core-api-gateway.tar",
     "run": "deno run -ENRW ./src/index.ts"
   },
   "imports": {
