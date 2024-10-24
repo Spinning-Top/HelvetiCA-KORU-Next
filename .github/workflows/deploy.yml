@@ -1,0 +1,31 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.message, 'DEPLOY')
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Copy code to server
+        run: |
+          scp -r ./path/to/your/folder username@your-server:/remote/path/
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_SERVER: ${{ secrets.REMOTE_SERVER }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+
+      - name: Restart services on the server
+        run: |
+          ssh username@your-server "pm2 restart all"
