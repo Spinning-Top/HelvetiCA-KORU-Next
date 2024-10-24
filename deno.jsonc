@@ -12,7 +12,7 @@
     "docker:prod:tech:down": "docker compose -f ./docker/compose/docker-compose.prod.tech.yaml --env-file ./.env down",
     "docker:prod:tech:up": "docker compose -f ./docker/compose/docker-compose.prod.tech.yaml --env-file ./.env up --build -d",
 
-    // TESTTTTTT
+    // TESTTTTTTAAAA
     // SEEDER
     "seeder": "deno -ENRW ./core/packages/seeder/src/index.ts",
 
