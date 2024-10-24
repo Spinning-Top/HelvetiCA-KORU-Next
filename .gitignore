@@ -83,4 +83,4 @@ lerna-debug.log*
 .env.docker
 build
 deno.lock
-docker-images
+docker/images

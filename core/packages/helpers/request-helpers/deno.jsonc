@@ -1,0 +1,9 @@
+{
+  "name": "@koru/request-helpers",
+  "version": "0.1.0",
+  "exports": "./src/index.ts",
+  "imports": {
+    // npm
+    "express": "npm:express@^4.19.2"
+  }
+}

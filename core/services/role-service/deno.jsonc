@@ -1,0 +1,14 @@
+{
+  "name": "@koru/role-service",
+  "version": "0.1.0",
+  "exports": "./src/index.ts",
+  "tasks": {
+    "compile": "deno compile -ENRW --target x86_64-unknown-linux-gnu --output ./build/service ./src/index.ts",
+    "run": "deno run -ENRW ./src/index.ts"
+  },
+  "imports": {
+    // npm
+    "express": "npm:express@^4.19.2",
+    "jsonwebtoken": "npm:jsonwebtoken@^9.0.2"
+  }
+}

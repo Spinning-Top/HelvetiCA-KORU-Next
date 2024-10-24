@@ -2,6 +2,7 @@
   {
     "name": "Dummy Service",
     "path": "feature/services/dummy-service",
+    "port": 9301,
     "enabled": true
   }
 ]

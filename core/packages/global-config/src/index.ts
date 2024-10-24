@@ -3,7 +3,8 @@ import { load } from "@std/dotenv";
 
 const currentFilePath = fromFileUrl(import.meta.url);
 const currentDirPath = dirname(currentFilePath);
-const envPath: string = resolve(currentDirPath, "../../../../.env");
+const envPath: string = resolve(currentDirPath, "../.env");
+// const envPath: string = resolve(currentDirPath, "../../../../.env");
 
 const conf: Record<string, string> = await load({
   envPath: envPath,

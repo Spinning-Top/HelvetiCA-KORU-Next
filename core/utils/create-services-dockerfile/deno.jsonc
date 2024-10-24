@@ -1,0 +1,12 @@
+{
+  "name": "@koru/create-services-dockerfile",
+  "version": "0.1.0",
+  "exports": "./src/index.ts",
+  "tasks": {
+    "run": "deno run -RW ./src/index.ts"
+  },
+  "imports": {
+    // jsr
+    "@std/path": "jsr:@std/path@1.0.6"
+  }
+}

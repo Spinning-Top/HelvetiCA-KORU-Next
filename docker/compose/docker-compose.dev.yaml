@@ -1,0 +1,18 @@
+name: koru-backend-dev
+
+services:
+  # core
+  api-gateway:
+    image: denoland/deno:alpine
+    command: ["deno", "task", "run"]
+    volumes:
+      - ../../core/services/api-gateway:/app
+    working_dir: /app
+    ports:
+      - "9100:9100"
+    networks:
+      - koru-network
+
+networks:
+  koru-network:
+    external: true

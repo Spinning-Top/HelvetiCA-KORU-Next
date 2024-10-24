@@ -1,0 +1,11 @@
+{
+  "name": "@koru/rabbit-breeder",
+  "version": "0.1.0",
+  "exports": "./src/index.ts",
+  "imports": {
+    // jsr
+    "@std/uuid": "jsr:@std/uuid@^1.0.4",
+    // npm
+    "amqplib": "npm:amqplib@^0.10.4"
+  }
+}

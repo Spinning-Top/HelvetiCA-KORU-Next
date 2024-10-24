@@ -8,31 +8,37 @@
   {
     "name": "Auth Service",
     "path": "core/services/auth-service",
+    "port": 9201,
     "enabled": true
   },
   {
     "name": "Cron Service",
     "path": "core/services/cron-service",
+    "port": 9202,
     "enabled": false
   },
   {
     "name": "Mail Service",
     "path": "core/services/mail-service",
+    "port": 9203,
     "enabled": false
   },
   {
     "name": "Notification Service",
     "path": "core/services/notification-service",
+    "port": 9204,
     "enabled": false
   },
   {
     "name": "Role Service",
     "path": "core/services/role-service",
+    "port": 9205,
     "enabled": true
   },
   {
     "name": "User Service",
     "path": "core/services/user-service",
+    "port": 9206,
     "enabled": true
   }
 ]

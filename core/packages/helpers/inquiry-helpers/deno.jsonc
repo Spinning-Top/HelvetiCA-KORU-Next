@@ -1,0 +1,9 @@
+{
+  "name": "@koru/inquiry-helpers",
+  "version": "0.1.0",
+  "exports": "./src/index.ts",
+  "imports": {
+    // npm
+    "@inquirer/prompts": "npm:@inquirer/prompts@^5.3.8"
+  }
+}

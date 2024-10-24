@@ -1,0 +1,16 @@
+name: koru-backend-prod-feature
+
+services:
+  dummy-service:
+    container_name: Dummy-Service
+    image: koru-feature-dummy-service:latest
+    environment:
+      - ENV_PATH=/service/.env
+    ports:
+      - "9301:9301"
+    networks:
+      - koru-network
+
+networks:
+  koru-network:
+    external: true
