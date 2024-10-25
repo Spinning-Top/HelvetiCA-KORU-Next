@@ -1,68 +1,55 @@
 {
   "tasks": {
-    // DOCKER
-    // dev
-    "docker:dev:down": "docker compose -f ./docker/compose/docker-compose.dev.yaml --env-file ./.env down",
-    "docker:dev:up": "docker compose -f ./docker/compose/docker-compose.dev.yaml --env-file ./.env up --build -d",
-    // prod
-    "docker:prod:core:down": "docker compose -f ./docker/compose/docker-compose.prod.core.yaml --env-file ./.env down",
-    "docker:prod:core:up": "docker compose -f ./docker/compose/docker-compose.prod.core.yaml --env-file ./.env up --build -d",
-    "docker:prod:feature:down": "docker compose -f ./docker/compose/docker-compose.prod.feature.yaml --env-file ./.env down",
-    "docker:prod:feature:up": "docker compose -f ./docker/compose/docker-compose.prod.feature.yaml --env-file ./.env up --build -d",
-    "docker:prod:tech:down": "docker compose -f ./docker/compose/docker-compose.prod.tech.yaml --env-file ./.env down",
-    "docker:prod:tech:up": "docker compose -f ./docker/compose/docker-compose.prod.tech.yaml --env-file ./.env up --build -d",
+    // BACKEND
+      // tech
+        "tech:down": "docker compose -f ./backend/tech/docker-compose.yaml --env-file ./backend/tech/.env down",
+        "tech:up": "docker compose -f ./backend/tech/docker-compose.yaml --env-file ./backend/tech/.env up --build -d",
+      // utils
+        "seeder": "deno -ENRW ./backend/core/utils/seeder/src/index.ts",
+      // test
+        "test": "ENV_PATH=/Volumes/Developer/Coding/HelvetiCA/KORU\\ Next/backend/.env.dev deno test -ER"
 
-    // TESTTTTTTAAAATTTRR
-    // SEEDER
-    "seeder": "deno -ENRW ./core/packages/seeder/src/index.ts",
-
-    // TEST
-    "test": "deno test -ER",
-
-    // UTILS
-    "utils:all": "deno task utils:create-docker-dev-file && deno task utils:create-services-dockerfile",
-    "utils:create-docker-dev-file": "deno task --cwd ./core/utils/create-docker-dev-file run",
-    "utils:create-docker-prod-files": "deno task --cwd ./core/utils/create-docker-prod-files run",
-    "utils:create-services-dockerfile": "deno task --cwd ./core/utils/create-services-dockerfile run",
-  
-    // TEMP
-    "run-api-gateway": "deno -ENRW ./core/services/api-gateway/src/index.ts",
-    "run-auth-service": "deno -ENRW ./core/services/auth-service/src/index.ts",
-    "run-seeder": "deno -ENRW ./core/packages/seeder/src/index.ts"
+    // FRONTEND
   },
   "imports": {
     "@std/assert": "jsr:@std/assert@^1.0.6"
   },
   "workspace": [
-    // CORE
-    // packages
-    "core/packages/core-models",
-    "core/packages/database",
-    "core/packages/global-config",
-    "core/packages/helpers/auth-helpers",
-    "core/packages/helpers/crypto-helpers",
-    "core/packages/helpers/data-helpers",
-    "core/packages/helpers/inquiry-helpers",
-    "core/packages/helpers/rabbit-helpers",
-    "core/packages/helpers/request-helpers",
-    "core/packages/microservice",
-    "core/packages/rabbit-breeder",
-    "core/packages/seeder",
-    // services
-    "core/services/api-gateway",
-    "core/services/auth-service",
-    "core/services/role-service",
-    "core/services/user-service",
-    // utils
-    "core/utils/create-docker-dev-file",
-    "core/utils/create-docker-prod-files",
-    "core/utils/create-services-dockerfile",
+    // BACKEND
+      // core
+        // packages
+          "backend/core/packages/database",
+          "backend/core/packages/global-config",
+          "backend/core/packages/helpers/auth-helpers",
+          "backend/core/packages/helpers/crypto-helpers",
+          "backend/core/packages/helpers/data-helpers",
+          "backend/core/packages/helpers/inquiry-helpers",
+          "backend/core/packages/helpers/rabbit-helpers",
+          "backend/core/packages/helpers/request-helpers",
+          "backend/core/packages/microservice",
+          "backend/core/packages/rabbit-breeder",
+        // services
+          "backend/core/services/api-gateway",
+          "backend/core/services/auth-service",
+          "backend/core/services/role-service",
+          "backend/core/services/user-service",
+        // utils
+          "backend/core/utils/seeder",
+      // feature
+        // services
+          "backend/feature/services/dummy-service",
 
-    // FEATURE
-    // packages
-    "feature/packages/feature-models",
-    // services
-    "feature/services/dummy-service"
+    // FRONTEND
+      // core
+      // feature
+
+    // SHARED
+      // core
+        // packages
+          "shared/core/packages/core-models",
+      // feature
+        // packages
+          "shared/feature/packages/feature-models"
   ],
   "fmt": {
     "lineWidth": 150,

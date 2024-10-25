@@ -80,7 +80,9 @@ lerna-debug.log*
 .DS_Store
 
 # custom
-.env.docker
+.env.dev
+.env.prod
 build
 deno.lock
 docker/images
+temp

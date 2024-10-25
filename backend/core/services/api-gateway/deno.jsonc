@@ -1,0 +1,18 @@
+{
+  "name": "@koru/api-gateway",
+  "version": "0.1.0",
+  "exports": "./src/index.ts",
+  "tasks": {
+    "compile:local": "deno compile -ENRW --output ./build/koru-core-api-gateway ./src/index.ts",
+    "compile:server": "deno compile -ENRW --target x86_64-unknown-linux-gnu --output ./build/koru-core-api-gateway ./src/index.ts",
+    "run": "deno run -ENRW ./src/index.ts"
+  },
+  "imports": {
+    // npm
+    "amqplib": "npm:amqplib@^0.10.4",
+    "axios": "npm:axios@^1.7.4",
+    "express": "npm:express@^4.19.2",
+    "readline": "npm:readline@^1.3.0",
+    "qs": "npm:qs@^6.13.0"
+  }
+}

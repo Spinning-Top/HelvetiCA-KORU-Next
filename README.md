@@ -1,4 +1,4 @@
-# HelvetiCA backend
+# HelvetiCA KORU Next
 
 -----------------------------------------
 
