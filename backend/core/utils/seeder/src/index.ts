@@ -1,12 +1,12 @@
-import { basename, extname, join, resolve } from "@std/path";
+import { basename, extname, resolve } from "@std/path";
 import { sync } from "glob";
 
 import { Database } from "@koru/database";
-import { getGlobalConfig, type GlobalConfig } from "@koru/global-config";
+import { getGlobalConfig, type GlobalConfig, initGlobalConfig } from "@koru/global-config";
 import { InquiryHelpers } from "@koru/inquiry-helpers";
 
-const CORE_SEEDERS_PATTERN = "./core/**/*-seeder.ts";
-const FEATURE_SEEDERS_PATTERN = "./feature/**/*-seeder.ts";
+const CORE_SEEDERS_PATTERN = "./backend/core/**/*-seeder.ts";
+const FEATURE_SEEDERS_PATTERN = "./backend/feature/**/*-seeder.ts";
 
 interface Seeder {
   name: string;
@@ -15,9 +15,10 @@ interface Seeder {
 }
 
 async function main() {
-  console.log("##############################");
-  console.log("###      KORU Seeder       ###");
-  console.log("##############################");
+  console.log("");
+  console.log("#############################");
+  console.log("###      KORU Seeder      ###");
+  console.log("#############################");
   console.log("");
 
   const selectedEnvironment = await InquiryHelpers.selectEnvironment();
@@ -28,7 +29,7 @@ async function main() {
     return;
   }
   // TODO
-  Deno.env.set("ENVIRONMENT", selectedEnvironment);
+  Deno.env.set("ENV", selectedEnvironment);
 
   const selectedSection = await InquiryHelpers.selectSection();
   console.log("");
@@ -48,7 +49,7 @@ async function main() {
     "Select seeders to run",
     seeders.map((seeder) => {
       return { name: seeder.dependsOn != undefined ? `${seeder.name} (depends on ${seeder.dependsOn})` : seeder.name, value: seeder.name };
-    })
+    }),
   );
   console.log("");
 
@@ -68,21 +69,23 @@ async function main() {
   await runSeeders(selectedSeeders);
 }
 
-async function findSeeders(section: string): Promise<Seeder[]> {  
+async function findSeeders(section: string): Promise<Seeder[]> {
   const seedersPattern = resolve(Deno.cwd(), section === "core" ? CORE_SEEDERS_PATTERN : FEATURE_SEEDERS_PATTERN);
 
   console.log(`Searching seeders in ${seedersPattern}...`);
 
-  const seeders: Seeder[] = await Promise.all(sync(seedersPattern).map(async (file) => {
-    const seederModule = await import(file);
-    const seederName = basename(file, extname(file));
+  const seeders: Seeder[] = await Promise.all(
+    sync(seedersPattern).map(async (file) => {
+      const seederModule = await import(file);
+      const seederName = basename(file, extname(file));
 
-    return {
-      name: seederName,
-      file,
-      dependsOn: seederModule.dependsOn || null,
-    } as Seeder;
-  }));
+      return {
+        name: seederName,
+        file,
+        dependsOn: seederModule.dependsOn || null,
+      } as Seeder;
+    }),
+  );
 
   // Ordina i seeder in base alle dipendenze
   const orderedSeeders = topologicalSort(seeders);
@@ -99,6 +102,8 @@ async function runSeeders(seeders: Seeder[]) {
 }
 
 async function initAndEmptyDatabase(): Promise<Database> {
+  await initGlobalConfig();
+
   const globalConfig: GlobalConfig = getGlobalConfig();
   const database: Database = new Database(globalConfig);
   await database.connect();
@@ -110,7 +115,7 @@ async function initAndEmptyDatabase(): Promise<Database> {
 
 async function executeSeeders(seeders: Seeder[]) {
   for (const seeder of seeders) {
-    const seederModule = await import(seeder.file);;
+    const seederModule = await import(seeder.file);
     if (typeof seederModule.default === "function") {
       await seederModule.default();
     }
@@ -137,25 +142,6 @@ function topologicalSort(seeders: Seeder[]): Seeder[] {
   seeders.forEach(visit);
 
   return sorted;
-}
-
-function globSync(directory: string, pattern: string): string[] {
-  const regex = new RegExp('^' + pattern.replace(/\*\*/g, '.*').replace(/\*/g, '[^/]*') + '$');
-  const matchedFiles: string[] = [];
-
-  for (const dirEntry of Deno.readDirSync(directory)) {
-    const fullPath = join(directory, dirEntry.name);
-
-    if (dirEntry.isDirectory) {
-      matchedFiles.push(...globSync(fullPath, pattern));
-    }
-
-    if (dirEntry.isFile && regex.test(fullPath)) {
-      matchedFiles.push(fullPath);
-    }
-  }
-
-  return matchedFiles;
 }
 
 main();

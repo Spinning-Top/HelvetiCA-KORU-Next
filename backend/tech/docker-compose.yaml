@@ -58,7 +58,7 @@ services:
     container_name: RabbitMQ-DEV
     image: rabbitmq:3-management
     ports:
-      - "127.0.0.1:${DEV_RABBITMQ_SERVICE_PORT}:${DEV_RABBITMQ_SERVICE_PORT}"  # service port
+      - "127.0.0.1:${DEV_RABBITMQ_SERVICE_PORT}:${DEV_RABBITMQ_SERVICE_PORT}" # service port
       - "${DEV_RABBITMQ_UI_PORT}:15672" # UI port
     networks:
       - koru-network
@@ -72,7 +72,7 @@ services:
     container_name: RabbitMQ-PROD
     image: rabbitmq:3-management
     ports:
-      - "127.0.0.1:${PROD_RABBITMQ_SERVICE_PORT}:${PROD_RABBITMQ_SERVICE_PORT}"  # service port
+      - "127.0.0.1:${PROD_RABBITMQ_SERVICE_PORT}:${PROD_RABBITMQ_SERVICE_PORT}" # service port
       - "${PROD_RABBITMQ_UI_PORT}:15672" # UI port
     networks:
       - koru-network

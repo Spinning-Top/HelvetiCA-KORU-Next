@@ -9,7 +9,8 @@
   },
   "imports": {
     // npm
-    "express": "npm:express@^4.19.2",
-    "jsonwebtoken": "npm:jsonwebtoken@^9.0.2"
+    "amqplib": "npm:amqplib@^0.10.4",
+    "class-validator": "npm:class-validator@^0.13.1",
+    "express": "npm:express@^4.19.2"
   }
 }

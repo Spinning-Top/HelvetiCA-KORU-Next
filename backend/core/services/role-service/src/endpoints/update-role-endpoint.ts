@@ -1,45 +1,44 @@
 import type { Request, Response } from "express";
 import { ValidationError } from "class-validator";
 
-import type { Dummy } from "@koru/feature-models";
-import { DummyController } from "../controllers/index.ts";
 import { Endpoint, EndpointMethod, type Handler } from "@koru/microservice";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
-import type { User } from "@koru/core-models";
+import type { Role, User } from "@koru/core-models";
+import { RoleController } from "../controllers/index.ts";
 
-export function updateDummyEndpoint(handler: Handler): Endpoint {
-  const endpoint: Endpoint = new Endpoint("/dummies/:id", EndpointMethod.PUT, true, ["dummy.update"]);
+export function updateRoleEndpoint(handler: Handler): Endpoint {
+  const endpoint: Endpoint = new Endpoint("/roles/:id", EndpointMethod.PUT, true, ["role.update"]);
 
   const endpointHandler: (req: Request, res: Response) => void = async (req: Request, res: Response) => {
     try {
       // get the user from the request
-      const user: User | undefined = "user" in req ? (req.user as User | undefined) : undefined;
+      const user: User | undefined = "user" in req ? req.user as User | undefined : undefined;
       // check if the user exists
       if (user === undefined) {
         // return an error
         return RequestHelpers.sendJsonError(res, HttpStatusCode.Unauthorized, "unauthorized", "Authentication needed to access this endpoint");
       }
 
-      // create a dummy controller instance
-      const dummyController: DummyController = new DummyController(handler);
+      // create a role controller instance
+      const roleController: RoleController = new RoleController(handler);
       // get the user id from the request
       const id: number = Number(req.params.id);
       // if id is not a number
       if (isNaN(id)) {
         // return an error
-        return RequestHelpers.sendJsonError(res, HttpStatusCode.BadRequest, "invalidDummyId", "Invalid dummy id");
+        return RequestHelpers.sendJsonError(res, HttpStatusCode.BadRequest, "invalidRoleId", "Invalid role id");
       }
-      // find the dummy by id
-      const dummy: Dummy | undefined = await dummyController.getEntityById(id);
-      // if dummy is not found
-      if (dummy === undefined) {
+      // find the role by id
+      const role: Role | undefined = await roleController.getEntityById(id);
+      // if role is not found
+      if (role === undefined) {
         // return an error
-        return RequestHelpers.sendJsonError(res, HttpStatusCode.NotFound, "notFound", `Dummy with id ${id} not found`);
+        return RequestHelpers.sendJsonError(res, HttpStatusCode.NotFound, "notFound", `Role with id ${id} not found`);
       }
-      // update the dummy from the request
-      dummy.updateFromRequest(req);
-      // save the updated dummy
-      const saveResult: Dummy | ValidationError[] | string = await dummyController.updateEntity(dummy, user);
+      // update the role from the request
+      role.updateFromRequest(req);
+      // save the updated role
+      const saveResult: Role | ValidationError[] | string = await roleController.updateEntity(role, user);
       // if the save result is an array of validation errors
       if (Array.isArray(saveResult) && saveResult.length > 0 && saveResult[0] instanceof ValidationError) {
         // return the validation errors

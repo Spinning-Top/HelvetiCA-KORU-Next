@@ -1,31 +1,22 @@
 import type { Request, Response } from "express";
 import { ValidationError } from "class-validator";
 
-import { Dummy } from "@koru/feature-models";
-import { DummyController } from "../controllers/index.ts";
 import { Endpoint, EndpointMethod, type Handler } from "@koru/microservice";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
-import type { User } from "@koru/core-models";
+import { User } from "@koru/core-models";
+import { UserController } from "../controllers/index.ts";
 
-export function createDummyEndpoint(handler: Handler): Endpoint {
-  const endpoint: Endpoint = new Endpoint("/dummies", EndpointMethod.POST, true, ["dummy.create"]);
+export function createUserEndpoint(handler: Handler): Endpoint {
+  const endpoint: Endpoint = new Endpoint("/users", EndpointMethod.POST, true, ["user.create"]);
 
   const endpointHandler: (req: Request, res: Response) => void = async (req: Request, res: Response) => {
     try {
-      // get the user from the request
-      const user: User | undefined = "user" in req ? (req.user as User | undefined) : undefined;
-      // check if the user exists
-      if (user === undefined) {
-        // return an error
-        return RequestHelpers.sendJsonError(res, HttpStatusCode.Unauthorized, "unauthorized", "Authentication needed to access this endpoint");
-      }
-
-      // create a dummy controller instance
-      const dummyController: DummyController = new DummyController(handler);
-      // create the new dummy from the request
-      const newDummy: Dummy = Dummy.createFromRequest(req, new Dummy());
-      // save the new dummy
-      const saveResult: Dummy | ValidationError[] | string = await dummyController.createEntity(newDummy, user);
+      // create a user controller instance
+      const userController: UserController = new UserController(handler);
+      // create the new user from the request
+      const newUser: User = User.createFromRequest(req, new User());
+      // save the new user
+      const saveResult: User | ValidationError[] | string = await userController.createEntity(newUser);
       // if the save result is an array of validation errors
       if (Array.isArray(saveResult) && saveResult.length > 0 && saveResult[0] instanceof ValidationError) {
         // return the validation errors
@@ -39,6 +30,9 @@ export function createDummyEndpoint(handler: Handler): Endpoint {
             constraints: error.constraints,
           })),
         );
+      } else if (saveResult === "duplicatedEmail") {
+        // return the validation error
+        return RequestHelpers.sendJsonError(res, HttpStatusCode.BadRequest, "duplicatedEmail", "Provided email is already in use");
       }
       // return the success response
       return RequestHelpers.sendJsonCreated(res);

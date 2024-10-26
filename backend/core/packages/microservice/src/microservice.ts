@@ -178,10 +178,10 @@ export class Microservice {
         // enable raw mode to capture keystrokes
         Deno.stdin.setRaw(true);
         // listen for keystrokes
-          for await (const chunk of Deno.stdin.readable) {
+        for await (const chunk of Deno.stdin.readable) {
           const key = new TextDecoder().decode(chunk);
           // if the user presses 'x'
-          if (key === 'x') {
+          if (key === "x") {
             this.handler.getLog().info(`${this.name} is stopping...`);
             // stop services
             await this.stop();

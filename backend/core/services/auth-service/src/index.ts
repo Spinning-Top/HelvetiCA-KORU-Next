@@ -45,7 +45,7 @@ export function startService(): Promise<void> {
   AuthHelpers.initPassport(
     microservice.getHandler().getGlobalConfig().auth.jwtSecret,
     microservice.getHandler().getExpress(),
-    microservice.getHandler().getRabbitBreeder()
+    microservice.getHandler().getRabbitBreeder(),
   );
 
   // start service

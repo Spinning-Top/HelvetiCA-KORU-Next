@@ -1,45 +1,36 @@
 import type { Request, Response } from "express";
 import { ValidationError } from "class-validator";
 
-import type { Dummy } from "@koru/feature-models";
-import { DummyController } from "../controllers/index.ts";
 import { Endpoint, EndpointMethod, type Handler } from "@koru/microservice";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
 import type { User } from "@koru/core-models";
+import { UserController } from "../controllers/index.ts";
 
-export function updateDummyEndpoint(handler: Handler): Endpoint {
-  const endpoint: Endpoint = new Endpoint("/dummies/:id", EndpointMethod.PUT, true, ["dummy.update"]);
+export function updateUserEndpoint(handler: Handler): Endpoint {
+  const endpoint: Endpoint = new Endpoint("/users/:id", EndpointMethod.PUT, true, ["user.update"]);
 
   const endpointHandler: (req: Request, res: Response) => void = async (req: Request, res: Response) => {
     try {
-      // get the user from the request
-      const user: User | undefined = "user" in req ? (req.user as User | undefined) : undefined;
-      // check if the user exists
-      if (user === undefined) {
-        // return an error
-        return RequestHelpers.sendJsonError(res, HttpStatusCode.Unauthorized, "unauthorized", "Authentication needed to access this endpoint");
-      }
-
-      // create a dummy controller instance
-      const dummyController: DummyController = new DummyController(handler);
+      // create a user controller instance
+      const userController: UserController = new UserController(handler);
       // get the user id from the request
       const id: number = Number(req.params.id);
       // if id is not a number
       if (isNaN(id)) {
         // return an error
-        return RequestHelpers.sendJsonError(res, HttpStatusCode.BadRequest, "invalidDummyId", "Invalid dummy id");
+        return RequestHelpers.sendJsonError(res, HttpStatusCode.BadRequest, "invalidUserId", "Invalid user id");
       }
-      // find the dummy by id
-      const dummy: Dummy | undefined = await dummyController.getEntityById(id);
-      // if dummy is not found
-      if (dummy === undefined) {
+      // find the user by id
+      const user: User | undefined = await userController.getEntityById(id);
+      // if user is not found
+      if (user === undefined) {
         // return an error
-        return RequestHelpers.sendJsonError(res, HttpStatusCode.NotFound, "notFound", `Dummy with id ${id} not found`);
+        return RequestHelpers.sendJsonError(res, HttpStatusCode.NotFound, "notFound", `User with id ${id} not found`);
       }
-      // update the dummy from the request
-      dummy.updateFromRequest(req);
-      // save the updated dummy
-      const saveResult: Dummy | ValidationError[] | string = await dummyController.updateEntity(dummy, user);
+      // update the user from the request
+      user.updateFromRequest(req);
+      // save the updated user
+      const saveResult: User | ValidationError[] | string = await userController.updateEntity(user);
       // if the save result is an array of validation errors
       if (Array.isArray(saveResult) && saveResult.length > 0 && saveResult[0] instanceof ValidationError) {
         // return the validation errors
@@ -53,6 +44,9 @@ export function updateDummyEndpoint(handler: Handler): Endpoint {
             constraints: error.constraints,
           })),
         );
+      } else if (saveResult === "duplicatedEmail") {
+        // return the validation error
+        return RequestHelpers.sendJsonError(res, HttpStatusCode.BadRequest, "duplicatedEmail", "Provided email is already in use");
       }
       // return the success response
       return RequestHelpers.sendJsonUpdated(res);

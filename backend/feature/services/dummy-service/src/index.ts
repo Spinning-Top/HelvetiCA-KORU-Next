@@ -6,8 +6,8 @@ import {
   createDummyEndpoint,
   deleteDummyEndpoint,
   readDeletedDummiesEndpoint,
-  readDummyEndpoint,
   readDummiesEndpoint,
+  readDummyEndpoint,
   updateDummyEndpoint,
 } from "./endpoints/index.ts";
 

@@ -1,14 +1,17 @@
+// deno-fmt-ignore-file
 {
   "tasks": {
     // BACKEND
+      // deploy
+        "deploy:dev": "ENV=development ./backend/deploy.sh",
+        "deploy:prod": "ENV=production ./backend/deploy.sh",
       // tech
         "tech:down": "docker compose -f ./backend/tech/docker-compose.yaml --env-file ./backend/tech/.env down",
         "tech:up": "docker compose -f ./backend/tech/docker-compose.yaml --env-file ./backend/tech/.env up --build -d",
       // utils
-        "seeder": "deno -ENRW ./backend/core/utils/seeder/src/index.ts",
+        "seeder": "ENV_PATH=./backend/ deno -ENRW ./backend/core/utils/seeder/src/index.ts",
       // test
-        "test": "ENV_PATH=/Volumes/Developer/Coding/HelvetiCA/KORU\\ Next/backend/.env.dev deno test -ER"
-
+        "test": "ENV=development ENV_PATH=./backend/ deno test -ER"
     // FRONTEND
   },
   "imports": {

@@ -35,7 +35,7 @@ export function passwordResetEndpoint(handler: Handler): Endpoint {
           const user: User | undefined = await RabbitHelpers.getUserByField(
             "id",
             Number((decodedToken as JwtPayload).id),
-            handler.getRabbitBreeder()
+            handler.getRabbitBreeder(),
           );
           // if the user is not found
           if (user === undefined) {
