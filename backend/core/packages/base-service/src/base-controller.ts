@@ -2,7 +2,7 @@ import { type FindManyOptions, type FindOptionsRelations, type FindOptionsWhere,
 import type { ValidationError } from "class-validator";
 
 import { type BaseModel, EntityModel, type User } from "@koru/core-models";
-import type { Handler } from "./handler.ts";
+import type { Handler } from "@koru/handler";
 
 export class BaseController<T extends BaseModel> {
   protected entityClass: { new (): T };

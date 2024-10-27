@@ -1,4 +1,4 @@
-import { ConsoleHandler, error, FileHandler, info, type LogRecord, setup, warn } from "@std/log";
+import { ConsoleHandler, debug, error, FileHandler, info, type LogRecord, setup, warn } from "@std/log";
 import { dirname, fromFileUrl, resolve } from "@std/path";
 import { format } from "@std/datetime";
 
@@ -41,6 +41,10 @@ export class Log {
     } catch (_error: unknown) {
       this.error("Failed to setup logger, logging won't be available");
     }
+  }
+
+  public debug(message: string): void {
+    debug(message);
   }
 
   public error(message: string): void {

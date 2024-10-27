@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "exports": "./src/index.ts",
   "imports": {
-    // npm
-    "express": "npm:express@^4.19.2"
+    // jsr
+    "hono": "jsr:/@hono/hono@^4.6.7"
   }
 }

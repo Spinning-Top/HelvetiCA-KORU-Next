@@ -1,7 +1,6 @@
 import { CreateDateColumn, DeleteDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 import { Expose, instanceToPlain, plainToClassFromExist } from "class-transformer";
-import type { Request } from "express";
 import { validate, type ValidationError } from "class-validator";
 
 export class BaseModel {

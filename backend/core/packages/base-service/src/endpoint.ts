@@ -1,11 +1,11 @@
-import type { Request, Response } from "express";
+import type { Handler as HonoHandler } from "hono/types";
 
 export class Endpoint {
   private url: string;
   private method: EndpointMethod;
   private authRequired: boolean;
   private allowedPermissions: string[];
-  private handler: ((req: Request, res: Response) => void) | undefined;
+  private handler: HonoHandler | undefined;
   // for api gateway
   private baseUrl: string | undefined;
   private serviceUrl: string | undefined;
@@ -62,11 +62,11 @@ export class Endpoint {
     this.serviceRoot = serviceRoot;
   }
 
-  public getHandler(): ((req: Request, res: Response) => void) | undefined {
+  public getHandler(): HonoHandler | undefined {
     return this.handler;
   }
 
-  public setHandler(handler: (req: Request, res: Response) => void): void {
+  public setHandler(handler: HonoHandler): void {
     this.handler = handler;
   }
 }

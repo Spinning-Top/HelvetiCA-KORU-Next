@@ -21,14 +21,16 @@
     // BACKEND
       // core
         // packages
+          "backend/core/packages/base-service",
           "backend/core/packages/database",
           "backend/core/packages/global-config",
+          "backend/core/packages/handler",
           "backend/core/packages/helpers/auth-helpers",
           "backend/core/packages/helpers/crypto-helpers",
-          "backend/core/packages/helpers/data-helpers",
           "backend/core/packages/helpers/inquiry-helpers",
           "backend/core/packages/helpers/rabbit-helpers",
           "backend/core/packages/helpers/request-helpers",
+          "backend/core/packages/log",
           "backend/core/packages/microservice",
           "backend/core/packages/rabbit-breeder",
         // services
@@ -50,6 +52,7 @@
       // core
         // packages
           "shared/core/packages/core-models",
+          "shared/core/packages/helpers/data-helpers",
       // feature
         // packages
           "shared/feature/packages/feature-models"

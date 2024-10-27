@@ -85,10 +85,10 @@ export class User extends BaseModel {
     this.refreshTokens.push(newRefreshToken);
   }
 
-  public async removeRefreshToken(token: string): Promise<void> {
+  public removeRefreshToken(token: string): void {
     if (this.refreshTokens === undefined) this.refreshTokens = [];
 
-    if (CryptoHelpers.isStringHashed(token) === false) token = await CryptoHelpers.hashPassword(token);
+    if (CryptoHelpers.isStringHashed(token) === false) token = CryptoHelpers.hashPassword(token);
 
     this.refreshTokens = this.refreshTokens.filter((refreshToken) => refreshToken.token !== token);
   }

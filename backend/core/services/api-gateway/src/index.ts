@@ -1,9 +1,6 @@
-import type { Express } from "express";
-
 import { Gateway } from "./gateway.ts";
 
 const gateway: Gateway = new Gateway();
-export const express: Express = gateway.getHandler().getExpress();
 
 export async function startService(): Promise<void> {
   // start service

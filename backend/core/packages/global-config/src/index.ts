@@ -1,14 +1,14 @@
 import { dirname, fromFileUrl, resolve } from "@std/path";
-import { load } from "@std/dotenv";
+import { loadSync } from "@std/dotenv";
 
 let conf: Record<string, string> = {};
 
-export async function initGlobalConfig(): Promise<void> {
+export function initGlobalConfig(): void {
   const envPath: string = Deno.env.get("ENV_PATH") || Deno.cwd() || dirname(fromFileUrl(import.meta.url));
   const envFilePath: string = Deno.env.get("ENV") === "production" ? resolve(envPath, ".env.prod") : resolve(envPath, ".env.dev");
 
   try {
-    conf = await load({
+    conf = loadSync({
       envPath: envFilePath,
       export: true,
     });

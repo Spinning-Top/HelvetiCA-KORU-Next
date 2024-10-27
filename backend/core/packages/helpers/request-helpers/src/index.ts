@@ -1,25 +1,21 @@
-import type { Response } from "express";
+import type { Context } from "hono";
 
 export class RequestHelpers {
-  public static sendJsonCreated(res: Response<unknown, Record<string, unknown>>): Response<unknown, Record<string, unknown>> {
-    return res.status(HttpStatusCode.Created).json({
-      status: "created",
-    });
+  public static sendJsonCreated(context: Context): Response {
+    return context.json({ status: "created" }, HttpStatusCode.Created);
   }
 
-  public static sendJsonDeleted(res: Response<unknown, Record<string, unknown>>): Response<unknown, Record<string, unknown>> {
-    return res.status(HttpStatusCode.Ok).json({
-      status: "deleted",
-    });
+  public static sendJsonDeleted(context: Context): Response {
+    return context.json({ status: "deleted" }, HttpStatusCode.Ok);
   }
 
   public static sendJsonError(
-    res: Response<unknown, Record<string, unknown>>,
+    c: Context,
     httpStatusCode: HttpStatusCode,
     code: string,
     message: string,
     details?: Record<string, unknown> | Record<string, unknown>[],
-  ): Response<unknown, Record<string, unknown>> {
+  ): Response {
     const body: Record<string, unknown> = {
       status: "error",
       code,
@@ -27,20 +23,15 @@ export class RequestHelpers {
     };
     if (details !== undefined) body.details = details;
 
-    return res.status(httpStatusCode).json(body);
+    return c.json(body, httpStatusCode);
   }
 
-  public static sendJsonResponse(
-    res: Response<unknown, Record<string, unknown>>,
-    body: Record<string, unknown> | Record<string, unknown>[],
-  ): Response<unknown, Record<string, unknown>> {
-    return res.status(HttpStatusCode.Ok).json(body);
+  public static sendJsonResponse(c: Context, body: Record<string, unknown> | Record<string, unknown>[]): Response {
+    return c.json(body, HttpStatusCode.Ok);
   }
 
-  public static sendJsonUpdated(res: Response<unknown, Record<string, unknown>>): Response<unknown, Record<string, unknown>> {
-    return res.status(HttpStatusCode.Ok).json({
-      status: "updated",
-    });
+  public static sendJsonUpdated(context: Context): Response {
+    return context.json({ status: "updated" }, HttpStatusCode.Ok);
   }
 }
 

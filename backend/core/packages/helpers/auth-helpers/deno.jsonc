@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "exports": "./src/index.ts",
   "imports": {
-    // npm
-    "express": "npm:express@^4.19.2",
-    "passport": "npm:passport@^0.7.0",
-    "passport-jwt": "npm:passport-jwt@^4.0.1"
+    // jsr
+    "hono": "jsr:/@hono/hono@^4.6.7",
+    "hono/factory": "jsr:/@hono/hono@^4.6.7/factory",
+    "hono/jwt": "jsr:/@hono/hono@^4.6.7/jwt"
   }
 }
