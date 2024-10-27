@@ -1,10 +1,8 @@
-import axios, { type AxiosResponse } from "axios";
-import type { Request, Response } from "express";
-import qs from "qs";
+// import axios, { type AxiosResponse } from "axios";
 
-import { DataHelpers } from "@koru/data-helpers";
-import { Endpoint, EndpointMethod } from "@koru/microservice";
-import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
+// import { DataHelpers } from "@koru/data-helpers";
+import { Endpoint, type EndpointMethod } from "@koru/base-service";
+// import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
 
 export function createEndpoint(endpointData: Record<string, unknown>, baseUrl: string, serviceRoot: string): Endpoint | undefined {
   if (endpointData === undefined) return undefined;
@@ -23,6 +21,7 @@ export function createEndpoint(endpointData: Record<string, unknown>, baseUrl: s
   endpoint.setServiceUrl(String(endpointData.url));
   endpoint.setServiceRoot(serviceRoot);
 
+  /*
   endpoint.setHandler(async (req: Request, res: Response) => {
     try {
       let response: AxiosResponse;
@@ -76,5 +75,6 @@ export function createEndpoint(endpointData: Record<string, unknown>, baseUrl: s
       }
     }
   });
+  */
   return endpoint;
 }

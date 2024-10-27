@@ -1,7 +1,8 @@
 import type { Request, Response } from "express";
 import { verify } from "jsonwebtoken";
 
-import { Endpoint, EndpointMethod, type Handler } from "@koru/microservice";
+import { Endpoint, EndpointMethod } from "@koru/base-service";
+import type { Handler } from "@koru/handler";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
 
 export function validateTokenEndpoint(handler: Handler): Endpoint {

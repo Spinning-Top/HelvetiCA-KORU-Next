@@ -31,7 +31,7 @@
           "backend/core/packages/helpers/rabbit-helpers",
           "backend/core/packages/helpers/request-helpers",
           "backend/core/packages/log",
-          "backend/core/packages/microservice",
+          "backend/core/packages/micro-service",
           "backend/core/packages/rabbit-breeder",
         // services
           "backend/core/services/api-gateway",

@@ -1,4 +1,5 @@
-      // hono setup
+/*
+// hono setup
       this.hono.use("*", async (c: Context, next) => {
         // Logga la richiesta
         const method = c.req.method;
@@ -40,4 +41,4 @@
               return c.json(payload) // eg: { "sub": "1234567890", "name": "John Doe", "iat": 1516239022 }
             })
       
-      
+*/

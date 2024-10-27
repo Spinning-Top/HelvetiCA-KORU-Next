@@ -1,5 +1,5 @@
 import { Database } from "@koru/database";
-import { Handler } from "@koru/microservice";
+import { Handler } from "@koru/handler";
 import { Role } from "@koru/core-models";
 
 export const dependsOn = undefined;

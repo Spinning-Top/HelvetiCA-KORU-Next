@@ -1,12 +1,12 @@
 import type { Express } from "express";
 
-import { Microservice } from "@koru/microservice";
+import { MicroService } from "@koru/microservice";
 
 import { createUserEndpoint, deleteUserEndpoint, readUserEndpoint, readUsersEndpoint, updateUserEndpoint } from "./endpoints/index.ts";
 
 import { userCreateRabbit, userReadRabbit, userUpdateRabbit } from "./rabbits/index.ts";
 
-const microservice: Microservice = new Microservice("User Service");
+const microservice: MicroService = new MicroService("User Service");
 export const express: Express = microservice.getHandler().getExpress();
 
 export async function startService(): Promise<void> {

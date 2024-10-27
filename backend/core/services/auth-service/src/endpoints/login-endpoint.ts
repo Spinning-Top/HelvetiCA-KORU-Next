@@ -2,7 +2,8 @@ import type { Request, Response } from "express";
 import { sign } from "jsonwebtoken";
 
 import { CryptoHelpers } from "@koru/crypto-helpers";
-import { Endpoint, EndpointMethod, type Handler } from "@koru/microservice";
+import { Endpoint, EndpointMethod } from "@koru/base-service";
+import type { Handler } from "@koru/handler";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
 import { RabbitHelpers } from "@koru/rabbit-helpers";
 import { User } from "@koru/core-models";

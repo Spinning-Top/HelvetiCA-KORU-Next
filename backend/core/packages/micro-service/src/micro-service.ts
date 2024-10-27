@@ -2,7 +2,7 @@ import { BaseService } from "@koru/base-service";
 
 import type { Rabbit } from "./rabbit.ts";
 
-export class Microservice extends BaseService {
+export class MicroService extends BaseService {
   private baseUrl: string;
   private rabbits: Rabbit[];
   

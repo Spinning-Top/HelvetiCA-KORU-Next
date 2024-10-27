@@ -1,9 +1,11 @@
 import type { Context, MiddlewareHandler } from "hono";
 import { createMiddleware } from "hono/factory";
+import type { Hono } from "hono";
+import { jwt } from "hono/jwt";
 import type { JWTPayload } from "hono/utils/jwt/types";
 import { verify } from "hono/jwt";
 
-import type { Handler } from "@koru/microservice";
+import type { Handler } from "@koru/handler";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
 import { RabbitHelpers } from "@koru/rabbit-helpers";
 import type { RabbitBreeder } from "@koru/rabbit-breeder";

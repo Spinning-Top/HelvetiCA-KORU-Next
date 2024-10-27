@@ -1,7 +1,8 @@
 import type { Request, Response } from "express";
 import { ValidationError } from "class-validator";
 
-import { Endpoint, EndpointMethod, type Handler } from "@koru/microservice";
+import { Endpoint, EndpointMethod } from "@koru/base-service";
+import type { Handler } from "@koru/handler";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
 import type { User } from "@koru/core-models";
 import { UserController } from "../controllers/index.ts";

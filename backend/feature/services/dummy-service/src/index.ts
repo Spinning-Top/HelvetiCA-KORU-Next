@@ -1,6 +1,6 @@
 import type { Express } from "express";
 
-import { Microservice } from "@koru/microservice";
+import { MicroService } from "@koru/micro-service";
 
 import {
   createDummyEndpoint,
@@ -11,7 +11,7 @@ import {
   updateDummyEndpoint,
 } from "./endpoints/index.ts";
 
-const microservice: Microservice = new Microservice("Dummy Service", "");
+const microservice: MicroService = new MicroService("Dummy Service", "");
 export const express: Express = microservice.getHandler().getExpress();
 
 export async function startService(): Promise<void> {

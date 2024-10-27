@@ -1,6 +1,6 @@
 import type { Express } from "express";
 
-import { Microservice } from "@koru/microservice";
+import { MicroService } from "@koru/micro-service";
 
 import {
   createRoleEndpoint,
@@ -11,7 +11,7 @@ import {
   updateRoleEndpoint,
 } from "./endpoints/index.ts";
 
-const microservice: Microservice = new Microservice("Role Service");
+const microservice: MicroService = new MicroService("Role Service");
 export const express: Express = microservice.getHandler().getExpress();
 
 export async function startService(): Promise<void> {

@@ -1,6 +1,7 @@
 import type { ValidationError } from "class-validator";
 
-import { BaseController, type Handler } from "@koru/microservice";
+import { BaseController } from "@koru/base-service";
+import type { Handler } from "@koru/handler";
 import { User } from "@koru/core-models";
 
 export class UserController extends BaseController<User> {

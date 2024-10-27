@@ -2,7 +2,8 @@ import type { Request, Response } from "express";
 
 import { CryptoHelpers } from "@koru/crypto-helpers";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
-import { Endpoint, EndpointMethod, type Handler } from "@koru/microservice";
+import { Endpoint, EndpointMethod } from "@koru/base-service";
+import type { Handler } from "@koru/handler";
 import { User } from "@koru/core-models";
 
 export function passwordChangeEndpoint(handler: Handler): Endpoint {

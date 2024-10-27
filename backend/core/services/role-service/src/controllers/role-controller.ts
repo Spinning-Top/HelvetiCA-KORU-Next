@@ -1,4 +1,5 @@
-import { BaseController, type Handler } from "@koru/microservice";
+import { BaseController } from "@koru/base-service";
+import type { Handler } from "@koru/handler";
 import { Role } from "@koru/core-models";
 
 export class RoleController extends BaseController<Role> {

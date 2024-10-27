@@ -1,6 +1,7 @@
 import type { ConsumeMessage } from "amqplib";
 
-import { type Handler, Rabbit } from "@koru/microservice";
+import type { Handler } from "@koru/handler";
+import { Rabbit } from "@koru/micro-service";
 import type { User } from "@koru/core-models";
 import { UserController } from "../controllers/index.ts";
 

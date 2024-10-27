@@ -3,7 +3,8 @@ import { ValidationError } from "class-validator";
 
 import type { Dummy } from "@koru/feature-models";
 import { DummyController } from "../controllers/index.ts";
-import { Endpoint, EndpointMethod, type Handler } from "@koru/microservice";
+import { Endpoint, EndpointMethod } from "@koru/base-service";
+import type { Handler } from "@koru/handler";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
 import type { User } from "@koru/core-models";
 

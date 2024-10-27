@@ -1,7 +1,7 @@
 import type { Express } from "express";
 
 import { AuthHelpers } from "@koru/auth-helpers";
-import { Microservice } from "@koru/microservice";
+import { MicroService } from "@koru/micro-service";
 
 import {
   loginEndpoint,
@@ -15,7 +15,7 @@ import {
   validateTokenEndpoint,
 } from "./endpoints/index.ts";
 
-const microservice: Microservice = new Microservice("Auth Service", "/auth");
+const microservice: MicroService = new MicroService("Auth Service", "/auth");
 export const express: Express = microservice.getHandler().getExpress();
 
 export function startService(): Promise<void> {

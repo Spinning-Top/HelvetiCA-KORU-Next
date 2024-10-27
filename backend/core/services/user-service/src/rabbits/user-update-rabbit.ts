@@ -1,7 +1,8 @@
 import type { ConsumeMessage } from "amqplib";
 import { ValidationError } from "class-validator";
 
-import { type Handler, Rabbit } from "@koru/microservice";
+import type { Handler } from "@koru/handler";
+import { Rabbit } from "@koru/micro-service";
 import { User } from "@koru/core-models";
 import { UserController } from "../controllers/index.ts";
 
