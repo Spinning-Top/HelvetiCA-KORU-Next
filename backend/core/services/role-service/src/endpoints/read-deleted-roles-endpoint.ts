@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { Context } from "hono";
 
 import { Endpoint, EndpointMethod } from "@koru/base-service";
 import type { Handler } from "@koru/handler";
@@ -9,17 +9,17 @@ import { RoleController } from "../controllers/index.ts";
 export function readDeletedRolesEndpoint(handler: Handler): Endpoint {
   const endpoint: Endpoint = new Endpoint("/roles/deleted", EndpointMethod.GET, true, ["role.read.all"]);
 
-  const endpointHandler: (req: Request, res: Response) => void = async (_req: Request, res: Response) => {
+  const endpointHandler: (c: Context) => void = async (c: Context) => {
     try {
       // create a role controller instance
       const roleController: RoleController = new RoleController(handler);
       // get the users with the given parameters
       const roles: Role[] = await roleController.getDeletedEntities();
       // return the users
-      return RequestHelpers.sendJsonResponse(res, { entities: roles });
+      return RequestHelpers.sendJsonResponse(c, { entities: roles });
     } catch (error) {
       console.error(error);
-      return RequestHelpers.sendJsonError(res, HttpStatusCode.InternalServerError, "error", (error as Error).message);
+      return RequestHelpers.sendJsonError(c, HttpStatusCode.InternalServerError, "error", (error as Error).message);
     }
   };
 

@@ -31,12 +31,12 @@ export class BaseModel {
     return await validate(this);
   }
 
-  public static createFromRequest<T>(request: Request, emptyObject: T): T {
-    return plainToClassFromExist(emptyObject, request.body, { excludeExtraneousValues: true, groups: ["create"] });
+  public static createFromRequest<T>(body: Record<string, unknown>, emptyObject: T): T {
+    return plainToClassFromExist(emptyObject, body, { excludeExtraneousValues: true, groups: ["create"] });
   }
 
-  public updateFromRequest(request: Request): BaseModel {
-    return plainToClassFromExist(this, request.body, { excludeExtraneousValues: true, groups: ["update"] });
+  public updateFromRequest(body: Record<string, unknown>): BaseModel {
+    return plainToClassFromExist(this, body, { excludeExtraneousValues: true, groups: ["update"] });
   }
 
   public static createFromJsonData<T>(jsonData: Record<string, unknown>, emptyObject: T): T {

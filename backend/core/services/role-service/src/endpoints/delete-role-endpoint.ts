@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { Context } from "hono";
 
 import { Endpoint, EndpointMethod } from "@koru/base-service";
 import type { Handler } from "@koru/handler";
@@ -9,39 +9,39 @@ import { RoleController } from "../controllers/index.ts";
 export function deleteRoleEndpoint(handler: Handler): Endpoint {
   const endpoint: Endpoint = new Endpoint("/roles/:id", EndpointMethod.DELETE, true, ["role.delete"]);
 
-  const endpointHandler: (req: Request, res: Response) => void = async (req: Request, res: Response) => {
+  const endpointHandler: (c: Context) => void = async (c: Context) => {
     try {
-      // get the user from the request
-      const user: User | undefined = "user" in req ? req.user as User | undefined : undefined;
+      // get the user from the context
+      const user: User | undefined = c.get("user");
       // check if the user exists
       if (user === undefined) {
         // return an error
-        return RequestHelpers.sendJsonError(res, HttpStatusCode.Unauthorized, "unauthorized", "Authentication needed to access this endpoint");
+        return RequestHelpers.sendJsonError(c, HttpStatusCode.Unauthorized, "unauthorized", "Authentication needed to access this endpoint");
       }
 
       // create a role controller instance
       const roleController: RoleController = new RoleController(handler);
       // get the role id from the request
-      const id: number = Number(req.params.id);
+      const id: number = Number(c.req.param("id"));
       // if id is not a number
       if (isNaN(id)) {
         // return an error
-        return RequestHelpers.sendJsonError(res, HttpStatusCode.BadRequest, "invalidRoleId", "Invalid role id");
+        return RequestHelpers.sendJsonError(c, HttpStatusCode.BadRequest, "invalidRoleId", "Invalid role id");
       }
       // find the role by id
       const role: Role | undefined = await roleController.getEntityById(id);
       // if role is not found
       if (role === undefined) {
         // return an error
-        return RequestHelpers.sendJsonError(res, HttpStatusCode.NotFound, "notFound", `Role with id ${id} not found`);
+        return RequestHelpers.sendJsonError(c, HttpStatusCode.NotFound, "notFound", `Role with id ${id} not found`);
       }
       // remove the role
       await roleController.deleteEntity(role, user);
       // return the success response
-      return RequestHelpers.sendJsonDeleted(res);
+      return RequestHelpers.sendJsonDeleted(c);
     } catch (error) {
       console.error(error);
-      return RequestHelpers.sendJsonError(res, HttpStatusCode.InternalServerError, "error", (error as Error).message);
+      return RequestHelpers.sendJsonError(c, HttpStatusCode.InternalServerError, "error", (error as Error).message);
     }
   };
 

@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { Context } from "hono";
 
 import { Endpoint, EndpointMethod } from "@koru/base-service";
 import type { Handler } from "@koru/handler";
@@ -8,22 +8,24 @@ import { User } from "@koru/core-models";
 export function logoutEndpoint(handler: Handler): Endpoint {
   const endpoint: Endpoint = new Endpoint("/logout", EndpointMethod.POST, true);
 
-  const endpointHandler: (req: Request, res: Response) => void = async (req: Request, res: Response) => {
+  const endpointHandler: (c: Context) => void = async (c: Context) => {
     try {
-      // get the user from the request
-      const user: User | undefined = "user" in req ? req.user as User | undefined : undefined;
+      // get the body from the request
+      const body: Record<string, unknown> = await c.req.parseBody();
+      // get the user from the context
+      const user: User | undefined = c.get("user");
       // check if the user exists
       if (user === undefined) {
         // return an error
-        return RequestHelpers.sendJsonError(res, HttpStatusCode.Unauthorized, "unauthorized", "Authentication needed to access this endpoint");
+        return RequestHelpers.sendJsonError(c, HttpStatusCode.Unauthorized, "unauthorized", "Authentication needed to access this endpoint");
       }
 
       // get the refresh token from the request
-      const refreshToken: string | undefined = req.body.refreshToken;
+      const refreshToken: string | undefined = body.refreshToken as string | undefined;
       // if refresh token is undefined
       if (refreshToken == undefined || refreshToken.trim().length == 0) {
         // return the validation error
-        return RequestHelpers.sendJsonError(res, HttpStatusCode.BadRequest, "refreshTokenRequired", "Refresh token is required");
+        return RequestHelpers.sendJsonError(c, HttpStatusCode.BadRequest, "refreshTokenRequired", "Refresh token is required");
       }
       // remove the refresh token from the user
       user.removeRefreshToken(refreshToken);
@@ -36,13 +38,13 @@ export function logoutEndpoint(handler: Handler): Endpoint {
       // check if the user was saved
       if (savedUser === undefined) {
         // return the error
-        return RequestHelpers.sendJsonError(res, HttpStatusCode.InternalServerError, "error", "User update failed");
+        return RequestHelpers.sendJsonError(c, HttpStatusCode.InternalServerError, "error", "User update failed");
       }
       // return the success response
-      return RequestHelpers.sendJsonResponse(res, { status: "Logged out successfully" });
+      return RequestHelpers.sendJsonResponse(c, { status: "Logged out successfully" });
     } catch (error) {
       console.error(error);
-      return RequestHelpers.sendJsonError(res, HttpStatusCode.InternalServerError, "error", (error as Error).message);
+      return RequestHelpers.sendJsonError(c, HttpStatusCode.InternalServerError, "error", (error as Error).message);
     }
   };
 

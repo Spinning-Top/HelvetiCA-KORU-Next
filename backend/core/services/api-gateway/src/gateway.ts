@@ -1,7 +1,8 @@
 import type { ConsumeMessage } from "amqplib";
+import type { Context } from "hono";
 
 import { createEndpoint } from "./utils/index.ts";
-import { BaseService, type Endpoint } from "@koru/base-service";
+import { BaseService, Endpoint, EndpointMethod } from "@koru/base-service";
 
 export class Gateway extends BaseService {
 
@@ -13,6 +14,7 @@ export class Gateway extends BaseService {
     try {
       await super.start();
 
+      /*
       // start the rabbit service listeners
       await this.startRabbitServiceListeners();
 
@@ -25,6 +27,9 @@ export class Gateway extends BaseService {
         // delay 10 seconds to wait for all endpoints to be received
         await new Promise((resolve) => setTimeout(resolve, 10000));
       }
+      */
+
+      this.tempEndpoints(); // TODO
 
       // register endpoints
       this.registerEndpoints();
@@ -69,5 +74,24 @@ export class Gateway extends BaseService {
 
     const rabbitTag: string | undefined = await this.handler.getRabbitBreeder().startRequestListener("apiGatewayServiceRequest", responseHandler);
     if (rabbitTag !== undefined) this.handler.getRabbitTags().push(rabbitTag);
+  }
+
+  private tempEndpoints(): void {
+    const endpoint: Endpoint | undefined = createEndpoint(
+      {
+        url: "/test",
+        method: EndpointMethod.GET,
+        authRequired: false,
+        allowedPermissions: [],
+      },
+      "temp", "");
+
+    if (endpoint !== undefined) this.endpoints.push(endpoint);
+
+    const endpoint2: Endpoint = new Endpoint("/test", EndpointMethod.GET, false);
+    endpoint2.setHandler((c: Context) => {
+      return c.json({ message: "Hello, world!" });
+    });
+    this.endpoints.push(endpoint2);
   }
 }

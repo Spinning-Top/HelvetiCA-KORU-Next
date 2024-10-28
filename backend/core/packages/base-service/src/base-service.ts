@@ -1,9 +1,11 @@
-import { Hono, type MiddlewareHandler } from "hono";
+import { type Context, Hono, type MiddlewareHandler } from "hono";
 import type { JwtVariables } from "hono/jwt";
 
 import { AuthHelpers } from "@koru/auth-helpers";
 import { type Endpoint, EndpointMethod } from "./endpoint.ts";
 import { Handler } from "@koru/handler";
+import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
+import type { HTTPResponseError } from "hono/types";
 
 export class BaseService {
   protected abortController: AbortController;
@@ -29,6 +31,29 @@ export class BaseService {
 
       // connect to database
       await this.handler.getDatabase().connect();
+
+      // hono endpoint setup
+      this.hono.use("*", async (c: Context, next) => {
+        const method = c.req.method;
+        const url = c.req.url;
+        this.handler.getLog().info(`Received ${method} request for ${url}`);
+      
+        const endpoint: Endpoint | undefined = this.endpoints.find((e) => e.getUrl() === url && e.getMethod() === method);
+        console.log(endpoint);
+      
+        await next();
+      });
+
+      // not found handler
+      this.hono.notFound((c: Context) => {
+        return RequestHelpers.sendJsonError(c, HttpStatusCode.NotFound, "notFound", "Endpoint not found");
+      });
+
+      // error handler
+      this.hono.onError((err: Error | HTTPResponseError, c: Context) => {
+        this.handler.getLog().error(`Request error: ${err.message}`);
+        return RequestHelpers.sendJsonError(c, HttpStatusCode.InternalServerError, "requestError", err.message);
+      });
     } catch (error: unknown) {
       this.handler.getLog().error((error as Error).message);
     }

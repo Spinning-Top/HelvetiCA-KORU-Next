@@ -5,11 +5,11 @@
   "tasks": {
     "compile:local": "deno compile -ENRW --output ./build/koru-core-auth-service ./src/index.ts",
     "compile:server": "deno compile -ENRW --target x86_64-unknown-linux-gnu --output ./build/koru-core-auth-service ./src/index.ts",
-    "run": "deno run -ENRW ./src/index.ts"
+    "dev": "ENV=development ENV_PATH=../../../ LOG_PATH=./logs/ deno run -ENRW ./src/index.ts"
   },
   "imports": {
-    // npm
-    "express": "npm:express@^4.19.2",
-    "jsonwebtoken": "npm:jsonwebtoken@^9.0.2"
+    // jsr
+    "hono": "jsr:@hono/hono@^4.6.7",
+    "hono/jwt": "jsr:@hono/hono@^4.6.7/jwt"
   }
 }

@@ -1,5 +1,3 @@
-import type { Express } from "express";
-
 import { MicroService } from "@koru/micro-service";
 
 import {
@@ -11,32 +9,31 @@ import {
   updateRoleEndpoint,
 } from "./endpoints/index.ts";
 
-const microservice: MicroService = new MicroService("Role Service");
-export const express: Express = microservice.getHandler().getExpress();
+const microService: MicroService = new MicroService("Role Service", 9205);
 
-export async function startService(): Promise<void> {
+export function startService(): Promise<void> {
   // endpoints
-  microservice.setEndpoints([
+  microService.setEndpoints([
     // read deleted roles endpoint
-    readDeletedRolesEndpoint(microservice.getHandler()),
+    readDeletedRolesEndpoint(microService.getHandler()),
     // read roles endpoint
-    readRolesEndpoint(microservice.getHandler()),
+    readRolesEndpoint(microService.getHandler()),
     // read role endpoint
-    readRoleEndpoint(microservice.getHandler()),
+    readRoleEndpoint(microService.getHandler()),
     // create role endpoint
-    createRoleEndpoint(microservice.getHandler()),
+    createRoleEndpoint(microService.getHandler()),
     // update role endpoint
-    updateRoleEndpoint(microservice.getHandler()),
+    updateRoleEndpoint(microService.getHandler()),
     // delete role endpoint
-    deleteRoleEndpoint(microservice.getHandler()),
+    deleteRoleEndpoint(microService.getHandler()),
   ]);
 
   // start service
-  return await microservice.start();
+  return microService.start();
 }
 
-export async function stopService(): Promise<void> {
-  return await microservice.stop();
+export function stopService(): Promise<void> {
+  return microService.stop();
 }
 
 startService();

@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { Context } from "hono";
 
 import { Endpoint, EndpointMethod } from "@koru/base-service";
 import type { Handler } from "@koru/handler";
@@ -8,20 +8,20 @@ import type { User } from "@koru/core-models";
 export function profileEndpoint(_handler: Handler): Endpoint {
   const endpoint: Endpoint = new Endpoint("/profile", EndpointMethod.GET, true);
 
-  const endpointHandler: (req: Request, res: Response) => void = (req: Request, res: Response) => {
+  const endpointHandler: (c: Context) => void = (c: Context) => {
     try {
-      // get the user from the request
-      const user: User | undefined = "user" in req ? req.user as User | undefined : undefined;
+      // get the user from the context
+      const user: User | undefined = c.get("user");
       // check if the user exists
       if (user === undefined) {
         // return an error
-        return RequestHelpers.sendJsonError(res, HttpStatusCode.Unauthorized, "unauthorized", "Authentication needed to access this endpoint");
+        return RequestHelpers.sendJsonError(c, HttpStatusCode.Unauthorized, "unauthorized", "Authentication needed to access this endpoint");
       }
       // return the user from the request
-      return RequestHelpers.sendJsonResponse(res, { user });
+      return RequestHelpers.sendJsonResponse(c, { user });
     } catch (error) {
       console.error(error);
-      return RequestHelpers.sendJsonError(res, HttpStatusCode.InternalServerError, "error", (error as Error).message);
+      return RequestHelpers.sendJsonError(c, HttpStatusCode.InternalServerError, "error", (error as Error).message);
     }
   };
 

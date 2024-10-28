@@ -1,6 +1,3 @@
-import type { Express } from "express";
-
-import { AuthHelpers } from "@koru/auth-helpers";
 import { MicroService } from "@koru/micro-service";
 
 import {
@@ -15,46 +12,38 @@ import {
   validateTokenEndpoint,
 } from "./endpoints/index.ts";
 
-const microservice: MicroService = new MicroService("Auth Service", "/auth");
-export const express: Express = microservice.getHandler().getExpress();
+const microService: MicroService = new MicroService("Auth Service", 9201, "/auth");
 
 export function startService(): Promise<void> {
   // endpoints
-  microservice.setEndpoints([
+  microService.setEndpoints([
     // login endpoint
-    loginEndpoint(microservice.getHandler()),
+    loginEndpoint(microService.getHandler()),
     // logout endpoint
-    logoutEndpoint(microservice.getHandler()),
+    logoutEndpoint(microService.getHandler()),
     // password change endpoint
-    passwordChangeEndpoint(microservice.getHandler()),
+    passwordChangeEndpoint(microService.getHandler()),
     // password forgot endpoint
-    passwordForgotEndpoint(microservice.getHandler()),
+    passwordForgotEndpoint(microService.getHandler()),
     // password reset endpoint
-    passwordResetEndpoint(microservice.getHandler()),
+    passwordResetEndpoint(microService.getHandler()),
     // profile endpoint
-    profileEndpoint(microservice.getHandler()),
+    profileEndpoint(microService.getHandler()),
     // refresh token endpoint
-    refreshTokenEndpoint(microservice.getHandler()),
+    refreshTokenEndpoint(microService.getHandler()),
     // register endpoint
-    registerEndpoint(microservice.getHandler()),
+    registerEndpoint(microService.getHandler()),
     // validate token endpoint
-    validateTokenEndpoint(microservice.getHandler()),
+    validateTokenEndpoint(microService.getHandler()),
   ]);
 
-  // init passport
-  AuthHelpers.initPassport(
-    microservice.getHandler().getGlobalConfig().auth.jwtSecret,
-    microservice.getHandler().getExpress(),
-    microservice.getHandler().getRabbitBreeder(),
-  );
-
   // start service
-  return microservice.start();
+  return microService.start();
 }
 
 export function stopService(): Promise<void> {
   // stop service
-  return microservice.stop();
+  return microService.stop();
 }
 
 startService();

@@ -1,8 +1,9 @@
 // import axios, { type AxiosResponse } from "axios";
+import type { Context } from "hono";
 
-// import { DataHelpers } from "@koru/data-helpers";
-import { Endpoint, type EndpointMethod } from "@koru/base-service";
-// import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
+import { DataHelpers } from "@koru/data-helpers";
+import { Endpoint, EndpointMethod } from "@koru/base-service";
+import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
 
 export function createEndpoint(endpointData: Record<string, unknown>, baseUrl: string, serviceRoot: string): Endpoint | undefined {
   if (endpointData === undefined) return undefined;
@@ -21,60 +22,60 @@ export function createEndpoint(endpointData: Record<string, unknown>, baseUrl: s
   endpoint.setServiceUrl(String(endpointData.url));
   endpoint.setServiceRoot(serviceRoot);
 
-  /*
-  endpoint.setHandler(async (req: Request, res: Response) => {
+  endpoint.setHandler(async (c: Context) => {
     try {
-      let response: AxiosResponse;
-      // Headers comuni con eventuale aggiunta di "X-Koru-User"
-      const headers = "user" in req && req.user != undefined
-        ? {
-          ...req.headers,
-          "X-Koru-User": JSON.stringify(req.user),
-        }
-        : req.headers;
-
-      const data = headers["content-type"] === "application/x-www-form-urlencoded" ? qs.stringify(req.body) : "";
-
-      const config: Record<string, unknown> = {
-        headers,
-        params: req.query,
-      };
-
-      const requestToServiceUrl: URL = new URL(
-        endpoint.getServiceRoot()! + DataHelpers.removeFirstOccurrenceOfString(req.url, endpoint.getBaseUrl()!),
-      );
-      requestToServiceUrl.search = "";
-
-      switch (endpoint.getMethod()) {
-        case EndpointMethod.GET:
-          response = await axios.get(requestToServiceUrl.toString(), config);
-          break;
-        case EndpointMethod.POST:
-          response = await axios.post(requestToServiceUrl.toString(), data, config);
-          break;
-        case EndpointMethod.PUT:
-          response = await axios.put(requestToServiceUrl.toString(), data, config);
-          break;
-        case EndpointMethod.DELETE:
-          response = await axios.delete(requestToServiceUrl.toString(), config);
-          break;
-        default:
-          throw new Error(`Unsupported HTTP method: ${endpoint.getMethod()}`);
+      // Costruisce le intestazioni con eventuale "X-Koru-User"
+      const headers = new Headers(c.req.raw.headers); // Crea una copia delle intestazioni originali
+      if (c.get('user')) {
+        headers.set('X-Koru-User', JSON.stringify(c.get('user')));
       }
 
+      const parsedBody = c.req.parseBody();
+
+      // Filtra solo i campi stringa, ignorando eventuali File
+      const formData = Object.fromEntries(
+        Object.entries(parsedBody).filter(([_, value]) => typeof value === 'string')
+      );
+      
+      // Ora puoi usare `URLSearchParams` senza errori
+      const data = headers.get('Content-Type') === 'application/x-www-form-urlencoded'
+        ? new URLSearchParams(formData as Record<string, string>).toString()
+        : JSON.stringify(parsedBody);
+
+      // Configura i parametri di query
+      const params = new URLSearchParams(c.req.query()).toString();
+
+      // Costruisce l'URL di destinazione del servizio
+      const requestToServiceUrl = new URL(
+        endpoint.getServiceRoot()! + DataHelpers.removeFirstOccurrenceOfString(c.req.url, endpoint.getBaseUrl()!)
+      );
+      requestToServiceUrl.search = params;
+
+      // Effettua la richiesta verso il servizio con fetch
+      const fetchOptions: RequestInit = {
+        method: endpoint.getMethod(),
+        headers,
+        body: [EndpointMethod.POST, EndpointMethod.PUT].includes(endpoint.getMethod()) ? data : undefined,
+      };
+
+      console.log('Richiesta al servizio:', requestToServiceUrl.toString(), fetchOptions);
+
+      const response = await fetch(requestToServiceUrl.toString(), fetchOptions);
+
       // Inoltra la risposta al client
-      res.status(response.status).send(response.data);
+      const responseBody = await response.json();
+      return RequestHelpers.sendJsonResponse(c, responseBody);
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        // In caso di errore da parte del sottoservizio, inoltra la risposta esatta
-        return res.status(error.response.status).set(error.response.headers).send(error.response.data);
+      if (error instanceof Response && error.status) {
+        // Se l'errore proviene dal sottoservizio, inoltra la risposta esatta
+        return RequestHelpers.sendJsonError(c, error.status, 'error', await error.json());
       } else {
         console.error(error);
         // In caso di altri errori, come problemi di rete, restituisci un 500
-        return RequestHelpers.sendJsonError(res, HttpStatusCode.InternalServerError, "error", (error as Error).message);
+        return RequestHelpers.sendJsonError(c, HttpStatusCode.InternalServerError, "error", (error as Error).message);
       }
     }
   });
-  */
+
   return endpoint;
 }

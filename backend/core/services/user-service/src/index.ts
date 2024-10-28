@@ -1,15 +1,12 @@
-import type { Express } from "express";
-
-import { MicroService } from "@koru/microservice";
+import { MicroService } from "@koru/micro-service";
 
 import { createUserEndpoint, deleteUserEndpoint, readUserEndpoint, readUsersEndpoint, updateUserEndpoint } from "./endpoints/index.ts";
 
 import { userCreateRabbit, userReadRabbit, userUpdateRabbit } from "./rabbits/index.ts";
 
-const microservice: MicroService = new MicroService("User Service");
-export const express: Express = microservice.getHandler().getExpress();
+const microservice: MicroService = new MicroService("User Service", 9206);
 
-export async function startService(): Promise<void> {
+export function startService(): Promise<void> {
   // endpoints
   microservice.setEndpoints([
     // read users endpoint
@@ -35,12 +32,12 @@ export async function startService(): Promise<void> {
   ]);
 
   // start service
-  return await microservice.start();
+  return microservice.start();
 }
 
-export async function stopService(): Promise<void> {
+export function stopService(): Promise<void> {
   // stop service
-  return await microservice.stop();
+  return microservice.stop();
 }
 
 startService();
