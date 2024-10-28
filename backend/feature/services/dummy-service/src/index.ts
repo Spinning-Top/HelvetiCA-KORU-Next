@@ -1,5 +1,3 @@
-import type { Express } from "express";
-
 import { MicroService } from "@koru/micro-service";
 
 import {
@@ -11,32 +9,31 @@ import {
   updateDummyEndpoint,
 } from "./endpoints/index.ts";
 
-const microservice: MicroService = new MicroService("Dummy Service", "");
-export const express: Express = microservice.getHandler().getExpress();
+const microService: MicroService = new MicroService("Dummy Service", 9301);
 
-export async function startService(): Promise<void> {
+export function startService(): Promise<void> {
   // endpoints
-  microservice.setEndpoints([
+  microService.setEndpoints([
     // read deleted dummies endpoint
-    readDeletedDummiesEndpoint(microservice.getHandler()),
+    readDeletedDummiesEndpoint(microService.getHandler()),
     // read dummies endpoint
-    readDummiesEndpoint(microservice.getHandler()),
+    readDummiesEndpoint(microService.getHandler()),
     // read dummy endpoint
-    readDummyEndpoint(microservice.getHandler()),
+    readDummyEndpoint(microService.getHandler()),
     // create dummy endpoint
-    createDummyEndpoint(microservice.getHandler()),
+    createDummyEndpoint(microService.getHandler()),
     // update dummy endpoint
-    updateDummyEndpoint(microservice.getHandler()),
+    updateDummyEndpoint(microService.getHandler()),
     // delete dummy endpoint
-    deleteDummyEndpoint(microservice.getHandler()),
+    deleteDummyEndpoint(microService.getHandler()),
   ]);
 
   // start service
-  return await microservice.start();
+  return microService.start();
 }
 
-export async function stopService(): Promise<void> {
-  return await microservice.stop();
+export function stopService(): Promise<void> {
+  return microService.stop();
 }
 
 startService();

@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "exports": "./src/index.ts",
   "tasks": {
-    "compile": "deno compile -ENRW --target x86_64-unknown-linux-gnu --output ./build/service ./src/index.ts",
-    "run": "deno run -ENRW ./src/index.ts"
+    "compile:local": "deno compile -ENRW --output ./build/koru-feature-dummy-service ./src/index.ts",
+    "compile:server": "deno compile -ENRW --target x86_64-unknown-linux-gnu --output ./build/koru-feature-dummy-service ./src/index.ts",
+    "dev": "ENV=development ENV_PATH=../../../ LOG_PATH=./logs/ deno run -ENRW ./src/index.ts"
   },
   "imports": {
+    // jsr
+    "hono": "jsr:@hono/hono@^4.6.7",
     // npm
     "class-validator": "npm:class-validator@^0.13.1"
   }
