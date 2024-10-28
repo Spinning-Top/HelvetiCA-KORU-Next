@@ -1,4 +1,3 @@
-// import axios, { type AxiosResponse } from "axios";
 import type { Context } from "hono";
 
 import { DataHelpers } from "@koru/data-helpers";
@@ -26,28 +25,26 @@ export function createEndpoint(endpointData: Record<string, unknown>, baseUrl: s
     try {
       // Costruisce le intestazioni con eventuale "X-Koru-User"
       const headers = new Headers(c.req.raw.headers); // Crea una copia delle intestazioni originali
-      if (c.get('user')) {
-        headers.set('X-Koru-User', JSON.stringify(c.get('user')));
-      }
+      if (c.get('user')) headers.set('X-Koru-User', JSON.stringify(c.get('user')));
 
-      const parsedBody = c.req.parseBody();
+      const body: Record<string, unknown> = await c.req.parseBody();
 
       // Filtra solo i campi stringa, ignorando eventuali File
       const formData = Object.fromEntries(
-        Object.entries(parsedBody).filter(([_, value]) => typeof value === 'string')
+        Object.entries(body).filter(([_, value]) => typeof value === 'string')
       );
       
       // Ora puoi usare `URLSearchParams` senza errori
       const data = headers.get('Content-Type') === 'application/x-www-form-urlencoded'
         ? new URLSearchParams(formData as Record<string, string>).toString()
-        : JSON.stringify(parsedBody);
+        : JSON.stringify(body);
 
       // Configura i parametri di query
       const params = new URLSearchParams(c.req.query()).toString();
 
       // Costruisce l'URL di destinazione del servizio
       const requestToServiceUrl = new URL(
-        endpoint.getServiceRoot()! + DataHelpers.removeFirstOccurrenceOfString(c.req.url, endpoint.getBaseUrl()!)
+        DataHelpers.removeFirstOccurrenceOfString(endpoint.getServiceRoot()!, endpoint.getBaseUrl()!) + endpoint.getServiceUrl()!
       );
       requestToServiceUrl.search = params;
 
@@ -57,8 +54,6 @@ export function createEndpoint(endpointData: Record<string, unknown>, baseUrl: s
         headers,
         body: [EndpointMethod.POST, EndpointMethod.PUT].includes(endpoint.getMethod()) ? data : undefined,
       };
-
-      console.log('Richiesta al servizio:', requestToServiceUrl.toString(), fetchOptions);
 
       const response = await fetch(requestToServiceUrl.toString(), fetchOptions);
 

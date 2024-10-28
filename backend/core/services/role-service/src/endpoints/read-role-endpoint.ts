@@ -13,7 +13,7 @@ export function readRoleEndpoint(handler: Handler): Endpoint {
     try {
       // create a role controller instance
       const roleController: RoleController = new RoleController(handler);
-      // get the role id from the request"
+      // get the role id from the request
       const id: number = Number(c.req.param("id"));
       // if id is not a number
       if (isNaN(id)) {

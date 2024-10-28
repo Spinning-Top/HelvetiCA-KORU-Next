@@ -10,7 +10,6 @@ export function readRolesEndpoint(handler: Handler): Endpoint {
 
   const endpointHandler: (c: Context) => void = async (c: Context) => {
     try {
-      c.req.query("page");
       // create a role controller instance
       const roleController: RoleController = new RoleController(handler);
       // get the page from the request

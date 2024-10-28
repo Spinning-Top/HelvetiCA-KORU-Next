@@ -25,8 +25,8 @@ export class MicroService extends BaseService {
       // register rabbits
       await this.registerRabbits();
 
-      // send endpoints to the gateway and get the service port
-      await this.sendEndpointsToGatewayAndGetPort();
+      // send endpoints to the gateway
+      await this.sendEndpointsToGateway();
 
       // boot server
       this.bootServer();
@@ -46,7 +46,7 @@ export class MicroService extends BaseService {
     }
   }
 
-  private async sendEndpointsToGatewayAndGetPort(): Promise<void> {
+  private async sendEndpointsToGateway(): Promise<void> {
     this.handler.getLog().info("Sending endpoints to the gateway...");
     const endpointsData: Record<string, unknown>[] = [];
     for (const endpoint of this.endpoints) {
@@ -66,18 +66,10 @@ export class MicroService extends BaseService {
     };
 
     try {
-      const port: number | undefined = await this.handler
-        .getRabbitBreeder()
-        .sendRequestAndAwaitResponse<number>("apiGatewayServiceRequest", "apiGatewayPortResponse", data, (response: Record<string, unknown>) => {
-          return Number(response.port);
-        });
-      if (port === undefined) throw new Error("portUndefined");
-      this.port = port;
+      await this.handler.getRabbitBreeder().sendRequest("apiGatewayServiceRequest", data);
     } catch (error: unknown) {
       const message: string = (error as Error).message;
-      if (message === "portUndefined") {
-        this.handler.getLog().error("Failed to get service port from the gateway: value undefined");
-      } else if (message === "timeout") {
+      if (message === "timeout") {
         this.handler.getLog().error("Failed to get service port from the gateway: request timeout");
       } else {
         this.handler.getLog().error("Failed to get service port from the gateway: unknown error");

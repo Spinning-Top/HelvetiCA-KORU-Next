@@ -15,6 +15,7 @@ export function loginEndpoint(handler: Handler): Endpoint {
     try {
       // get the body from the request
       const body: Record<string, unknown> = await c.req.parseBody();
+      console.log(body);
       // get the email from the request
       const email: string | undefined = body.email as string | undefined;
       // if email is undefined

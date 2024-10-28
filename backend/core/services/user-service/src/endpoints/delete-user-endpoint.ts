@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { Context } from "hono";
 
 import { Endpoint, EndpointMethod } from "@koru/base-service";
 import type { Handler } from "@koru/handler";
@@ -9,31 +9,39 @@ import { UserController } from "../controllers/index.ts";
 export function deleteUserEndpoint(handler: Handler): Endpoint {
   const endpoint: Endpoint = new Endpoint("/users/:id", EndpointMethod.DELETE, true, ["user.delete"]);
 
-  const endpointHandler: (req: Request, res: Response) => void = async (req: Request, res: Response) => {
+  const endpointHandler: (c: Context) => void = async (c: Context) => {
     try {
+      // get the user from the context
+      const user: User | undefined = c.get("user");
+      // check if the user exists
+      if (user === undefined) {
+        // return an error
+        return RequestHelpers.sendJsonError(c, HttpStatusCode.Unauthorized, "unauthorized", "Authentication needed to access this endpoint");
+      }
+
       // create a user controller instance
       const userController: UserController = new UserController(handler);
       // get the user id from the request
-      const id: number = Number(req.params.id);
+      const id: number = Number(c.req.param("id"));
       // if id is not a number
       if (isNaN(id)) {
         // return an error
-        return RequestHelpers.sendJsonError(res, HttpStatusCode.BadRequest, "invalidUserId", "Invalid user id");
+        return RequestHelpers.sendJsonError(c, HttpStatusCode.BadRequest, "invalidUserId", "Invalid user id");
       }
       // find the user by id
-      const user: User | undefined = await userController.getEntityById(id);
+      const userToDelete: User | undefined = await userController.getEntityById(id);
       // if user is not found
-      if (user === undefined) {
+      if (userToDelete === undefined) {
         // return an error
-        return RequestHelpers.sendJsonError(res, HttpStatusCode.NotFound, "notFound", `User with id ${id} not found`);
+        return RequestHelpers.sendJsonError(c, HttpStatusCode.NotFound, "notFound", `User with id ${id} not found`);
       }
       // remove the user
-      await userController.deleteEntity(user);
+      await userController.deleteEntity(userToDelete);
       // return the success response
-      return RequestHelpers.sendJsonDeleted(res);
+      return RequestHelpers.sendJsonDeleted(c);
     } catch (error) {
       console.error(error);
-      return RequestHelpers.sendJsonError(res, HttpStatusCode.InternalServerError, "error", (error as Error).message);
+      return RequestHelpers.sendJsonError(c, HttpStatusCode.InternalServerError, "error", (error as Error).message);
     }
   };
 

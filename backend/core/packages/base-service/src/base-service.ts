@@ -33,6 +33,7 @@ export class BaseService {
       await this.handler.getDatabase().connect();
 
       // hono endpoint setup
+      /* TODO non dovrebbe servire?
       this.hono.use("*", async (c: Context, next) => {
         const method = c.req.method;
         const url = c.req.url;
@@ -43,6 +44,7 @@ export class BaseService {
       
         await next();
       });
+      */
 
       // not found handler
       this.hono.notFound((c: Context) => {

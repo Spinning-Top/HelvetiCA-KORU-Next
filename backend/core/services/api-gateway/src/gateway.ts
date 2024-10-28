@@ -14,7 +14,6 @@ export class Gateway extends BaseService {
     try {
       await super.start();
 
-      /*
       // start the rabbit service listeners
       await this.startRabbitServiceListeners();
 
@@ -22,14 +21,13 @@ export class Gateway extends BaseService {
 
       if (this.handler.getGlobalConfig().environment === "development") {
         // delay 5 seconds to wait for all endpoints to be received
-        await new Promise((resolve) => setTimeout(resolve, 20000));
+        await new Promise((resolve) => setTimeout(resolve, 5000));
       } else {
         // delay 10 seconds to wait for all endpoints to be received
         await new Promise((resolve) => setTimeout(resolve, 10000));
       }
-      */
 
-      this.tempEndpoints(); // TODO
+      // this.tempEndpoints(); // TODO
 
       // register endpoints
       this.registerEndpoints();
@@ -54,11 +52,10 @@ export class Gateway extends BaseService {
       if (data.serviceRoot === undefined) return undefined;
 
       const baseUrl: string = String(data.baseUrl);
-      const serviceRoot: string = `${String(data.serviceRoot)}:${String(data.port)}`;
 
       let endpointCount: number = 0;
       for (const endpointData of data.endpoints) {
-        const endpoint: Endpoint | undefined = createEndpoint(endpointData, baseUrl, serviceRoot);
+        const endpoint: Endpoint | undefined = createEndpoint(endpointData, baseUrl, String(data.serviceRoot));
         // if the endpoint is valid and not already registered
         if (
           endpoint !== undefined &&
@@ -69,7 +66,7 @@ export class Gateway extends BaseService {
         }
       }
 
-      this.getHandler().getLog().info(`${endpointCount} endpoints received from ${data.sender} for service url ${serviceRoot}`);
+      this.getHandler().getLog().info(`${endpointCount} endpoints received from ${data.sender} for service url ${String(data.serviceRoot)}`);
     };
 
     const rabbitTag: string | undefined = await this.handler.getRabbitBreeder().startRequestListener("apiGatewayServiceRequest", responseHandler);
