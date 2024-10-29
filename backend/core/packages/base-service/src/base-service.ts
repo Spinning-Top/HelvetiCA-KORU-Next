@@ -1,8 +1,7 @@
-import { type Context, Hono, type MiddlewareHandler } from "hono";
+import { type Context, Hono } from "hono";
 import type { JwtVariables } from "hono/jwt";
 
-import { AuthHelpers } from "@koru/auth-helpers";
-import { type Endpoint, EndpointMethod } from "./endpoint.ts";
+import type { Endpoint } from "./endpoint.ts";
 import { Handler } from "@koru/handler";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
 import type { HTTPResponseError } from "hono/types";
@@ -91,35 +90,6 @@ export class BaseService {
       this.abortController.abort();
     } catch (error: unknown) {
       this.handler.getLog().error((error as Error).message);
-    }
-  }
-
-  protected registerEndpoints(): void {
-    for (const endpoint of this.endpoints) {
-      if (endpoint.getHandler() === undefined) continue;
-
-      const middlewares: MiddlewareHandler[] = endpoint.isAuthRequired() 
-        ? [AuthHelpers.getAuthMiddleware(this.handler), endpoint.getHandler()!] 
-        : [endpoint.getHandler()!];
-
-      this.handler.getLog().info(`Registering ${EndpointMethod[endpoint.getMethod()]} ${endpoint.getUrl()}`);
-
-      switch (endpoint.getMethod()) {
-        case EndpointMethod.GET:
-          this.hono.get(endpoint.getUrl(), ...middlewares);
-          break;
-        case EndpointMethod.POST:
-          this.hono.post(endpoint.getUrl(), ...middlewares);
-          break;
-        case EndpointMethod.PUT:
-          this.hono.put(endpoint.getUrl(), ...middlewares);
-          break;
-        case EndpointMethod.DELETE:
-          this.hono.delete(endpoint.getUrl(), ...middlewares);
-          break;
-        default:
-          throw new Error(`Unsupported HTTP method: ${endpoint.getMethod()}`);
-      }
     }
   }
 

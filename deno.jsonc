@@ -3,10 +3,10 @@
   "tasks": {
     // BACKEND
       // deploy
-        "deploy:dev": "ENV=development ./backend/deploy.sh",
-        "deploy:prod": "ENV=production ./backend/deploy.sh",
+        "deploy:dev": "ENV=development ./backend/scripts/deploy.sh",
+        "deploy:prod": "ENV=production ./backend/scripts/deploy.sh",
       // dev
-        "dev": "./backend/dev.sh",
+        "dev": "./backend/scripts/dev.sh",
       // tech
         "tech:down": "docker compose -f ./backend/tech/docker-compose.yaml --env-file ./backend/tech/.env down",
         "tech:up": "docker compose -f ./backend/tech/docker-compose.yaml --env-file ./backend/tech/.env up --build -d",

@@ -1,10 +1,10 @@
 import type { Context } from "hono";
 
-import { DataHelpers } from "@koru/data-helpers";
 import { Endpoint, EndpointMethod } from "@koru/base-service";
+import type { GatewayService } from "../gateway-service.ts";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
 
-export function createEndpoint(endpointData: Record<string, unknown>, baseUrl: string, serviceRoot: string): Endpoint | undefined {
+export function createEndpoint(endpointData: Record<string, unknown>, gatewayService: GatewayService): Endpoint | undefined {
   if (endpointData === undefined) return undefined;
   if (endpointData.url === undefined) return undefined;
   if (endpointData.method === undefined) return undefined;
@@ -12,14 +12,11 @@ export function createEndpoint(endpointData: Record<string, unknown>, baseUrl: s
   if (endpointData.allowedPermissions === undefined) return undefined;
 
   const endpoint: Endpoint = new Endpoint(
-    `${baseUrl}${endpointData.url}`,
+    endpointData.url as string,
     endpointData.method as EndpointMethod,
     endpointData.authRequired as boolean,
     endpointData.allowedPermissions as string[],
   );
-  endpoint.setBaseUrl(baseUrl);
-  endpoint.setServiceUrl(String(endpointData.url));
-  endpoint.setServiceRoot(serviceRoot);
 
   endpoint.setHandler(async (c: Context) => {
     try {
@@ -43,9 +40,9 @@ export function createEndpoint(endpointData: Record<string, unknown>, baseUrl: s
       const params = new URLSearchParams(c.req.query()).toString();
 
       // Costruisce l'URL di destinazione del servizio
-      const requestToServiceUrl = new URL(
-        DataHelpers.removeFirstOccurrenceOfString(endpoint.getServiceRoot()!, endpoint.getBaseUrl()!) + endpoint.getServiceUrl()!
-      );
+      const requestToServiceUrl = new URL(endpoint.getUrl());
+      // TODO
+      // DataHelpers.removeFirstOccurrenceOfString(gatewayService.getServiceRoot()!, endgatewayServicepoint.getBaseUrl()!) + endpoint.getServiceUrl()!
       requestToServiceUrl.search = params;
 
       // Effettua la richiesta verso il servizio con fetch

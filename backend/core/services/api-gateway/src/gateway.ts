@@ -1,13 +1,15 @@
 import type { ConsumeMessage } from "amqplib";
-import type { Context } from "hono";
 
 import { createEndpoint } from "./utils/index.ts";
-import { BaseService, Endpoint, EndpointMethod } from "@koru/base-service";
+import { BaseService, type Endpoint } from "@koru/base-service";
+import { GatewayService } from "./gateway-service.ts";
 
 export class Gateway extends BaseService {
+  private gatewayServices: GatewayService[];
 
   public constructor() {
     super("KORU API Gateway", 9100);
+    this.gatewayServices = [];
   }
 
   public override async start(): Promise<void> {
@@ -16,21 +18,6 @@ export class Gateway extends BaseService {
 
       // start the rabbit service listeners
       await this.startRabbitServiceListeners();
-
-      this.handler.getLog().info("Waiting for endpoints...");
-
-      if (this.handler.getGlobalConfig().environment === "development") {
-        // delay 5 seconds to wait for all endpoints to be received
-        await new Promise((resolve) => setTimeout(resolve, 5000));
-      } else {
-        // delay 10 seconds to wait for all endpoints to be received
-        await new Promise((resolve) => setTimeout(resolve, 10000));
-      }
-
-      // this.tempEndpoints(); // TODO
-
-      // register endpoints
-      this.registerEndpoints();
 
       // boot server
       this.bootServer();
@@ -41,54 +28,41 @@ export class Gateway extends BaseService {
 
   private async startRabbitServiceListeners(): Promise<void> {
     // deno-lint-ignore require-await
-    const responseHandler = async (msg: ConsumeMessage): Promise<Record<string, unknown> | undefined> => {
+    const responseHandler = async (msg: ConsumeMessage): Promise<void> => {
       // get the endpoint data json from the message
       const data: Record<string, unknown> = JSON.parse(msg.content.toString());
       if (data === undefined) return undefined;
       if (data.endpoints === undefined) return undefined;
       if (!Array.isArray(data.endpoints)) return undefined;
-      if (data.sender === undefined) return undefined;
+      if (data.name === undefined) return undefined;
       if (data.baseUrl === undefined) return undefined;
       if (data.serviceRoot === undefined) return undefined;
 
+      const serviceName: string = String(data.name);
       const baseUrl: string = String(data.baseUrl);
+      const serviceRoot: string = String(data.serviceRoot);
+
+      const gatewayServiceCheck: GatewayService | undefined = this.gatewayServices.find((s) => s.getName() === data.name);
+      if (gatewayServiceCheck !== undefined) {
+        this.handler.getLog().info(`Gateway service ${data.name} already registered`);
+        return;
+      }
+
+      const gatewayService: GatewayService = new GatewayService(serviceName, baseUrl, serviceRoot);
 
       let endpointCount: number = 0;
       for (const endpointData of data.endpoints) {
-        const endpoint: Endpoint | undefined = createEndpoint(endpointData, baseUrl, String(data.serviceRoot));
-        // if the endpoint is valid and not already registered
-        if (
-          endpoint !== undefined &&
-          this.endpoints.find((e) => e.getUrl() === endpoint.getUrl() && e.getMethod() === endpoint.getMethod()) === undefined
-        ) {
-          this.endpoints.push(endpoint);
-          endpointCount++;
-        }
+        const endpoint: Endpoint | undefined = createEndpoint(endpointData, gatewayService);
+        if (endpoint === undefined) continue;
+        // if the endpoint is valid
+        this.endpoints.push(endpoint);
+        endpointCount++;
       }
 
-      this.getHandler().getLog().info(`${endpointCount} endpoints received from ${data.sender} for service url ${String(data.serviceRoot)}`);
+      this.getHandler().getLog().info(`${endpointCount} endpoints received from ${gatewayService.getName()}`);
     };
 
-    const rabbitTag: string | undefined = await this.handler.getRabbitBreeder().startRequestListener("apiGatewayServiceRequest", responseHandler);
+    const rabbitTag: string | undefined = await this.handler.getRabbitBreeder().startRequestListener("apiGatewayServiceDataRequest", responseHandler);
     if (rabbitTag !== undefined) this.handler.getRabbitTags().push(rabbitTag);
-  }
-
-  private tempEndpoints(): void {
-    const endpoint: Endpoint | undefined = createEndpoint(
-      {
-        url: "/test",
-        method: EndpointMethod.GET,
-        authRequired: false,
-        allowedPermissions: [],
-      },
-      "temp", "");
-
-    if (endpoint !== undefined) this.endpoints.push(endpoint);
-
-    const endpoint2: Endpoint = new Endpoint("/test", EndpointMethod.GET, false);
-    endpoint2.setHandler((c: Context) => {
-      return c.json({ message: "Hello, world!" });
-    });
-    this.endpoints.push(endpoint2);
   }
 }

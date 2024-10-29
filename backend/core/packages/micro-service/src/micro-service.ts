@@ -1,4 +1,10 @@
+import type { MiddlewareHandler } from "hono";
+
+// import { AuthHelpers } from "@koru/auth-helpers";
+import { EndpointMethod } from "@koru/base-service";
+
 import { BaseService } from "@koru/base-service";
+
 
 import type { Rabbit } from "./rabbit.ts";
 
@@ -12,7 +18,7 @@ export class MicroService extends BaseService {
     this.baseUrl = baseUrl;
     this.rabbits = [];
 
-    this.serviceRoot = `http://localhost:${this.port}${this.baseUrl}`;
+    this.serviceRoot = `http://localhost:${this.port}`;
   }
 
   public override async start(): Promise<void> {
@@ -25,8 +31,8 @@ export class MicroService extends BaseService {
       // register rabbits
       await this.registerRabbits();
 
-      // send endpoints to the gateway
-      await this.sendEndpointsToGateway();
+      // send service data to the gateway
+      await this.sendServiceDataToGateway();
 
       // boot server
       this.bootServer();
@@ -46,8 +52,8 @@ export class MicroService extends BaseService {
     }
   }
 
-  private async sendEndpointsToGateway(): Promise<void> {
-    this.handler.getLog().info("Sending endpoints to the gateway...");
+  private async sendServiceDataToGateway(): Promise<void> {
+    this.handler.getLog().info("Sending service data to the gateway...");
     const endpointsData: Record<string, unknown>[] = [];
     for (const endpoint of this.endpoints) {
       endpointsData.push({
@@ -61,23 +67,55 @@ export class MicroService extends BaseService {
     const data: Record<string, unknown> = {
       baseUrl: this.baseUrl,
       endpoints: endpointsData,
-      sender: this.name,
+      name: this.name,
       serviceRoot: this.serviceRoot,
     };
 
     try {
-      await this.handler.getRabbitBreeder().sendRequest("apiGatewayServiceRequest", data);
+      await this.handler.getRabbitBreeder().sendRequest("apiGatewayServiceDataRequest", data);
     } catch (error: unknown) {
       const message: string = (error as Error).message;
       if (message === "timeout") {
-        this.handler.getLog().error("Failed to get service port from the gateway: request timeout");
+        this.handler.getLog().error("Failed to send service data to the gateway: request timeout");
       } else {
-        this.handler.getLog().error("Failed to get service port from the gateway: unknown error");
+        this.handler.getLog().error("Failed to send service data to the gateway: unknown error");
       }
       // stop services
       await this.stop();
       // quit
       Deno.exit(0);
+    }
+  }
+
+  private registerEndpoints(): void {
+    for (const endpoint of this.endpoints) {
+      if (endpoint.getHandler() === undefined) continue;
+
+      /* TODO
+      const middlewares: MiddlewareHandler[] = endpoint.isAuthRequired() 
+        ? [AuthHelpers.getAuthMiddleware(this.handler), endpoint.getHandler()!] 
+        : [endpoint.getHandler()!];
+      */
+      const middlewares: MiddlewareHandler[] = [endpoint.getHandler()!];
+
+      this.handler.getLog().info(`Registering ${EndpointMethod[endpoint.getMethod()]} ${endpoint.getUrl()}`);
+
+      switch (endpoint.getMethod()) {
+        case EndpointMethod.GET:
+          this.hono.get(endpoint.getUrl(), ...middlewares);
+          break;
+        case EndpointMethod.POST:
+          this.hono.post(endpoint.getUrl(), ...middlewares);
+          break;
+        case EndpointMethod.PUT:
+          this.hono.put(endpoint.getUrl(), ...middlewares);
+          break;
+        case EndpointMethod.DELETE:
+          this.hono.delete(endpoint.getUrl(), ...middlewares);
+          break;
+        default:
+          throw new Error(`Unsupported HTTP method: ${endpoint.getMethod()}`);
+      }
     }
   }
 
