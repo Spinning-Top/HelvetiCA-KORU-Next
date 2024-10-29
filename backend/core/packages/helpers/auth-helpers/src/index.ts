@@ -15,11 +15,11 @@ export class AuthHelpers {
   public static getAuthMiddleware(handler: Handler): MiddlewareHandler {
     return createMiddleware(async (c: Context, next) => {
       const authHeader = c.req.header("Authorization");
-      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return RequestHelpers.sendJsonError(c, HttpStatusCode.Unauthorized, "error", "Invalid or missing token");
       }
 
-      const token: string = authHeader.split(' ')[1];
+      const token: string = authHeader.split(" ")[1];
 
       try {
         const payload: JWTPayload = await verify(token, handler.getGlobalConfig().auth.jwtSecret);
@@ -28,7 +28,7 @@ export class AuthHelpers {
           return RequestHelpers.sendJsonError(c, HttpStatusCode.Unauthorized, "error", "User authentication failed");
         }
 
-        c.set('user', payload);
+        c.set("user", payload);
         await next();
       } catch (error: unknown) {
         return RequestHelpers.sendJsonError(
@@ -36,7 +36,7 @@ export class AuthHelpers {
           HttpStatusCode.InternalServerError,
           "error",
           "An error occured",
-          error instanceof Error ? { details: error.message } : undefined
+          error instanceof Error ? { details: error.message } : undefined,
         );
       }
     });
@@ -45,7 +45,7 @@ export class AuthHelpers {
   public static getUserMiddleware(permissions: string[] = []): MiddlewareHandler {
     return createMiddleware(async (c: Context, next) => {
       let user: User | undefined = undefined;
-      
+
       // Verifica la presenza dell'intestazione "x-koru-user"
       const userHeader = c.req.header("x-koru-user");
       if (userHeader) {
@@ -59,10 +59,10 @@ export class AuthHelpers {
       // Controlla se l'utente è definito
       if (!user) {
         return RequestHelpers.sendJsonError(
-          c, 
-          HttpStatusCode.Unauthorized, 
-          "unauthorized", 
-          "Authentication needed to access this endpoint"
+          c,
+          HttpStatusCode.Unauthorized,
+          "unauthorized",
+          "Authentication needed to access this endpoint",
         );
       }
 
@@ -71,15 +71,15 @@ export class AuthHelpers {
         const hasPermission = permissions.some((permission) => user?.hasPermission(permission) ?? false);
         if (!hasPermission) {
           return RequestHelpers.sendJsonError(
-            c, 
-            HttpStatusCode.Forbidden, 
-            "forbidden", 
-            "You don't have permission to access this endpoint"
+            c,
+            HttpStatusCode.Forbidden,
+            "forbidden",
+            "You don't have permission to access this endpoint",
           );
         }
       }
 
-      c.set('user', user);
+      c.set("user", user);
       await next();
     });
   }
@@ -89,29 +89,29 @@ export class AuthHelpers {
 
     const userMiddleware: MiddlewareHandler = async (c: Context, next) => {
       try {
-        const jwtPayload = c.get('jwtPayload') as Record<string, unknown>;
-        const user = await RabbitHelpers.getUserByField('id', Number(jwtPayload.id), rabbitBreeder);
+        const jwtPayload = c.get("jwtPayload") as Record<string, unknown>;
+        const user = await RabbitHelpers.getUserByField("id", Number(jwtPayload.id), rabbitBreeder);
 
         if (user) {
           // Aggiunge l'utente al contesto in modo che sia disponibile per le route successive
-          c.set('user', user.toReadResponse());
+          c.set("user", user.toReadResponse());
           await next();
         } else {
           return c.json(
-            { error: 'Unauthorized', message: 'User not found' },
-            401
+            { error: "Unauthorized", message: "User not found" },
+            401,
           );
         }
       } catch (err) {
         return c.json(
-          { error: 'Internal Server Error', message: err instanceof Error ? err.message : 'Unknown error' },
-          500
+          { error: "Internal Server Error", message: err instanceof Error ? err.message : "Unknown error" },
+          500,
         );
       }
     };
 
     // Applica i middleware JWT e User su tutte le route che richiedono autenticazione
-    app.use('*', jwtMiddleware, userMiddleware);
+    app.use("*", jwtMiddleware, userMiddleware);
   }
 
   /*

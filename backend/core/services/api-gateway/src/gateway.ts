@@ -70,7 +70,7 @@ export class Gateway extends BaseService {
       .getRabbitBreeder()
       .startRequestListener(
         "apiGatewayServiceDataRequest",
-        responseHandler
+        responseHandler,
       );
     if (rabbitTag !== undefined) this.handler.getRabbitTags().push(rabbitTag);
   }

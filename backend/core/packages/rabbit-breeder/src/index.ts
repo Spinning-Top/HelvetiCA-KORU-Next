@@ -70,7 +70,6 @@ export class RabbitBreeder {
       this.channel!.consume(
         randomResponseQueue,
         (msg: ConsumeMessage | null) => {
-          console.log("msg:", msg);
           if (msg === null) return;
 
           if (msg.properties.correlationId === correlationId) {
@@ -101,10 +100,8 @@ export class RabbitBreeder {
     this.channel.assertQueue(requestQueue, { durable: false, exclusive: false });
 
     const { consumerTag } = await this.channel.consume(requestQueue, async (msg: ConsumeMessage | null) => {
-      console.log("listen:", msg);
       if (msg !== null) {
         const objectToSend: T = await responseCreator(msg);
-        console.log("objectToSend:", objectToSend);
         if (objectToSend != undefined) {
           this.channel!.sendToQueue(msg.properties.replyTo, Buffer.from(JSON.stringify(objectToSend)), {
             correlationId: msg.properties.correlationId,

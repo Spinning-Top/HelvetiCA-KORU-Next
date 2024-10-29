@@ -6,26 +6,25 @@ import { AuditLog } from "./audit-log.ts";
 import { BaseModel } from "./base-model.ts";
 import { LinkedUser } from "./linked-user.ts";
 import { User } from "./user.ts";
-import type { User as UserType } from "./user.ts";
 
 export class EntityModel extends BaseModel {
   @ManyToOne(() => User, { nullable: true, eager: true })
   @JoinColumn({ name: "createdBy" })
   @Expose({ groups: ["read", "fromJson", "toJson"] })
   @Transform(({ value }) => (value ? new LinkedUser(value) : null), { toPlainOnly: true })
-  createdBy?: UserType;
+  createdBy?: User;
 
   @ManyToOne(() => User, { nullable: true, eager: true })
   @JoinColumn({ name: "deletedBy" })
   @Expose({ groups: ["read", "fromJson", "toJson"] })
   @Transform(({ value }) => (value ? new LinkedUser(value) : null), { toPlainOnly: true })
-  deletedBy?: UserType;
+  deletedBy?: User;
 
   @ManyToOne(() => User, { nullable: true, eager: true })
   @JoinColumn({ name: "updatedBy" })
   @Expose({ groups: ["read", "fromJson", "toJson"] })
   @Transform(({ value }) => (value ? new LinkedUser(value) : null), { toPlainOnly: true })
-  updatedBy?: UserType;
+  updatedBy?: User;
 
   public constructor() {
     super();

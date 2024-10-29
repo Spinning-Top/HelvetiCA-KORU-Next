@@ -2,7 +2,6 @@ import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } f
 
 import type { AuditAction } from "./audit-action.ts";
 import { User } from "./user.ts";
-import type { User as UserType } from "./user.ts";
 
 @Entity()
 export class AuditLog {
@@ -19,7 +18,7 @@ export class AuditLog {
   value: Record<string, unknown> | undefined;
 
   @ManyToOne(() => User, { nullable: true, eager: true })
-  user?: UserType;
+  user?: User;
 
   @CreateDateColumn()
   timestamp!: Date;

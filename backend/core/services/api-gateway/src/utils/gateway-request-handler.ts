@@ -20,7 +20,7 @@ export function gatewayRequestHandler(gatewayServices: GatewayService[], handler
       let selectedEndpoint: Endpoint | undefined = undefined;
       for (const gatewayService of gatewayServices) {
         const endpoint: Endpoint | undefined = gatewayService.getEndpoints().find(
-          (endpoint) => endpoint.getFullUrl() === endpointUrl && endpoint.getMethod() === method
+          (endpoint) => endpoint.getFullUrl() === endpointUrl && endpoint.getMethod() === method,
         );
         if (endpoint === undefined) continue;
         selectedGatewayService = gatewayService;
@@ -32,17 +32,17 @@ export function gatewayRequestHandler(gatewayServices: GatewayService[], handler
 
       // Costruisce le intestazioni con eventuale "X-Koru-User"
       const headers = new Headers(c.req.raw.headers); // Crea una copia delle intestazioni originali
-      if (c.get('user')) headers.set('X-Koru-User', JSON.stringify(c.get('user')));
+      if (c.get("user")) headers.set("X-Koru-User", JSON.stringify(c.get("user")));
 
       const body: Record<string, unknown> = await c.req.parseBody();
 
       // Filtra solo i campi stringa, ignorando eventuali File
       const formData = Object.fromEntries(
-        Object.entries(body).filter(([_, value]) => typeof value === 'string')
+        Object.entries(body).filter(([_, value]) => typeof value === "string"),
       );
-      
+
       // Ora puoi usare `URLSearchParams` senza errori
-      const data = headers.get('Content-Type') === 'application/x-www-form-urlencoded'
+      const data = headers.get("Content-Type") === "application/x-www-form-urlencoded"
         ? new URLSearchParams(formData as Record<string, string>).toString()
         : JSON.stringify(body);
 
@@ -69,12 +69,12 @@ export function gatewayRequestHandler(gatewayServices: GatewayService[], handler
     } catch (error) {
       if (error instanceof Response && error.status) {
         // Se l'errore proviene dal sottoservizio, inoltra la risposta esatta
-        return RequestHelpers.sendJsonError(c, error.status, 'error', await error.json());
+        return RequestHelpers.sendJsonError(c, error.status, "error", await error.json());
       } else {
         console.error(error);
         // In caso di altri errori, come problemi di rete, restituisci un 500
         return RequestHelpers.sendJsonError(c, HttpStatusCode.InternalServerError, "error", (error as Error).message);
       }
     }
-  }
+  };
 }

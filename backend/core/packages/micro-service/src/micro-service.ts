@@ -5,14 +5,13 @@ import { EndpointMethod } from "@koru/base-service";
 
 import { BaseService } from "@koru/base-service";
 
-
 import type { Rabbit } from "./rabbit.ts";
 
 export class MicroService extends BaseService {
   private baseUrl: string;
   private rabbits: Rabbit[];
   private serviceRoot: string;
-  
+
   public constructor(name: string, port: number, baseUrl: string = "") {
     super(name, port);
     this.baseUrl = baseUrl;
@@ -93,8 +92,8 @@ export class MicroService extends BaseService {
       if (endpoint.getHandler() === undefined) continue;
 
       /* TODO
-      const middlewares: MiddlewareHandler[] = endpoint.isAuthRequired() 
-        ? [AuthHelpers.getAuthMiddleware(this.handler), endpoint.getHandler()!] 
+      const middlewares: MiddlewareHandler[] = endpoint.isAuthRequired()
+        ? [AuthHelpers.getAuthMiddleware(this.handler), endpoint.getHandler()!]
         : [endpoint.getHandler()!];
       */
       const middlewares: MiddlewareHandler[] = [endpoint.getHandler()!];

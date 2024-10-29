@@ -14,6 +14,16 @@ export class BaseService {
   protected name: string;
   protected port: number;
 
+  /* TODO
+  // init jwt
+  this.hono.use("*", jwt({ secret: this.getHandler().getGlobalConfig().auth.jwtSecret }));
+
+  this.hono.get('/test', (c) => {
+    const payload = c.get('jwtPayload')
+    return c.json(payload) // eg: { "sub": "1234567890", "name": "John Doe", "iat": 1516239022 }
+  })
+  */
+
   public constructor(name: string, port: number = 0) {
     this.abortController = new AbortController();
     this.endpoints = [];
@@ -52,7 +62,7 @@ export class BaseService {
         {
           onListen: () => this.handler.getLog().info(`${this.name} is running on port ${this.port}`),
           port: this.port,
-          signal: this.abortController.signal
+          signal: this.abortController.signal,
         },
         this.hono.fetch,
       );
