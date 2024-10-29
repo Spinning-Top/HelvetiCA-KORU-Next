@@ -24,7 +24,11 @@ export function userReadRabbit(handler: Handler): Rabbit<User | undefined> {
       console.log("Finding user by email");
       // otherwise if email is provided, find the user by email
       const user: User | undefined = await userController.getEntityByField("email", parameters.email as string);
-      handler.getLog().info(`User found: ${user}`);
+      if (user !== undefined) {
+        handler.getLog().info(`User found: ${user.email}`);
+      } else {
+        handler.getLog().warn(`User not found with email: ${parameters.email}`);
+      }
       return user;
     }
     // no id or email provided, return undefined

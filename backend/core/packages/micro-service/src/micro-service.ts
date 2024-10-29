@@ -58,6 +58,7 @@ export class MicroService extends BaseService {
     for (const endpoint of this.endpoints) {
       endpointsData.push({
         url: endpoint.getUrl(),
+        fullUrl: endpoint.getFullUrl(),
         method: endpoint.getMethod(),
         authRequired: endpoint.isAuthRequired(),
         allowedPermissions: endpoint.getAllowedPermissions(),

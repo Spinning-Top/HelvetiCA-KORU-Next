@@ -1,6 +1,6 @@
 import type { ConsumeMessage } from "amqplib";
 
-import { createEndpoint } from "./utils/index.ts";
+import { createEndpoint, gatewayRequestHandler } from "./utils/index.ts";
 import { BaseService, type Endpoint } from "@koru/base-service";
 import { GatewayService } from "./gateway-service.ts";
 
@@ -15,6 +15,9 @@ export class Gateway extends BaseService {
   public override async start(): Promise<void> {
     try {
       await super.start();
+
+      // hono endpoint setup
+      this.hono.all("*", gatewayRequestHandler(this.gatewayServices, this.handler));
 
       // start the rabbit service listeners
       await this.startRabbitServiceListeners();
@@ -55,14 +58,20 @@ export class Gateway extends BaseService {
         const endpoint: Endpoint | undefined = createEndpoint(endpointData, gatewayService);
         if (endpoint === undefined) continue;
         // if the endpoint is valid
-        this.endpoints.push(endpoint);
+        gatewayService.addEndpoint(endpoint);
         endpointCount++;
       }
 
+      this.gatewayServices.push(gatewayService);
       this.getHandler().getLog().info(`${endpointCount} endpoints received from ${gatewayService.getName()}`);
     };
 
-    const rabbitTag: string | undefined = await this.handler.getRabbitBreeder().startRequestListener("apiGatewayServiceDataRequest", responseHandler);
+    const rabbitTag: string | undefined = await this.handler
+      .getRabbitBreeder()
+      .startRequestListener(
+        "apiGatewayServiceDataRequest",
+        responseHandler
+      );
     if (rabbitTag !== undefined) this.handler.getRabbitTags().push(rabbitTag);
   }
 }

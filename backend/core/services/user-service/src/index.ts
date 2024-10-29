@@ -4,40 +4,40 @@ import { createUserEndpoint, deleteUserEndpoint, readUserEndpoint, readUsersEndp
 
 import { userCreateRabbit, userReadRabbit, userUpdateRabbit } from "./rabbits/index.ts";
 
-const microservice: MicroService = new MicroService("User Service", 9206);
+const microService: MicroService = new MicroService("User Service", 9206);
 
 export function startService(): Promise<void> {
   // endpoints
-  microservice.setEndpoints([
+  microService.setEndpoints([
     // read users endpoint
-    readUsersEndpoint(microservice.getHandler()),
+    readUsersEndpoint(microService.getHandler()),
     // read user endpoint
-    readUserEndpoint(microservice.getHandler()),
+    readUserEndpoint(microService.getHandler()),
     // create user endpoint
-    createUserEndpoint(microservice.getHandler()),
+    createUserEndpoint(microService.getHandler()),
     // update user endpoint
-    updateUserEndpoint(microservice.getHandler()),
+    updateUserEndpoint(microService.getHandler()),
     // delete user endpoint
-    deleteUserEndpoint(microservice.getHandler()),
+    deleteUserEndpoint(microService.getHandler()),
   ]);
 
   // rabbits
-  microservice.setRabbits([
+  microService.setRabbits([
     // user create rabbit
-    userCreateRabbit(microservice.getHandler()),
+    userCreateRabbit(microService.getHandler()),
     // user read rabbit
-    userReadRabbit(microservice.getHandler()),
+    userReadRabbit(microService.getHandler()),
     // user update rabbit
-    userUpdateRabbit(microservice.getHandler()),
+    userUpdateRabbit(microService.getHandler()),
   ]);
 
   // start service
-  return microservice.start();
+  return microService.start();
 }
 
 export function stopService(): Promise<void> {
   // stop service
-  return microservice.stop();
+  return microService.stop();
 }
 
 startService();

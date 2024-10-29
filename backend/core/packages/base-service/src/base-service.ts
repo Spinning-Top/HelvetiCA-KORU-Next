@@ -31,20 +31,6 @@ export class BaseService {
       // connect to database
       await this.handler.getDatabase().connect();
 
-      // hono endpoint setup
-      /* TODO non dovrebbe servire?
-      this.hono.use("*", async (c: Context, next) => {
-        const method = c.req.method;
-        const url = c.req.url;
-        this.handler.getLog().info(`Received ${method} request for ${url}`);
-      
-        const endpoint: Endpoint | undefined = this.endpoints.find((e) => e.getUrl() === url && e.getMethod() === method);
-        console.log(endpoint);
-      
-        await next();
-      });
-      */
-
       // not found handler
       this.hono.notFound((c: Context) => {
         return RequestHelpers.sendJsonError(c, HttpStatusCode.NotFound, "notFound", "Endpoint not found");

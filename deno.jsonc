@@ -3,17 +3,17 @@
   "tasks": {
     // BACKEND
       // deploy
-        "deploy:dev": "ENV=development ./backend/scripts/deploy.sh",
-        "deploy:prod": "ENV=production ./backend/scripts/deploy.sh",
+        "backend:deploy:dev": "ENV=development ./backend/scripts/deploy.sh",
+        "backend:deploy:prod": "ENV=production ./backend/scripts/deploy.sh",
       // dev
-        "dev": "./backend/scripts/dev.sh",
+        "backend:dev": "./backend/scripts/dev.sh",
       // tech
-        "tech:down": "docker compose -f ./backend/tech/docker-compose.yaml --env-file ./backend/tech/.env down",
-        "tech:up": "docker compose -f ./backend/tech/docker-compose.yaml --env-file ./backend/tech/.env up --build -d",
+        "backend:tech:down": "docker compose -f ./backend/tech/docker-compose.yaml --env-file ./backend/tech/.env down",
+        "backend:tech:up": "docker compose -f ./backend/tech/docker-compose.yaml --env-file ./backend/tech/.env up --build -d",
       // utils
-        "seeder": "ENV_PATH=./backend/ deno -ENRW ./backend/core/utils/seeder/src/index.ts",
+        "backend:seeder": "ENV_PATH=./backend/ deno -ENRW ./backend/core/utils/seeder/src/index.ts",
       // test
-        "test": "ENV=development ENV_PATH=./backend/ deno test -ER"
+        "backend:test": "ENV=development ENV_PATH=./backend/ deno test -ER"
     // FRONTEND
   },
   "imports": {

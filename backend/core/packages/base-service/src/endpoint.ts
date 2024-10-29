@@ -2,6 +2,7 @@ import type { Handler as HonoHandler } from "hono/types";
 
 export class Endpoint {
   private url: string;
+  private fullUrl: string;
   private method: EndpointMethod;
   private authRequired: boolean;
   private allowedPermissions: string[];
@@ -13,10 +14,15 @@ export class Endpoint {
     this.authRequired = authRequired;
     this.allowedPermissions = allowedPermissions;
     this.handler = undefined;
+    this.fullUrl = "";
   }
 
   public getUrl(): string {
     return this.url;
+  }
+
+  public getFullUrl(): string {
+    return this.fullUrl;
   }
 
   public getMethod(): EndpointMethod {
@@ -37,6 +43,10 @@ export class Endpoint {
 
   public setHandler(handler: HonoHandler): void {
     this.handler = handler;
+  }
+
+  public setFullUrl(fullUrl: string): void {
+    this.fullUrl = fullUrl;
   }
 }
 

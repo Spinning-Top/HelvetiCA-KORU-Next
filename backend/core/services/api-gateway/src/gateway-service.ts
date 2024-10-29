@@ -31,4 +31,8 @@ export class GatewayService {
   public getServiceRoot(): string {
     return this.serviceRoot;
   }
+
+  public setEndpoints(endpoints: Endpoint[]): void {
+    this.endpoints = endpoints;
+  }
 }
