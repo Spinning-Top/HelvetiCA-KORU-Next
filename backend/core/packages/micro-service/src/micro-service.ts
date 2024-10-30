@@ -93,9 +93,7 @@ export class MicroService extends BaseService {
 
       const authMiddlewares: MiddlewareHandler[] = AuthHelpers.getAuthMiddlewares(this.handler);
 
-      const middlewares: MiddlewareHandler[] = endpoint.isAuthRequired()
-        ? [...authMiddlewares, endpoint.getHandler()!]
-        : [endpoint.getHandler()!];
+      const middlewares: MiddlewareHandler[] = endpoint.isAuthRequired() ? [...authMiddlewares, endpoint.getHandler()!] : [endpoint.getHandler()!];
 
       this.handler.getLog().info(`Registering ${EndpointMethod[endpoint.getMethod()]} ${endpoint.getUrl()}`);
 

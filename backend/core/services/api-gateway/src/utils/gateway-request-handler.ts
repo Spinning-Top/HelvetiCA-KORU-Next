@@ -27,7 +27,7 @@ export function gatewayRequestHandler(gatewayServices: GatewayService[], handler
             selectedGatewayService = gatewayService;
             selectedEndpoint = endpoint;
             urlToService = selectedEndpoint.getUrl();
-      
+
             for (const [key, value] of Object.entries(params)) {
               urlToService = urlToService.replace(`:${key}`, value);
             }
@@ -100,15 +100,15 @@ export function gatewayRequestHandler(gatewayServices: GatewayService[], handler
 }
 
 function matchRoute(requestPath: string, endpointPath: string): Record<string, string> | undefined {
-  const requestSegments = requestPath.split('/');
-  const endpointSegments = endpointPath.split('/');
+  const requestSegments = requestPath.split("/");
+  const endpointSegments = endpointPath.split("/");
 
   if (requestSegments.length !== endpointSegments.length) return undefined;
 
   const params: Record<string, string> = {};
 
   for (let i = 0; i < requestSegments.length; i++) {
-    if (endpointSegments[i].startsWith(':')) {
+    if (endpointSegments[i].startsWith(":")) {
       // È un parametro dinamico
       const paramName = endpointSegments[i].slice(1);
       params[paramName] = requestSegments[i];

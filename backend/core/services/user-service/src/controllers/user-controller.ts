@@ -8,7 +8,7 @@ export class UserController extends BaseController<User> {
   public constructor(handler: Handler) {
     super(handler, User);
 
-    this.relations = ["roles"];
+    this.relations = ["roles", "refreshTokens"];
     this.searchFields = ["email", "firstName", "lastName"];
   }
 

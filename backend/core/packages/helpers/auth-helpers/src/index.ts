@@ -102,5 +102,4 @@ export class AuthHelpers {
 
     return [jwtMiddleware, userMiddleware];
   }
-
 }

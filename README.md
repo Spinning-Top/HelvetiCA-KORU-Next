@@ -2,4 +2,4 @@
 
 ---
 
-TODOS
+externalUpdate e internalUpdate

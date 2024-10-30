@@ -49,8 +49,8 @@ export class User extends BaseModel {
   @Transform(({ value }) => (value ? (value as Role[]).map((role) => new LinkedRole(role)) : null), { toPlainOnly: true })
   roles!: Role[];
 
-  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
-  @Expose({ groups: ["fromJson", "toJson"] })
+  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user, { cascade: true })
+  @Expose({ groups: ["update", "fromJson", "toJson"] })
   refreshTokens!: RefreshToken[];
 
   @BeforeInsert()

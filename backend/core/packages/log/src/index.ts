@@ -13,7 +13,7 @@ export class Log {
             formatter: (logRecord: LogRecord) => {
               const timestamp = format(new Date(), "yyyy-MM-dd HH:mm:ss.SSS");
               const serviceNameRender: string = serviceName != "" ? `[${serviceName.toUpperCase().replace(/ /g, "-")}]` : "";
-              return `${timestamp} ${serviceNameRender}[${logRecord.levelName.toUpperCase()}]: ${logRecord.msg}`
+              return `${timestamp} ${serviceNameRender}[${logRecord.levelName.toUpperCase()}]: ${logRecord.msg}`;
             },
           }),
           fileError: new FileHandler("WARN", {
@@ -21,8 +21,7 @@ export class Log {
             formatter: (logRecord: LogRecord) => {
               const timestamp = format(new Date(), "yyyy-MM-dd HH:mm:ss.SSS");
               const serviceNameRender: string = serviceName != "" ? `[${serviceName.toUpperCase().replace(/ /g, "-")}]` : "";
-              return `${timestamp} ${serviceNameRender}[${logRecord.levelName.toUpperCase()}]: ${logRecord.msg}`
-
+              return `${timestamp} ${serviceNameRender}[${logRecord.levelName.toUpperCase()}]: ${logRecord.msg}`;
             },
           }),
           fileCombined: new FileHandler("DEBUG", {
@@ -30,7 +29,7 @@ export class Log {
             formatter: (logRecord: LogRecord) => {
               const timestamp = format(new Date(), "yyyy-MM-dd HH:mm:ss.SSS");
               const serviceNameRender: string = serviceName != "" ? `[${serviceName.toUpperCase().replace(/ /g, "-")}]` : "";
-              return `${timestamp} ${serviceNameRender}[${logRecord.levelName.toUpperCase()}]: ${logRecord.msg}`
+              return `${timestamp} ${serviceNameRender}[${logRecord.levelName.toUpperCase()}]: ${logRecord.msg}`;
             },
           }),
         },

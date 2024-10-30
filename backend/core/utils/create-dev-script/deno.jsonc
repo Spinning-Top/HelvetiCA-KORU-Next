@@ -1,0 +1,4 @@
+{
+  "name": "@koru/create-dev-script",
+  "exports": "./src/index.ts"
+}

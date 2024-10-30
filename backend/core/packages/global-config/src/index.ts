@@ -36,6 +36,17 @@ export interface GlobalConfig {
   koru: {
     version: string;
   };
+  mail: {
+    domain: string;
+    host: string;
+    maxFailures: number;
+    port: number;
+    privateKeyPath: string;
+    selector: string;
+    sendInterval: number;
+    senderAddress: string;
+    senderName: string;
+  };
   rabbitMq: {
     host: string;
     password: string;
@@ -57,6 +68,15 @@ export function getGlobalConfig(): GlobalConfig {
   if (conf.DB_USERNAME == undefined) throw new Error("DB_USERNAME is not defined");
   if (conf.ENV == undefined) throw new Error("ENV is not defined");
   if (conf.KORU_VERSION == undefined) throw new Error("KORU_VERSION is not defined");
+  if (conf.MAIL_DOMAIN == undefined) throw new Error("MAIL_DOMAIN is not defined");
+  if (conf.MAIL_HOST == undefined) throw new Error("MAIL_HOST is not defined");
+  if (conf.MAIL_MAX_FAILURES == undefined) throw new Error("MAIL_MAX_FAILURES is not defined");
+  if (conf.MAIL_PORT == undefined) throw new Error("MAIL_PORT is not defined");
+  if (conf.MAIL_PRIVATE_KEY_PATH == undefined) throw new Error("MAIL_PRIVATE_KEY_PATH is not defined");
+  if (conf.MAIL_SELECTOR == undefined) throw new Error("MAIL_SELECTOR is not defined");
+  if (conf.MAIL_SEND_INTERVAL == undefined) throw new Error("MAIL_SEND_INTERVAL is not defined");
+  if (conf.MAIL_SENDER_ADDRESS == undefined) throw new Error("MAIL_SENDER_ADDRESS is not defined");
+  if (conf.MAIL_SENDER_NAME == undefined) throw new Error("MAIL_SENDER_NAME is not defined");
   if (conf.RABBITMQ_HOST == undefined) throw new Error("RABBITMQ_HOST is not defined");
   if (conf.RABBITMQ_PASSWORD == undefined) throw new Error("RABBITMQ_PASSWORD is not defined");
   if (conf.RABBITMQ_REQUEST_TIMEOUT == undefined) throw new Error("RABBITMQ_REQUEST_TIMEOUT is not defined");
@@ -80,6 +100,17 @@ export function getGlobalConfig(): GlobalConfig {
     environment: conf.ENV as "production" | "development",
     koru: {
       version: conf.KORU_VERSION,
+    },
+    mail: {
+      domain: conf.MAIL_DOMAIN,
+      host: conf.MAIL_HOST,
+      maxFailures: parseInt(conf.MAIL_MAX_FAILURES),
+      port: parseInt(conf.MAIL_PORT),
+      privateKeyPath: conf.MAIL_PRIVATE_KEY_PATH,
+      selector: conf.MAIL_SELECTOR,
+      sendInterval: parseInt(conf.MAIL_SEND_INTERVAL),
+      senderAddress: conf.MAIL_SENDER_ADDRESS,
+      senderName: conf.MAIL_SENDER_NAME,
     },
     rabbitMq: {
       host: conf.RABBITMQ_HOST,

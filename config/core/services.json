@@ -13,31 +13,31 @@
   },
   {
     "name": "Cron Service",
-    "path": "core/services/cron-service",
+    "path": "backend/core/services/cron-service",
     "port": 9202,
-    "enabled": false
+    "enabled": true
   },
   {
     "name": "Mail Service",
-    "path": "core/services/mail-service",
+    "path": "backend/core/services/mail-service",
     "port": 9203,
-    "enabled": false
+    "enabled": true
   },
   {
     "name": "Notification Service",
-    "path": "core/services/notification-service",
+    "path": "backend/core/services/notification-service",
     "port": 9204,
-    "enabled": false
+    "enabled": true
   },
   {
     "name": "Role Service",
-    "path": "core/services/role-service",
+    "path": "backend/core/services/role-service",
     "port": 9205,
     "enabled": true
   },
   {
     "name": "User Service",
-    "path": "core/services/user-service",
+    "path": "backend/core/services/user-service",
     "port": 9206,
     "enabled": true
   }

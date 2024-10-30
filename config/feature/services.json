@@ -1,7 +1,7 @@
 [
   {
     "name": "Dummy Service",
-    "path": "feature/services/dummy-service",
+    "path": "backend/feature/services/dummy-service",
     "port": 9301,
     "enabled": true
   }

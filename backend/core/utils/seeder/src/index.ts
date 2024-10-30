@@ -102,7 +102,7 @@ async function runSeeders(seeders: Seeder[]) {
 }
 
 async function initAndEmptyDatabase(): Promise<Database> {
-  await initGlobalConfig();
+  initGlobalConfig();
 
   const globalConfig: GlobalConfig = getGlobalConfig();
   const database: Database = new Database(globalConfig);

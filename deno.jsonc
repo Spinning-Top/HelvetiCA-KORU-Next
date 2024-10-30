@@ -12,7 +12,8 @@
         "backend:tech:down": "docker compose -f ./backend/tech/docker-compose.yaml --env-file ./backend/tech/.env down",
         "backend:tech:up": "docker compose -f ./backend/tech/docker-compose.yaml --env-file ./backend/tech/.env up --build -d",
       // utils
-        "backend:seeder": "ENV_PATH=./backend/ deno -ENRW ./backend/core/utils/seeder/src/index.ts",
+        "backend:utils:create-dev-script": "deno -ENRW ./backend/core/utils/create-dev-script/src/index.ts",
+        "backend:utils:seeder": "ENV_PATH=./backend/ deno -ENRW ./backend/core/utils/seeder/src/index.ts",
       // test
         "backend:test": "ENV=development ENV_PATH=./backend/ deno test -ER"
     // FRONTEND
@@ -40,9 +41,13 @@
         // services
           "backend/core/services/api-gateway",
           "backend/core/services/auth-service",
+          "backend/core/services/cron-service",
+          "backend/core/services/mail-service",
+          "backend/core/services/notification-service",
           "backend/core/services/role-service",
           "backend/core/services/user-service",
         // utils
+          "backend/core/utils/create-dev-script",
           "backend/core/utils/seeder",
       // feature
         // services
