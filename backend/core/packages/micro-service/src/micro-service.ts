@@ -1,6 +1,6 @@
 import type { MiddlewareHandler } from "hono";
 
-// import { AuthHelpers } from "@koru/auth-helpers";
+import { AuthHelpers } from "@koru/auth-helpers";
 import { EndpointMethod } from "@koru/base-service";
 
 import { BaseService } from "@koru/base-service";
@@ -91,12 +91,11 @@ export class MicroService extends BaseService {
     for (const endpoint of this.endpoints) {
       if (endpoint.getHandler() === undefined) continue;
 
-      /* TODO
+      const authMiddlewares: MiddlewareHandler[] = AuthHelpers.initJwtMiddleware(this.handler);
+
       const middlewares: MiddlewareHandler[] = endpoint.isAuthRequired()
-        ? [AuthHelpers.getAuthMiddleware(this.handler), endpoint.getHandler()!]
+        ? [...authMiddlewares, endpoint.getHandler()!]
         : [endpoint.getHandler()!];
-      */
-      const middlewares: MiddlewareHandler[] = [endpoint.getHandler()!];
 
       this.handler.getLog().info(`Registering ${EndpointMethod[endpoint.getMethod()]} ${endpoint.getUrl()}`);
 

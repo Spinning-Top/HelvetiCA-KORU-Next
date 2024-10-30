@@ -43,7 +43,11 @@ export function refreshTokenEndpoint(handler: Handler): Endpoint {
         // check if the decoded token is a JwtPayload object and contains the id
         if (typeof decodedToken === "object" && decodedToken !== null && "id" in decodedToken) {
           // create a new access token
-          const newAccessToken = sign({ id: decodedToken.id }, handler.getGlobalConfig().auth.jwtSecret); // TODO duration ? expiresIn: handler.getGlobalConfig().auth.jwtAccessTokenDuration
+          const newAccessTokenPayload: JWTPayload = {
+            id: decodedToken.id,
+            exp: Math.floor(Date.now() / 1000) + handler.getGlobalConfig().auth.jwtAccessTokenDuration,
+          };
+          const newAccessToken = sign(newAccessTokenPayload, handler.getGlobalConfig().auth.jwtSecret);
           // return the new access token
           return RequestHelpers.sendJsonResponse(c, { accessToken: newAccessToken });
         } else {

@@ -78,7 +78,7 @@ export class User extends BaseModel {
 
     if (CryptoHelpers.isStringHashed(token) === false) token = CryptoHelpers.hashPassword(token);
 
-    const expiresAt: Date = new Date(Date.now() + 1000 * 60 * 60 * 24 * Number(globalConfig.auth.jwtRefreshTokenDuration.replace("d", "")));
+    const expiresAt: Date = new Date(Date.now() + globalConfig.auth.jwtRefreshTokenDuration);
     expiresAt.setHours(23, 59, 59, 999);
 
     const newRefreshToken: RefreshToken = new RefreshToken(this, token, expiresAt);

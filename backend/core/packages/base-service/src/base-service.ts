@@ -14,20 +14,10 @@ export class BaseService {
   protected name: string;
   protected port: number;
 
-  /* TODO
-  // init jwt
-  this.hono.use("*", jwt({ secret: this.getHandler().getGlobalConfig().auth.jwtSecret }));
-
-  this.hono.get('/test', (c) => {
-    const payload = c.get('jwtPayload')
-    return c.json(payload) // eg: { "sub": "1234567890", "name": "John Doe", "iat": 1516239022 }
-  })
-  */
-
   public constructor(name: string, port: number = 0) {
     this.abortController = new AbortController();
     this.endpoints = [];
-    this.handler = new Handler();
+    this.handler = new Handler(name);
     this.hono = new Hono<{ Variables: JwtVariables }>();
     this.name = name;
     this.port = port;
@@ -36,7 +26,7 @@ export class BaseService {
   protected async start(): Promise<void> {
     try {
       // initialize rabbit breeder
-      await this.handler.getRabbitBreeder().initialize();
+      await this.handler.getRabbitBreeder().initialize(this.name);
 
       // connect to database
       await this.handler.getDatabase().connect();
@@ -66,7 +56,20 @@ export class BaseService {
         },
         this.hono.fetch,
       );
+
       server.finished.then(() => this.handler.getLog().info(`${this.name} has been stopped`));
+
+      // Ascolta il segnale SIGTERM
+      Deno.addSignalListener("SIGTERM", () => {
+        console.log("SIGTERM received: shutting down gracefully...");
+        this.stop();
+      });
+
+      // Ascolta il segnale SIGINT (CTRL+C) se vuoi supportarlo
+      Deno.addSignalListener("SIGINT", () => {
+        console.log("SIGINT received: shutting down gracefully...");
+        this.stop();
+      });
     } catch (error: unknown) {
       this.handler.getLog().error((error as Error).message);
     }

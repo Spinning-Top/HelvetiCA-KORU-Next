@@ -8,7 +8,7 @@ export class Gateway extends BaseService {
   private gatewayServices: GatewayService[];
 
   public constructor() {
-    super("KORU API Gateway", 9100);
+    super("API Gateway", 9100);
     this.gatewayServices = [];
   }
 

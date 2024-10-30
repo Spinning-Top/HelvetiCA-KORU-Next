@@ -1,4 +1,5 @@
 import type { Context } from "hono";
+import type { JWTPayload } from "hono/utils/jwt/types";
 import { sign } from "hono/jwt";
 
 import { CryptoHelpers } from "@koru/crypto-helpers";
@@ -44,9 +45,19 @@ export function loginEndpoint(handler: Handler): Endpoint {
         return RequestHelpers.sendJsonError(c, HttpStatusCode.Unauthorized, "invalidPassword", "Password is not valid");
       }
       // create the access token
-      const accessToken: string = await sign({ id: user.id }, handler.getGlobalConfig().auth.jwtSecret); // TODO duration ? expiresIn: handler.getGlobalConfig().auth.jwtAccessTokenDuration
+      const accessTokenPayload: JWTPayload = {
+        id: user.id,
+        email: user.email,
+        exp: Math.floor(Date.now() / 1000) + handler.getGlobalConfig().auth.jwtAccessTokenDuration,
+      };
+      const accessToken: string = await sign(accessTokenPayload, handler.getGlobalConfig().auth.jwtSecret);
       // create the refresh token
-      const refreshToken: string = await sign({ id: user.id }, handler.getGlobalConfig().auth.jwtSecret); // TODO duration ? expiresIn: handler.getGlobalConfig().auth.jwtRefreshTokenDuration,
+      const refreshTokenPayload: JWTPayload = {
+        id: user.id,
+        email: user.email,
+        exp: Math.floor(Date.now() / 1000) + handler.getGlobalConfig().auth.jwtRefreshTokenDuration,
+      };
+      const refreshToken: string = await sign(refreshTokenPayload, handler.getGlobalConfig().auth.jwtSecret);
       // add refresh token to the user
       user.addRefreshToken(refreshToken);
       // TODO create and save token

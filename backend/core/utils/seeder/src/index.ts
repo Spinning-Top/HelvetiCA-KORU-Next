@@ -28,7 +28,7 @@ async function main() {
     console.log("Invalid environment provided");
     return;
   }
-  // TODO
+
   Deno.env.set("ENV", selectedEnvironment);
 
   const selectedSection = await InquiryHelpers.selectSection();

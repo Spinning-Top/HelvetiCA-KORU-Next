@@ -1,6 +1,5 @@
 import type { Context, MiddlewareHandler } from "hono";
 import { createMiddleware } from "hono/factory";
-import type { Hono } from "hono";
 import { jwt } from "hono/jwt";
 import type { JWTPayload } from "hono/utils/jwt/types";
 import { verify } from "hono/jwt";
@@ -8,7 +7,6 @@ import { verify } from "hono/jwt";
 import type { Handler } from "@koru/handler";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
 import { RabbitHelpers } from "@koru/rabbit-helpers";
-import type { RabbitBreeder } from "@koru/rabbit-breeder";
 import { User } from "@koru/core-models";
 
 export class AuthHelpers {
@@ -24,11 +22,9 @@ export class AuthHelpers {
       try {
         const payload: JWTPayload = await verify(token, handler.getGlobalConfig().auth.jwtSecret);
 
-        if (!payload) {
-          return RequestHelpers.sendJsonError(c, HttpStatusCode.Unauthorized, "error", "User authentication failed");
-        }
+        if (!payload) return RequestHelpers.sendJsonError(c, HttpStatusCode.Unauthorized, "error", "User authentication failed");
 
-        c.set("user", payload);
+        c.set("jwtPayload", payload);
         await next();
       } catch (error: unknown) {
         return RequestHelpers.sendJsonError(
@@ -84,13 +80,13 @@ export class AuthHelpers {
     });
   }
 
-  public static initJwtMiddleware(jwtSecret: string, app: Hono, rabbitBreeder: RabbitBreeder): void {
-    const jwtMiddleware: MiddlewareHandler = jwt({ secret: jwtSecret });
+  public static initJwtMiddleware(handler: Handler): MiddlewareHandler[] {
+    const jwtMiddleware: MiddlewareHandler = jwt({ secret: handler.getGlobalConfig().auth.jwtSecret });
 
     const userMiddleware: MiddlewareHandler = async (c: Context, next) => {
       try {
         const jwtPayload = c.get("jwtPayload") as Record<string, unknown>;
-        const user = await RabbitHelpers.getUserByField("id", Number(jwtPayload.id), rabbitBreeder);
+        const user = await RabbitHelpers.getUserByField("id", Number(jwtPayload.id), handler.getRabbitBreeder());
 
         if (user) {
           // Aggiunge l'utente al contesto in modo che sia disponibile per le route successive
@@ -110,34 +106,7 @@ export class AuthHelpers {
       }
     };
 
-    // Applica i middleware JWT e User su tutte le route che richiedono autenticazione
-    app.use("*", jwtMiddleware, userMiddleware);
+    return [jwtMiddleware, userMiddleware];
   }
 
-  /*
-  public static initPassport(jwtSecret: string, express: Express, rabbitBreeder: RabbitBreeder): void {
-    passport.use(
-      new JwtStrategy(
-        {
-          jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-          secretOrKey: jwtSecret,
-        },
-        async (jwt_payload: Record<string, unknown>, done: (arg0: unknown, arg1: unknown) => unknown) => {
-          try {
-            const user: User | undefined = await RabbitHelpers.getUserByField("id", Number(jwt_payload.id), rabbitBreeder);
-            if (user != undefined) {
-              return done(null, user.toReadResponse());
-            } else {
-              return done(null, false);
-            }
-          } catch (err) {
-            return done(err, false);
-          }
-        },
-      ),
-    );
-
-    express.use(passport.initialize());
-  }
-  */
 }

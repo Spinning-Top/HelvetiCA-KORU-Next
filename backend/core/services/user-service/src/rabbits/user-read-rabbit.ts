@@ -16,12 +16,12 @@ export function userReadRabbit(handler: Handler): Rabbit<User | undefined> {
     const parameters: Record<string, unknown> = JSON.parse(msg.content.toString());
     // if id is provided in the parameters
     if (parameters.id !== undefined) {
-      console.log("Finding user by id");
+      handler.getLog().info(`Searching for user with id: ${parameters.id}`);
       // find the user by id
       const user: User | undefined = await userController.getEntityById(Number(parameters.id));
       return user;
     } else if (parameters.email !== undefined) {
-      console.log("Finding user by email");
+      handler.getLog().info(`Searching for user with email: ${parameters.email}`);
       // otherwise if email is provided, find the user by email
       const user: User | undefined = await userController.getEntityByField("email", parameters.email as string);
       if (user !== undefined) {

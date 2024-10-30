@@ -20,9 +20,9 @@ export function initGlobalConfig(): void {
 
 export interface GlobalConfig {
   auth: {
-    jwtAccessTokenDuration: string;
-    jwtRecoveryTokenDuration: string;
-    jwtRefreshTokenDuration: string;
+    jwtAccessTokenDuration: number;
+    jwtRecoveryTokenDuration: number;
+    jwtRefreshTokenDuration: number;
     jwtSecret: string;
   };
   database: {
@@ -61,9 +61,9 @@ export function getGlobalConfig(): GlobalConfig {
 
   return {
     auth: {
-      jwtAccessTokenDuration: conf.AUTH_JWT_ACCESS_TOKEN_DURATION,
-      jwtRecoveryTokenDuration: conf.AUTH_JWT_RECOVERY_TOKEN_DURATION,
-      jwtRefreshTokenDuration: conf.AUTH_JWT_REFRESH_TOKEN_DURATION,
+      jwtAccessTokenDuration: Number(conf.AUTH_JWT_ACCESS_TOKEN_DURATION),
+      jwtRecoveryTokenDuration: Number(conf.AUTH_JWT_RECOVERY_TOKEN_DURATION),
+      jwtRefreshTokenDuration: Number(conf.AUTH_JWT_REFRESH_TOKEN_DURATION),
       jwtSecret: conf.AUTH_JWT_SECRET,
     },
     database: {

@@ -1,4 +1,5 @@
 import type { Context } from "hono";
+import type { JWTPayload } from "hono/utils/jwt/types";
 import { sign } from "hono/jwt";
 
 import { Endpoint, EndpointMethod } from "@koru/base-service";
@@ -29,7 +30,12 @@ export function passwordForgotEndpoint(handler: Handler): Endpoint {
         return RequestHelpers.sendJsonError(c, HttpStatusCode.Unauthorized, "userNotFound", "User not found with the provided e-mail");
       }
       // create the recovery token
-      const recoveryToken = sign({ id: user.id }, handler.getGlobalConfig().auth.jwtSecret); // TODO duration ? expiresIn: handler.getGlobalConfig().auth.jwtRecoveryTokenDuration
+      const recoveryTokenPayload: JWTPayload = {
+        id: user.id,
+        email: user.email,
+        exp: Math.floor(Date.now() / 1000) + handler.getGlobalConfig().auth.jwtRecoveryTokenDuration,
+      };
+      const recoveryToken = sign(recoveryTokenPayload, handler.getGlobalConfig().auth.jwtSecret);
       // TODO Invia recoveryToken via email all'utente: sendRecoveryEmail(user.email, recoveryToken);
       console.log(recoveryToken);
       // send the success response

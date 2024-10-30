@@ -30,9 +30,7 @@ export function gatewayRequestHandler(gatewayServices: GatewayService[], handler
         return RequestHelpers.sendJsonError(c, HttpStatusCode.NotFound, "notFound", "Endpoint not found");
       }
 
-      // Costruisce le intestazioni con eventuale "X-Koru-User"
       const headers = new Headers(c.req.raw.headers); // Crea una copia delle intestazioni originali
-      if (c.get("user")) headers.set("X-Koru-User", JSON.stringify(c.get("user")));
 
       const body: Record<string, unknown> = await c.req.parseBody();
 

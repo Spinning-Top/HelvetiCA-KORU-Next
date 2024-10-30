@@ -3,7 +3,7 @@ import { dirname, fromFileUrl, resolve } from "@std/path";
 import { format } from "@std/datetime";
 
 export class Log {
-  public constructor() {
+  public constructor(serviceName: string = "") {
     const logPath: string = Deno.env.get("LOG_PATH") || resolve(Deno.cwd(), "./logs") || resolve(dirname(fromFileUrl(import.meta.url)), "./logs");
 
     try {
@@ -12,21 +12,25 @@ export class Log {
           console: new ConsoleHandler("DEBUG", {
             formatter: (logRecord: LogRecord) => {
               const timestamp = format(new Date(), "yyyy-MM-dd HH:mm:ss.SSS");
-              return `${timestamp} [${logRecord.levelName.toUpperCase()}]: ${logRecord.msg}`;
+              const serviceNameRender: string = serviceName != "" ? `[${serviceName.toUpperCase().replace(/ /g, "-")}]` : "";
+              return `${timestamp} ${serviceNameRender}[${logRecord.levelName.toUpperCase()}]: ${logRecord.msg}`
             },
           }),
           fileError: new FileHandler("WARN", {
             filename: resolve(logPath, "./error.log"),
             formatter: (logRecord: LogRecord) => {
               const timestamp = format(new Date(), "yyyy-MM-dd HH:mm:ss.SSS");
-              return `${timestamp} [${logRecord.levelName.toUpperCase()}]: ${logRecord.msg}`;
+              const serviceNameRender: string = serviceName != "" ? `[${serviceName.toUpperCase().replace(/ /g, "-")}]` : "";
+              return `${timestamp} ${serviceNameRender}[${logRecord.levelName.toUpperCase()}]: ${logRecord.msg}`
+
             },
           }),
           fileCombined: new FileHandler("DEBUG", {
             filename: resolve(logPath, "./combined.log"),
             formatter: (logRecord: LogRecord) => {
               const timestamp = format(new Date(), "yyyy-MM-dd HH:mm:ss.SSS");
-              return `${timestamp} [${logRecord.levelName.toUpperCase()}]: ${logRecord.msg}`;
+              const serviceNameRender: string = serviceName != "" ? `[${serviceName.toUpperCase().replace(/ /g, "-")}]` : "";
+              return `${timestamp} ${serviceNameRender}[${logRecord.levelName.toUpperCase()}]: ${logRecord.msg}`
             },
           }),
         },

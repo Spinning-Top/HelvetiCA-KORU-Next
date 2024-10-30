@@ -7,6 +7,7 @@
         "backend:deploy:prod": "ENV=production ./backend/scripts/deploy.sh",
       // dev
         "backend:dev": "./backend/scripts/dev.sh",
+        "backend:dev:kill": "./backend/scripts/dev-kill.sh",
       // tech
         "backend:tech:down": "docker compose -f ./backend/tech/docker-compose.yaml --env-file ./backend/tech/.env down",
         "backend:tech:up": "docker compose -f ./backend/tech/docker-compose.yaml --env-file ./backend/tech/.env up --build -d",

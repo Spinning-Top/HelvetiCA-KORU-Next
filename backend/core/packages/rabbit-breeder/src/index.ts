@@ -6,8 +6,6 @@ import { NAMESPACE_DNS, v5 } from "@std/uuid";
 
 import type { GlobalConfig } from "@koru/global-config";
 
-const rabbitBreederHash: Uint8Array = new TextEncoder().encode("koru-rabbit-breeder");
-
 export class RabbitBreeder {
   private channel: Channel | undefined;
   private connection: Connection | undefined;
@@ -17,16 +15,19 @@ export class RabbitBreeder {
     this.globalConfig = globalConfig;
   }
 
-  public async initialize(): Promise<void> {
+  public async initialize(connectionName: string = ""): Promise<void> {
     if (this.connection !== undefined) return;
 
     try {
-      this.connection = await connect({
-        hostname: this.globalConfig.rabbitMq.host,
-        port: this.globalConfig.rabbitMq.servicePort,
-        username: this.globalConfig.rabbitMq.username,
-        password: this.globalConfig.rabbitMq.password,
-      });
+      const username: string = this.globalConfig.rabbitMq.username;
+      const password: string = this.globalConfig.rabbitMq.password;
+      const host: string = this.globalConfig.rabbitMq.host;
+      const servicePort: number = this.globalConfig.rabbitMq.servicePort;
+
+      this.connection = await connect(
+        `amqp://${username}:${password}@${host}:${servicePort}`,
+        { clientProperties: { connection_name: connectionName } },
+      );
       this.channel = await this.connection.createChannel();
     } catch (error) {
       console.error(error);
@@ -40,10 +41,9 @@ export class RabbitBreeder {
   }
 
   public async sendRequest(requestQueue: string, requestParams: Record<string, unknown>): Promise<void> {
-    await this.initialize();
     if (this.channel === undefined) return undefined;
 
-    const correlationId: string = await v5.generate(NAMESPACE_DNS, rabbitBreederHash);
+    const correlationId: string = await this.generateUUID();
 
     this.channel.sendToQueue(requestQueue, Buffer.from(JSON.stringify(requestParams)), { correlationId });
   }
@@ -54,12 +54,11 @@ export class RabbitBreeder {
     requestParams: Record<string, unknown>,
     responseCreator: (data: Record<string, unknown>) => T,
   ): Promise<T | undefined> {
-    await this.initialize();
     if (this.channel === undefined) return undefined;
 
-    const correlationId: string = await v5.generate(NAMESPACE_DNS, rabbitBreederHash);
+    const correlationId: string = await this.generateUUID();
 
-    const randomResponseQueue: string = `${responseQueue}-${await v5.generate(NAMESPACE_DNS, rabbitBreederHash)}`;
+    const randomResponseQueue: string = `${responseQueue}-${await this.generateUUID()}`;
     await this.channel.assertQueue(randomResponseQueue, { autoDelete: true, exclusive: true });
 
     const result: T = await new Promise((resolve, reject) => {
@@ -94,7 +93,6 @@ export class RabbitBreeder {
   }
 
   public async startRequestListener<T>(requestQueue: string, responseCreator: (msg: ConsumeMessage) => Promise<T>): Promise<string | undefined> {
-    await this.initialize();
     if (this.channel === undefined) return undefined;
 
     this.channel.assertQueue(requestQueue, { durable: false, exclusive: false });
@@ -118,5 +116,9 @@ export class RabbitBreeder {
   public async stopRequestListener(consumerTag: string): Promise<void> {
     if (this.channel === undefined) return;
     await this.channel.cancel(consumerTag);
+  }
+
+  private async generateUUID(): Promise<string> {
+    return await v5.generate(NAMESPACE_DNS, new TextEncoder().encode(`seed-${Date.now()}`));
   }
 }

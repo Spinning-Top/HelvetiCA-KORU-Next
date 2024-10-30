@@ -10,9 +10,9 @@ export class Handler {
   private rabbitBreeder: RabbitBreeder;
   private rabbitTags: string[];
 
-  public constructor() {
+  public constructor(serviceName: string = "") {
     this.globalConfig = getGlobalConfig();
-    this.log = new Log();
+    this.log = new Log(serviceName);
     this.database = new Database(this.globalConfig);
     this.rabbitBreeder = new RabbitBreeder(this.globalConfig);
     this.rabbitTags = [];
