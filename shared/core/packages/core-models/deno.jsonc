@@ -1,6 +1,5 @@
 {
   "name": "@koru/core-models",
-  "version": "0.1.0",
   "exports": "./src/index.ts",
   "imports": {
     // npm

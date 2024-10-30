@@ -55,7 +55,7 @@ export function registerEndpoint(handler: Handler): Endpoint {
         // return the error
         return RequestHelpers.sendJsonError(c, HttpStatusCode.InternalServerError, "error", "User create failed");
       }
-      // TODO send email confirmation
+      // TODOMAIL send email confirmation
       // return the success response
       return RequestHelpers.sendJsonCreated(c);
     } catch (error) {

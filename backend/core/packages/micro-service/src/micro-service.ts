@@ -91,7 +91,7 @@ export class MicroService extends BaseService {
     for (const endpoint of this.endpoints) {
       if (endpoint.getHandler() === undefined) continue;
 
-      const authMiddlewares: MiddlewareHandler[] = AuthHelpers.initJwtMiddleware(this.handler);
+      const authMiddlewares: MiddlewareHandler[] = AuthHelpers.getAuthMiddlewares(this.handler);
 
       const middlewares: MiddlewareHandler[] = endpoint.isAuthRequired()
         ? [...authMiddlewares, endpoint.getHandler()!]

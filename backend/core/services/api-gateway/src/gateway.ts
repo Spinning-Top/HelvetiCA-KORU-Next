@@ -1,4 +1,5 @@
 import type { ConsumeMessage } from "amqplib";
+import type { Context } from "hono";
 
 import { createEndpoint, gatewayRequestHandler } from "./utils/index.ts";
 import { BaseService, type Endpoint } from "@koru/base-service";
@@ -16,6 +17,13 @@ export class Gateway extends BaseService {
     try {
       await super.start();
 
+      // hono root info
+      this.hono.get("/", (c: Context) => {
+        return c.json({
+          name: "KORU API",
+          version: this.handler.getGlobalConfig().koru.version,
+        });
+      });
       // hono endpoint setup
       this.hono.all("*", gatewayRequestHandler(this.gatewayServices, this.handler));
 

@@ -17,6 +17,7 @@ export class UserController extends BaseController<User> {
     const errors: ValidationError[] = await user.validate();
     // check if there are any validation errors
     if (errors.length > 0) return errors;
+
     // check if the user with the same email already exists
     const existingUser: User | null = await this.repository.findOne({ where: { email: user.email } });
     if (existingUser != null) {
@@ -32,10 +33,10 @@ export class UserController extends BaseController<User> {
     const errors: ValidationError[] = await user.validate();
     // check if there are any validation errors
     if (errors.length > 0) return errors;
+
     // check if the user with the same email already exists
     const existingUser: User | null = await this.repository.findOne({ where: { email: user.email } });
-    // TODO
-    if (existingUser?.email == "cane.infame@gmail.com") {
+    if (existingUser !== null && existingUser.id != user.id) {
       return "duplicatedEmail";
     }
     // save the new user and return

@@ -60,7 +60,7 @@ export function loginEndpoint(handler: Handler): Endpoint {
       const refreshToken: string = await sign(refreshTokenPayload, handler.getGlobalConfig().auth.jwtSecret);
       // add refresh token to the user
       user.addRefreshToken(refreshToken);
-      // TODO create and save token
+      // TODONOW create and save token
       // save user with rabbit
       const savedUser: User | undefined = await handler
         .getRabbitBreeder()

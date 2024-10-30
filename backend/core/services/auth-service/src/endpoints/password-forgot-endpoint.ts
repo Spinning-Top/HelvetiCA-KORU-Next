@@ -36,7 +36,7 @@ export function passwordForgotEndpoint(handler: Handler): Endpoint {
         exp: Math.floor(Date.now() / 1000) + handler.getGlobalConfig().auth.jwtRecoveryTokenDuration,
       };
       const recoveryToken = sign(recoveryTokenPayload, handler.getGlobalConfig().auth.jwtSecret);
-      // TODO Invia recoveryToken via email all'utente: sendRecoveryEmail(user.email, recoveryToken);
+      // TODOMAIL Invia recoveryToken via email all'utente: sendRecoveryEmail(user.email, recoveryToken);
       console.log(recoveryToken);
       // send the success response
       return RequestHelpers.sendJsonResponse(c, { status: "ok", recoveryToken });

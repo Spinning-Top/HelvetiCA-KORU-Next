@@ -1,6 +1,5 @@
 {
   "name": "@koru/role-service",
-  "version": "0.1.0",
   "exports": "./src/index.ts",
   "tasks": {
     "compile:local": "deno compile -ENRW --output ./build/koru-core-role-service ./src/index.ts",

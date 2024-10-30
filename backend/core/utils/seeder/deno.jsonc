@@ -1,6 +1,5 @@
 {
   "name": "@koru/seeder",
-  "version": "0.1.0",
   "exports": "./src/index.ts",
   "tasks": {
     "run": "deno run -ENRW ./src/index.ts"

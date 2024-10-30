@@ -1,5 +1,6 @@
 export * from "./user.ts";
 
+export * from "./audit-action.ts";
 export * from "./audit-log.ts";
 export * from "./base-model.ts";
 export * from "./email.ts";

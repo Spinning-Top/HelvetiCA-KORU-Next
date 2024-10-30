@@ -80,10 +80,10 @@ export class AuthHelpers {
     });
   }
 
-  public static initJwtMiddleware(handler: Handler): MiddlewareHandler[] {
+  public static getAuthMiddlewares(handler: Handler): MiddlewareHandler[] {
     const jwtMiddleware: MiddlewareHandler = jwt({ secret: handler.getGlobalConfig().auth.jwtSecret });
 
-    const userMiddleware: MiddlewareHandler = async (c: Context, next) => {
+    const userMiddleware: MiddlewareHandler = createMiddleware(async (c: Context, next) => {
       try {
         const jwtPayload = c.get("jwtPayload") as Record<string, unknown>;
         const user = await RabbitHelpers.getUserByField("id", Number(jwtPayload.id), handler.getRabbitBreeder());
@@ -93,18 +93,12 @@ export class AuthHelpers {
           c.set("user", user.toReadResponse());
           await next();
         } else {
-          return c.json(
-            { error: "Unauthorized", message: "User not found" },
-            401,
-          );
+          return RequestHelpers.sendJsonError(c, HttpStatusCode.Unauthorized, "unauthorized", "Authentication needed to access this endpoint");
         }
-      } catch (err) {
-        return c.json(
-          { error: "Internal Server Error", message: err instanceof Error ? err.message : "Unknown error" },
-          500,
-        );
+      } catch (error: unknown) {
+        return RequestHelpers.sendJsonError(c, HttpStatusCode.InternalServerError, "error", (error as Error).message);
       }
-    };
+    });
 
     return [jwtMiddleware, userMiddleware];
   }

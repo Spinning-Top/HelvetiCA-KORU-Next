@@ -1,6 +1,5 @@
 {
   "name": "@koru/api-gateway",
-  "version": "0.1.0",
   "exports": "./src/index.ts",
   "tasks": {
     "compile:local": "deno compile -ENRW --output ./build/koru-core-api-gateway ./src/index.ts",

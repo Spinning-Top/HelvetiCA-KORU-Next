@@ -18,6 +18,26 @@ export function gatewayRequestHandler(gatewayServices: GatewayService[], handler
 
       let selectedGatewayService: GatewayService | undefined = undefined;
       let selectedEndpoint: Endpoint | undefined = undefined;
+      let urlToService: string = "";
+
+      for (const gatewayService of gatewayServices) {
+        for (const endpoint of gatewayService.getEndpoints()) {
+          const params: Record<string, string> | undefined = matchRoute(endpointUrl, endpoint.getFullUrl());
+          if (params !== undefined && endpoint.getMethod() === method) {
+            selectedGatewayService = gatewayService;
+            selectedEndpoint = endpoint;
+            urlToService = selectedEndpoint.getUrl();
+      
+            for (const [key, value] of Object.entries(params)) {
+              urlToService = urlToService.replace(`:${key}`, value);
+            }
+            break;
+          }
+        }
+        if (selectedGatewayService !== undefined) break;
+      }
+
+      /*
       for (const gatewayService of gatewayServices) {
         const endpoint: Endpoint | undefined = gatewayService.getEndpoints().find(
           (endpoint) => endpoint.getFullUrl() === endpointUrl && endpoint.getMethod() === method,
@@ -26,6 +46,8 @@ export function gatewayRequestHandler(gatewayServices: GatewayService[], handler
         selectedGatewayService = gatewayService;
         selectedEndpoint = endpoint;
       }
+      */
+
       if (selectedGatewayService === undefined || selectedEndpoint === undefined) {
         return RequestHelpers.sendJsonError(c, HttpStatusCode.NotFound, "notFound", "Endpoint not found");
       }
@@ -48,7 +70,7 @@ export function gatewayRequestHandler(gatewayServices: GatewayService[], handler
       const params = new URLSearchParams(c.req.query()).toString();
 
       // Costruisce l'URL di destinazione del servizio
-      const requestToServiceUrl = new URL(selectedGatewayService.getServiceRoot() + selectedEndpoint.getUrl());
+      const requestToServiceUrl = new URL(selectedGatewayService.getServiceRoot() + urlToService);
 
       requestToServiceUrl.search = params;
 
@@ -75,4 +97,25 @@ export function gatewayRequestHandler(gatewayServices: GatewayService[], handler
       }
     }
   };
+}
+
+function matchRoute(requestPath: string, endpointPath: string): Record<string, string> | undefined {
+  const requestSegments = requestPath.split('/');
+  const endpointSegments = endpointPath.split('/');
+
+  if (requestSegments.length !== endpointSegments.length) return undefined;
+
+  const params: Record<string, string> = {};
+
+  for (let i = 0; i < requestSegments.length; i++) {
+    if (endpointSegments[i].startsWith(':')) {
+      // È un parametro dinamico
+      const paramName = endpointSegments[i].slice(1);
+      params[paramName] = requestSegments[i];
+    } else if (endpointSegments[i] !== requestSegments[i]) {
+      // Se il segmento non corrisponde, ritorna undefined
+      return undefined;
+    }
+  }
+  return params;
 }

@@ -28,6 +28,7 @@
           "backend/core/packages/database",
           "backend/core/packages/global-config",
           "backend/core/packages/handler",
+          "backend/core/packages/helpers/audit-log-helpers",
           "backend/core/packages/helpers/auth-helpers",
           "backend/core/packages/helpers/crypto-helpers",
           "backend/core/packages/helpers/inquiry-helpers",

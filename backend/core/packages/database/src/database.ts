@@ -8,10 +8,10 @@ import {
   type Repository,
 } from "typeorm";
 
+import { AuditLogHelpers } from "@koru/audit-log-helpers";
 import { coreModels } from "@koru/core-models";
 import { featureModels } from "@koru/feature-models";
 import type { GlobalConfig } from "@koru/global-config";
-import { DatabaseConnection } from "./database-connection.ts";
 
 export class Database {
   private dataSource: DataSource;
@@ -34,7 +34,7 @@ export class Database {
 
   public async connect(): Promise<DataSource> {
     this.dataSource = await this.dataSource.initialize();
-    DatabaseConnection.setDataSource(this.dataSource);
+    AuditLogHelpers.initialize(this.dataSource);
     return this.dataSource;
   }
 

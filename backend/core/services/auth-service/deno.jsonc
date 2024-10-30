@@ -1,6 +1,5 @@
 {
   "name": "@koru/auth-service",
-  "version": "0.1.0",
   "exports": "./src/index.ts",
   "tasks": {
     "compile:local": "deno compile -ENRW --output ./build/koru-core-auth-service ./src/index.ts",

@@ -48,6 +48,10 @@ export class Endpoint {
   public setFullUrl(fullUrl: string): void {
     this.fullUrl = fullUrl;
   }
+
+  public setUrl(url: string): void {
+    this.url = url;
+  }
 }
 
 export enum EndpointMethod {

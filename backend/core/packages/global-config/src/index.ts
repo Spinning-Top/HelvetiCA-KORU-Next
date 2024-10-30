@@ -33,6 +33,9 @@ export interface GlobalConfig {
     username: string;
   };
   environment: "production" | "development";
+  koru: {
+    version: string;
+  };
   rabbitMq: {
     host: string;
     password: string;
@@ -53,6 +56,7 @@ export function getGlobalConfig(): GlobalConfig {
   if (conf.DB_PORT == undefined) throw new Error("DB_PORT is not defined");
   if (conf.DB_USERNAME == undefined) throw new Error("DB_USERNAME is not defined");
   if (conf.ENV == undefined) throw new Error("ENV is not defined");
+  if (conf.KORU_VERSION == undefined) throw new Error("KORU_VERSION is not defined");
   if (conf.RABBITMQ_HOST == undefined) throw new Error("RABBITMQ_HOST is not defined");
   if (conf.RABBITMQ_PASSWORD == undefined) throw new Error("RABBITMQ_PASSWORD is not defined");
   if (conf.RABBITMQ_REQUEST_TIMEOUT == undefined) throw new Error("RABBITMQ_REQUEST_TIMEOUT is not defined");
@@ -74,6 +78,9 @@ export function getGlobalConfig(): GlobalConfig {
       username: conf.DB_USERNAME,
     },
     environment: conf.ENV as "production" | "development",
+    koru: {
+      version: conf.KORU_VERSION,
+    },
     rabbitMq: {
       host: conf.RABBITMQ_HOST,
       password: conf.RABBITMQ_PASSWORD,

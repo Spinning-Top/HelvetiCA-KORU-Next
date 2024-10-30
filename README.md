@@ -2,6 +2,4 @@
 
 ---
 
-AUTH HELPERS
-
 TODOS
