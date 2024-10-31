@@ -14,13 +14,7 @@ export function createDummyEndpoint(handler: Handler): Endpoint {
   const endpointHandler: (c: Context) => void = async (c: Context) => {
     try {
       // get the user from the context
-      const user: User | undefined = c.get("user");
-      // check if the user exists
-      if (user === undefined) {
-        // return an error
-        return RequestHelpers.sendJsonError(c, HttpStatusCode.Unauthorized, "unauthorized", "Authentication needed to access this endpoint");
-      }
-
+      const user: User = c.get("user");
       // create a dummy controller instance
       const dummyController: DummyController = new DummyController(handler);
       // get the body from the request

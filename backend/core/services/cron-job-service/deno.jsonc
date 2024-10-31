@@ -1,0 +1,16 @@
+{
+  "name": "@koru/cron-job-service",
+  "exports": "./src/index.ts",
+  "tasks": {
+    "compile:local": "deno compile -ENRW --output ./build/koru-core-cron-job-service ./src/index.ts",
+    "compile:server": "deno compile -ENRW --target x86_64-unknown-linux-gnu --output ./build/koru-core-cron-job-service ./src/index.ts",
+    "dev": "ENV=development ENV_PATH=../../../ LOG_PATH=./logs/ deno run -ENRW ./src/index.ts --reload"
+  },
+  "imports": {
+    // jsr
+    "cron-schedule": "jsr:@p4sca1/cron-schedule@5.0.3",
+    "hono": "jsr:@hono/hono@^4.6.7",
+    // npm
+    "class-validator": "npm:class-validator@^0.13.1"
+  }
+}

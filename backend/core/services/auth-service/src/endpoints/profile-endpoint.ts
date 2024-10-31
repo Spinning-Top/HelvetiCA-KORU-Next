@@ -11,12 +11,7 @@ export function profileEndpoint(_handler: Handler): Endpoint {
   const endpointHandler: (c: Context) => void = (c: Context) => {
     try {
       // get the user from the context
-      const user: User | undefined = c.get("user");
-      // check if the user exists
-      if (user === undefined) {
-        // return an error
-        return RequestHelpers.sendJsonError(c, HttpStatusCode.Unauthorized, "unauthorized", "Authentication needed to access this endpoint");
-      }
+      const user: User = c.get("user");
       // return the user from the request
       return RequestHelpers.sendJsonResponse(c, { user });
     } catch (error) {

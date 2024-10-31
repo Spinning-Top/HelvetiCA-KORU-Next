@@ -12,16 +12,10 @@ export function refreshTokenEndpoint(handler: Handler): Endpoint {
 
   const endpointHandler: (c: Context) => void = async (c: Context) => {
     try {
+      // get the user from the context
+      const user: User = c.get("user");
       // get the body from the request
       const body: Record<string, unknown> = await c.req.parseBody();
-      // get the user from the context
-      const user: User | undefined = c.get("user");
-      // check if the user exists
-      if (user === undefined) {
-        // return an error
-        return RequestHelpers.sendJsonError(c, HttpStatusCode.Unauthorized, "unauthorized", "Authentication needed to access this endpoint");
-      }
-
       // get the refresh token from the request
       const refreshToken: string | undefined = body.refreshToken as string | undefined;
       // if refresh token is undefined

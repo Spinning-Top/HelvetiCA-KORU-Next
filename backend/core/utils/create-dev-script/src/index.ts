@@ -51,7 +51,7 @@ function main() {
 
     for (const service of services.filter((service) => service.enabled === true)) {
       renderedServices.push(renderService(service));
-      pids.push("$" + service.name.toUpperCase().replace(" ", "_"));
+      pids.push("$" + service.name.toUpperCase().replace(/ /g, "_"));
     }
   }
 
@@ -65,8 +65,8 @@ function main() {
 function renderService(service: { name: string; path: string; port: string; enabled: boolean }): string {
   return SERVICE_TEMPLATE.replace(/%COMMENT_NAME%/g, service.name.toLowerCase())
     .replace(/%PATH%/g, service.path)
-    .replace(/%SERVICE_NAME%/g, service.name.toLowerCase().replace(" ", "-"))
-    .replace(/%PID_NAME%/g, service.name.toUpperCase().replace(" ", "_"))
+    .replace(/%SERVICE_NAME%/g, service.name.toLowerCase().replace(/ /g, "-"))
+    .replace(/%PID_NAME%/g, service.name.toUpperCase().replace(/ /g, "_"))
     .replace(/%NAME%/g, service.name);
 }
 

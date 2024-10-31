@@ -41,7 +41,7 @@
         // services
           "backend/core/services/api-gateway",
           "backend/core/services/auth-service",
-          "backend/core/services/cron-service",
+          "backend/core/services/cron-job-service",
           "backend/core/services/mail-service",
           "backend/core/services/notification-service",
           "backend/core/services/role-service",

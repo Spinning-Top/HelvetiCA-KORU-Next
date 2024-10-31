@@ -12,8 +12,8 @@
     "enabled": true
   },
   {
-    "name": "Cron Service",
-    "path": "backend/core/services/cron-service",
+    "name": "Cron Job Service",
+    "path": "backend/core/services/cron-job-service",
     "port": 9202,
     "enabled": true
   },
