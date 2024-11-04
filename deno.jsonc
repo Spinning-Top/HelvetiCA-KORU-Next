@@ -26,6 +26,7 @@
       // core
         // packages
           "backend/core/packages/base-service",
+          "backend/core/packages/crud-template",
           "backend/core/packages/database",
           "backend/core/packages/global-config",
           "backend/core/packages/handler",

@@ -1,29 +1,24 @@
+import { CronJob } from "@koru/core-models";
+import { CrudTemplate } from "@koru/crud-template";
+import { EndpointType } from "@koru/base-service";
 import { MicroService } from "@koru/micro-service";
 
-import {
-  createCronJobEndpoint,
-  deleteCronJobEndpoint,
-  readCronJobEndpoint,
-  readCronJobsEndpoint,
-  updateCronJobEndpoint,
-} from "./endpoints/index.ts";
+import { CronJobController } from "./controllers/index.ts";
 
 const microService: MicroService = new MicroService("Cron Job Service", 9202);
 
 export function startService(): Promise<void> {
   // endpoints
-  microService.setEndpoints([
-    // read cron jobs endpoint
-    readCronJobsEndpoint(microService.getHandler()),
-    // read cron job endpoint
-    readCronJobEndpoint(microService.getHandler()),
-    // create cron job endpoint
-    createCronJobEndpoint(microService.getHandler()),
-    // update cron job endpoint
-    updateCronJobEndpoint(microService.getHandler()),
-    // delete cron job endpoint
-    deleteCronJobEndpoint(microService.getHandler()),
-  ]);
+  microService.setEndpoints(
+    CrudTemplate.getTemplate(
+      microService.getHandler(),
+      "/cron-jobs",
+      "cronJob",
+      CronJob,
+      CronJobController,
+      [EndpointType.Create, EndpointType.ReadAll, EndpointType.Read, EndpointType.Update, EndpointType.Delete],
+    ),
+  );
 
   // start service
   return microService.start();

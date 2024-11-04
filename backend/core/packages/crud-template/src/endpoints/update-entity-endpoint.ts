@@ -1,42 +1,45 @@
 import type { Context } from "hono";
 import { ValidationError } from "class-validator";
 
-import type { CronJob, User } from "@koru/core-models";
-import { Endpoint, EndpointMethod } from "@koru/base-service";
+import { type BaseController, Endpoint, EndpointMethod } from "@koru/base-service";
+import type { EntityModel, User } from "@koru/core-models";
 import type { Handler } from "@koru/handler";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
 
-import { CronJobController } from "../controllers/index.ts";
-
-export function updateCronJobEndpoint(handler: Handler): Endpoint {
-  const endpoint: Endpoint = new Endpoint("/cron-jobs/:id", EndpointMethod.PUT, true, ["cronJob.update"]);
+export function updateEntityEndpoint<T extends EntityModel, U extends BaseController<T>>(
+  handler: Handler,
+  url: string,
+  allowedPermissions: string[],
+  ControllerClass: new (handler: Handler) => U,
+): Endpoint {
+  const endpoint: Endpoint = new Endpoint(url, EndpointMethod.PUT, true, allowedPermissions);
 
   const endpointHandler: (c: Context) => void = async (c: Context) => {
     try {
       // get the user from the context
       const user: User = c.get("user");
-      // create a cron job controller instance
-      const cronJobController: CronJobController = new CronJobController(handler);
-      // get the cron job id from the request
+      // create an entity controller instance
+      const entityController: U = new ControllerClass(handler);
+      // get the entity id from the request
       const id: number = Number(c.req.param("id"));
       // if id is not a number
       if (isNaN(id)) {
         // return an error
-        return RequestHelpers.sendJsonError(c, HttpStatusCode.BadRequest, "invalidCronJobId", "Invalid cron job id");
+        return RequestHelpers.sendJsonError(c, HttpStatusCode.BadRequest, "invalidId", "Invalid id provided");
       }
-      // find the cron job by id
-      const cronJob: CronJob | undefined = await cronJobController.getEntityById(id);
-      // if cron job is not found
-      if (cronJob === undefined) {
+      // find the entity by id
+      const entity: T | undefined = await entityController.getEntityById(id);
+      // if entity is not found
+      if (entity === undefined) {
         // return an error
-        return RequestHelpers.sendJsonError(c, HttpStatusCode.NotFound, "notFound", `Cron job with id ${id} not found`);
+        return RequestHelpers.sendJsonError(c, HttpStatusCode.NotFound, "notFound", `Entity with id ${id} not found`);
       }
       // get the body from the request
       const body: Record<string, unknown> = await c.req.parseBody();
-      // update the cron job from the request
-      cronJob.updateFromRequest(body);
-      // save the updated cron job
-      const saveResult: CronJob | ValidationError[] | string = await cronJobController.updateEntity(cronJob, user);
+      // update the entity from the request
+      entity.updateFromRequest(body);
+      // save the updated entity
+      const saveResult: T | ValidationError[] | string = await entityController.updateEntity(entity, user);
       // if the save result is an array of validation errors
       if (Array.isArray(saveResult) && saveResult.length > 0 && saveResult[0] instanceof ValidationError) {
         // return the validation errors

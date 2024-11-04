@@ -60,3 +60,12 @@ export enum EndpointMethod {
   PUT = "PUT",
   DELETE = "DELETE",
 }
+
+export enum EndpointType {
+  Create = "Create",
+  ReadAll = "ReadAll",
+  Read = "Read",
+  ReadDeleted = "ReadDeleted",
+  Update = "Update",
+  Delete = "Delete",
+}

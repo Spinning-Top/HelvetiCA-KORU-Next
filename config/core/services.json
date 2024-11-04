@@ -1,13 +1,13 @@
 [
   {
     "name": "API Gateway",
-    "path": "core/services/api-gateway",
+    "path": "backend/core/services/api-gateway",
     "port": 9100,
     "enabled": true
   },
   {
     "name": "Auth Service",
-    "path": "core/services/auth-service",
+    "path": "backend/core/services/auth-service",
     "port": 9201,
     "enabled": true
   },

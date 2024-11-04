@@ -14,11 +14,11 @@ trap cleanup SIGINT
 # CORE
 
 # api gateway
-cd core/services/api-gateway && deno task dev & API_GATEWAY=$!
+cd backend/core/services/api-gateway && deno task dev & API_GATEWAY=$!
 echo "API Gateway started with PID $API_GATEWAY"
 
 # auth service
-cd core/services/auth-service && deno task dev & AUTH_SERVICE=$!
+cd backend/core/services/auth-service && deno task dev & AUTH_SERVICE=$!
 echo "Auth Service started with PID $AUTH_SERVICE"
 
 # cron job service

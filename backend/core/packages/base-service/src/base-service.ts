@@ -38,6 +38,7 @@ export class BaseService {
 
       // error handler
       this.hono.onError((err: Error | HTTPResponseError, c: Context) => {
+        // TODO
         this.handler.getLog().error(`Request error: ${err.message}`);
         return RequestHelpers.sendJsonError(c, HttpStatusCode.InternalServerError, "requestError", err.message);
       });

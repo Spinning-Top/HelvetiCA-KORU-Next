@@ -19,14 +19,14 @@ export function updateUserEndpoint(handler: Handler): Endpoint {
       // if id is not a number
       if (isNaN(id)) {
         // return an error
-        return RequestHelpers.sendJsonError(c, HttpStatusCode.BadRequest, "invalidUserId", "Invalid user id");
+        return RequestHelpers.sendJsonError(c, HttpStatusCode.BadRequest, "invalidId", "Invalid id provided");
       }
       // find the user by id
       const userToUpdate: User | undefined = await userController.getEntityById(id);
       // if user is not found
       if (userToUpdate === undefined) {
         // return an error
-        return RequestHelpers.sendJsonError(c, HttpStatusCode.NotFound, "notFound", `User with id ${id} not found`);
+        return RequestHelpers.sendJsonError(c, HttpStatusCode.NotFound, "notFound", `Entity with id ${id} not found`);
       }
       // get the body from the request
       const body: Record<string, unknown> = await c.req.parseBody();
