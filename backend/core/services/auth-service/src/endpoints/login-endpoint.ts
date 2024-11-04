@@ -1,12 +1,12 @@
+// third party
 import type { Context } from "hono";
-import type { JWTPayload } from "hono/utils/jwt/types";
-import { sign } from "hono/jwt";
 
+// project
 import { CryptoHelpers } from "@koru/crypto-helpers";
+import { DatabaseHelpers } from "@koru/database-helpers";
 import { Endpoint, EndpointMethod } from "@koru/base-service";
 import type { Handler } from "@koru/handler";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
-import { RabbitHelpers } from "@koru/rabbit-helpers";
 import { User } from "@koru/core-models";
 
 export function loginEndpoint(handler: Handler): Endpoint {
@@ -31,7 +31,7 @@ export function loginEndpoint(handler: Handler): Endpoint {
         return RequestHelpers.sendJsonError(c, HttpStatusCode.BadRequest, "passwordRequired", "Password field is required");
       }
       // get the user by email
-      const user: User | undefined = await RabbitHelpers.getUserByField("email", email, handler.getRabbitBreeder());
+      const user: User | undefined = await DatabaseHelpers.getEntityByField(handler, User, "email", email);
       // if necessary fields are not defined
       if (user == undefined || user.id == undefined || user.email == undefined || user.password == undefined) {
         // return the error
@@ -45,32 +45,13 @@ export function loginEndpoint(handler: Handler): Endpoint {
         return RequestHelpers.sendJsonError(c, HttpStatusCode.Unauthorized, "invalidPassword", "Password is not valid");
       }
       // create the access token
-      const accessTokenPayload: JWTPayload = {
-        id: user.id,
-        email: user.email,
-        exp: Math.floor(Date.now() / 1000) + handler.getGlobalConfig().auth.jwtAccessTokenDuration,
-      };
-      const accessToken: string = await sign(accessTokenPayload, handler.getGlobalConfig().auth.jwtSecret);
-      // create the refresh token
-      const refreshTokenPayload: JWTPayload = {
-        id: user.id,
-        email: user.email,
-        exp: Math.floor(Date.now() / 1000) + handler.getGlobalConfig().auth.jwtRefreshTokenDuration,
-      };
-      const refreshToken: string = await sign(refreshTokenPayload, handler.getGlobalConfig().auth.jwtSecret);
+      const accessToken: string = await CryptoHelpers.createAccessToken(handler, user);
+      // create the refresh token and its expiration
+      const { refreshToken, expiresAt } = await CryptoHelpers.createRefreshToken(handler, user);
       // add refresh token to the user
-      user.addRefreshToken(refreshToken);
-      // save user with rabbit
-      const savedUser: User | undefined = await handler
-        .getRabbitBreeder()
-        .sendRequestAndAwaitResponse<User>("userUpdate", "userUpdateResponse", user.toJson(), (data: Record<string, unknown>) => {
-          return User.createFromJsonData(data, new User());
-        });
-      // check if the user was saved
-      if (savedUser === undefined) {
-        // return the error
-        return RequestHelpers.sendJsonError(c, HttpStatusCode.InternalServerError, "error", "User update failed");
-      }
+      user.addRefreshToken(refreshToken, expiresAt);
+      // update the user
+      await DatabaseHelpers.updateEntity(handler, User, user);
       // return the success response
       return RequestHelpers.sendJsonResponse(c, { accessToken, refreshToken });
     } catch (error) {

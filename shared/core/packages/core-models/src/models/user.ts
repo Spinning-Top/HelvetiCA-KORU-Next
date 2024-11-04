@@ -1,13 +1,16 @@
+// third party
 import { BeforeInsert, BeforeUpdate, Column, Entity, Index, JoinTable, ManyToMany, OneToMany } from "typeorm";
 import { Expose, Transform } from "class-transformer";
 import { IsEmail, Length } from "class-validator";
 
-import { BaseModel } from "./base-model.ts";
+// project
 import { CryptoHelpers } from "@koru/crypto-helpers";
-import { getGlobalConfig, type GlobalConfig } from "@koru/global-config";
+
+// local
+import { BaseModel } from "./base-model.ts";
 import { LinkedRole } from "./linked-role.ts";
-import { Role } from "./role.ts";
 import { RefreshToken } from "./refresh-token.ts";
+import { Role } from "./role.ts";
 
 @Entity()
 export class User extends BaseModel {
@@ -49,7 +52,7 @@ export class User extends BaseModel {
   @Transform(({ value }) => (value ? (value as Role[]).map((role) => new LinkedRole(role)) : null), { toPlainOnly: true })
   roles!: Role[];
 
-  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user, { cascade: true })
+  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user, { cascade: true, orphanedRowAction: "delete" })
   @Expose({ groups: ["update", "fromJson", "toJson"] })
   refreshTokens!: RefreshToken[];
 
@@ -71,15 +74,8 @@ export class User extends BaseModel {
     this.isActive = true;
   }
 
-  public addRefreshToken(token: string): void {
+  public addRefreshToken(token: string, expiresAt: Date): void {
     if (this.refreshTokens === undefined) this.refreshTokens = [];
-
-    const globalConfig: GlobalConfig = getGlobalConfig();
-
-    if (CryptoHelpers.isStringHashed(token) === false) token = CryptoHelpers.hashPassword(token);
-
-    const expiresAt: Date = new Date(Date.now() + globalConfig.auth.jwtRefreshTokenDuration);
-    expiresAt.setHours(23, 59, 59, 999);
 
     const newRefreshToken: RefreshToken = new RefreshToken(this, token, expiresAt);
     this.refreshTokens.push(newRefreshToken);
@@ -88,16 +84,13 @@ export class User extends BaseModel {
   public removeRefreshToken(token: string): void {
     if (this.refreshTokens === undefined) this.refreshTokens = [];
 
-    if (CryptoHelpers.isStringHashed(token) === false) token = CryptoHelpers.hashPassword(token);
-
-    this.refreshTokens = this.refreshTokens.filter((refreshToken) => refreshToken.token !== token);
+    this.refreshTokens = this.refreshTokens.filter((refreshToken) => CryptoHelpers.compareStringWithHash(token, refreshToken.token) === false);
   }
 
   public hasRefreshToken(token: string): boolean {
     if (this.refreshTokens === undefined) this.refreshTokens = [];
 
-    token = CryptoHelpers.hashPassword(token);
-    return this.refreshTokens.some((refreshToken) => refreshToken.token === token);
+    return this.refreshTokens.some((refreshToken) => CryptoHelpers.compareStringWithHash(token, refreshToken.token) === true);
   }
 
   public hasPermission(permission: string): boolean {

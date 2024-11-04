@@ -1,5 +1,8 @@
+// third party
 import type { Context } from "hono";
 
+// project
+import { DatabaseHelpers } from "@koru/database-helpers";
 import { Endpoint, EndpointMethod } from "@koru/base-service";
 import type { Handler } from "@koru/handler";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
@@ -23,17 +26,8 @@ export function logoutEndpoint(handler: Handler): Endpoint {
       }
       // remove the refresh token from the user
       user.removeRefreshToken(refreshToken);
-      // save user with rabbit
-      const savedUser: User | undefined = await handler
-        .getRabbitBreeder()
-        .sendRequestAndAwaitResponse<User>("userUpdate", "userUpdateResponse", user.toJson(), (data: Record<string, unknown>) => {
-          return User.createFromJsonData(data, new User());
-        });
-      // check if the user was saved
-      if (savedUser === undefined) {
-        // return the error
-        return RequestHelpers.sendJsonError(c, HttpStatusCode.InternalServerError, "error", "User update failed");
-      }
+      // update the user
+      await DatabaseHelpers.updateEntity(handler, User, user);
       // return the success response
       return RequestHelpers.sendJsonResponse(c, { status: "Logged out successfully" });
     } catch (error) {

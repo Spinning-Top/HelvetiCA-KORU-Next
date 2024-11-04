@@ -12,10 +12,9 @@ export class RefreshToken {
   id!: number;
 
   @Index()
-  @ManyToOne(() => User, (user) => user.refreshTokens, { onDelete: "CASCADE" })
+  @ManyToOne(() => User, (user) => user.refreshTokens, { onDelete: "CASCADE", orphanedRowAction: "delete" })
   @Expose({ groups: ["fromJson", "toJson"] })
-  // @Transform(({ value }) => (value ? (value as User[]).map((role) => new LinkedUser(role)) : null), { toPlainOnly: true })
-  @Transform(({ value }) => (value ? new LinkedUser(value) : null), { toPlainOnly: true })
+  @Transform(({ value }) => new LinkedUser(value), { toPlainOnly: true })
   user!: User;
 
   @Index({ unique: true })

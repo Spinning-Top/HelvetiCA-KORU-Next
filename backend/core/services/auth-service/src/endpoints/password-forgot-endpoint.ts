@@ -1,12 +1,13 @@
+// third party
 import type { Context } from "hono";
-import type { JWTPayload } from "hono/utils/jwt/types";
-import { sign } from "hono/jwt";
 
+// project
+import { CryptoHelpers } from "@koru/crypto-helpers";
+import { DatabaseHelpers } from "@koru/database-helpers";
 import { Endpoint, EndpointMethod } from "@koru/base-service";
 import type { Handler } from "@koru/handler";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
-import { RabbitHelpers } from "@koru/rabbit-helpers";
-import type { User } from "@koru/core-models";
+import { User } from "@koru/core-models";
 
 export function passwordForgotEndpoint(handler: Handler): Endpoint {
   const endpoint: Endpoint = new Endpoint("/password-forgot", EndpointMethod.POST);
@@ -23,19 +24,14 @@ export function passwordForgotEndpoint(handler: Handler): Endpoint {
         return RequestHelpers.sendJsonError(c, HttpStatusCode.BadRequest, "emailRequired", "E-mail field is required");
       }
       // get the user by email
-      const user: User | undefined = await RabbitHelpers.getUserByField("email", email, handler.getRabbitBreeder());
+      const user: User | undefined = await DatabaseHelpers.getEntityByField(handler, User, "email", email);
       // if necessary fields are not defined
       if (user == undefined || user.id == undefined || user.email == undefined || user.password == undefined) {
         // return the error
         return RequestHelpers.sendJsonError(c, HttpStatusCode.Unauthorized, "userNotFound", "User not found with the provided e-mail");
       }
       // create the recovery token
-      const recoveryTokenPayload: JWTPayload = {
-        id: user.id,
-        email: user.email,
-        exp: Math.floor(Date.now() / 1000) + handler.getGlobalConfig().auth.jwtRecoveryTokenDuration,
-      };
-      const recoveryToken = sign(recoveryTokenPayload, handler.getGlobalConfig().auth.jwtSecret);
+      const recoveryToken: string = await CryptoHelpers.createRecoveryToken(handler, user);
       // TODOMAIL Invia recoveryToken via email all'utente: sendRecoveryEmail(user.email, recoveryToken);
       console.log(recoveryToken);
       // send the success response

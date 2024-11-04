@@ -1,11 +1,12 @@
+// third party
 import type { Context } from "hono";
-import type { JWTPayload } from "hono/utils/jwt/types";
-import { verify } from "hono/jwt";
 
+// project
+import { CryptoHelpers } from "@koru/crypto-helpers";
+import { DatabaseHelpers } from "@koru/database-helpers";
 import { Endpoint, EndpointMethod } from "@koru/base-service";
 import type { Handler } from "@koru/handler";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
-import { RabbitHelpers } from "@koru/rabbit-helpers";
 import { User } from "@koru/core-models";
 
 export function passwordResetEndpoint(handler: Handler): Endpoint {
@@ -32,38 +33,25 @@ export function passwordResetEndpoint(handler: Handler): Endpoint {
 
       try {
         // verify the recovery token
-        const decodedToken: JWTPayload = await verify(recoveryToken, handler.getGlobalConfig().auth.jwtSecret);
-        // check if the decoded token is a JwtPayload object and contains the id
-        if (typeof decodedToken === "object" && decodedToken !== null && "id" in decodedToken) {
-          // get the user by id in the token
-          const user: User | undefined = await RabbitHelpers.getUserByField(
-            "id",
-            Number(decodedToken.id),
-            handler.getRabbitBreeder(),
-          );
-          // if the user is not found
-          if (user === undefined) {
-            // return the error
-            return RequestHelpers.sendJsonError(c, HttpStatusCode.NotFound, "userNotFound", "User not found");
-          }
-          // set the user new password
-          user.password = newPassword;
-          // save user with rabbit
-          const savedUser: User | undefined = await handler
-            .getRabbitBreeder()
-            .sendRequestAndAwaitResponse<User>("userUpdate", "userUpdateResponse", user.toJson(), (data: Record<string, unknown>) => {
-              return User.createFromJsonData(data, new User());
-            });
-          // check if the user was saved
-          if (savedUser === undefined) {
-            // return the error
-            return RequestHelpers.sendJsonError(c, HttpStatusCode.InternalServerError, "error", "User update failed");
-          }
-          // return the success response
-          return RequestHelpers.sendJsonUpdated(c);
-        } else {
+        const isTokenValid: boolean = await CryptoHelpers.verifyToken(handler, recoveryToken);
+        // if the token is not valid
+        if (isTokenValid === false) {
+          // return the error
           return RequestHelpers.sendJsonError(c, HttpStatusCode.Unauthorized, "invalidRefreshToken", "Invalid or expired refresh token");
         }
+        // get the user by id in the token
+        const user: User | undefined = await DatabaseHelpers.getEntityById(handler, User, Number(decodedToken.id));
+        // if the user is not found
+        if (user === undefined) {
+          // return the error
+          return RequestHelpers.sendJsonError(c, HttpStatusCode.NotFound, "userNotFound", "User not found");
+        }
+        // set the user new password
+        user.password = newPassword;
+        // update the user
+        await DatabaseHelpers.updateEntity(handler, User, user);
+        // return the success response
+        return RequestHelpers.sendJsonUpdated(c);
       } catch (_error: unknown) {
         return RequestHelpers.sendJsonError(c, HttpStatusCode.Unauthorized, "invalidRefreshToken", "Invalid or expired refresh token");
       }

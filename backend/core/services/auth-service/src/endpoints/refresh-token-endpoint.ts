@@ -1,11 +1,13 @@
+// third party
 import type { Context } from "hono";
-import type { JWTPayload } from "hono/utils/jwt/types";
-import { sign, verify } from "hono/jwt";
 
+// project
+import { CryptoHelpers } from "@koru/crypto-helpers";
+import { DatabaseHelpers } from "@koru/database-helpers";
 import { Endpoint, EndpointMethod } from "@koru/base-service";
 import type { Handler } from "@koru/handler";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
-import type { User } from "@koru/core-models";
+import { User } from "@koru/core-models";
 
 export function refreshTokenEndpoint(handler: Handler): Endpoint {
   const endpoint: Endpoint = new Endpoint("/refresh-token", EndpointMethod.POST, true);
@@ -24,30 +26,32 @@ export function refreshTokenEndpoint(handler: Handler): Endpoint {
         return RequestHelpers.sendJsonError(c, HttpStatusCode.BadRequest, "refreshTokenRequired", "Refresh token field is required");
       }
       // check if the refresh token exists in the database
-      const tokenExists: boolean = await user.hasRefreshToken(refreshToken);
+      const tokenExists: boolean = user.hasRefreshToken(refreshToken);
       // if the token does not exist
       if (tokenExists === false) {
         // return the error
         return RequestHelpers.sendJsonError(c, HttpStatusCode.Forbidden, "invalidRefreshToken", "Refresh token is not valid");
       }
-
       try {
         // verify the refresh token
-        const decodedToken: JWTPayload = await verify(refreshToken, handler.getGlobalConfig().auth.jwtSecret);
-        // check if the decoded token is a JwtPayload object and contains the id
-        if (typeof decodedToken === "object" && decodedToken !== null && "id" in decodedToken) {
-          // create a new access token
-          const newAccessTokenPayload: JWTPayload = {
-            id: decodedToken.id,
-            exp: Math.floor(Date.now() / 1000) + handler.getGlobalConfig().auth.jwtAccessTokenDuration,
-          };
-          const newAccessToken = sign(newAccessTokenPayload, handler.getGlobalConfig().auth.jwtSecret);
-          // return the new access token
-          return RequestHelpers.sendJsonResponse(c, { accessToken: newAccessToken });
-        } else {
-          // otherwise, return the error
+        const isTokenValid: boolean = await CryptoHelpers.verifyToken(handler, refreshToken, user);
+        // if the token is not valid
+        if (isTokenValid === false) {
+          // return the error
           return RequestHelpers.sendJsonError(c, HttpStatusCode.Forbidden, "invalidRefreshToken", "Refresh token is not valid");
         }
+        // otherwise, remove the old refresh token from the user
+        user.removeRefreshToken(refreshToken);
+        // create the new access token
+        const newAccessToken: string = await CryptoHelpers.createAccessToken(handler, user);
+        // create the new refresh token and its expiration
+        const { refreshToken: newRefreshToken, expiresAt } = await CryptoHelpers.createRefreshToken(handler, user);
+        // add the new refresh token to the user
+        user.addRefreshToken(newRefreshToken, expiresAt);
+        // update the user
+        await DatabaseHelpers.updateEntity(handler, User, user);
+        // return the success response
+        return RequestHelpers.sendJsonResponse(c, { accessToken: newAccessToken, refreshToken: newRefreshToken });
       } catch (_error: unknown) {
         // otherwise, return the error
         return RequestHelpers.sendJsonError(c, HttpStatusCode.Forbidden, "invalidRefreshToken", "Refresh token is not valid");

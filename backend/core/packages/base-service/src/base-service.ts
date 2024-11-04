@@ -5,6 +5,14 @@ import type { Endpoint } from "./endpoint.ts";
 import { Handler } from "@koru/handler";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
 import type { HTTPResponseError } from "hono/types";
+import {
+  JwtAlgorithmNotImplemented,
+  JwtTokenExpired,
+  JwtTokenInvalid,
+  JwtTokenIssuedAt,
+  JwtTokenNotBefore,
+  JwtTokenSignatureMismatched,
+} from "hono/utils/jwt/types";
 
 export class BaseService {
   protected abortController: AbortController;
@@ -38,7 +46,20 @@ export class BaseService {
 
       // error handler
       this.hono.onError((err: Error | HTTPResponseError, c: Context) => {
-        // TODO
+        // check if the error is an instance of a JWT error
+        if (
+          err instanceof JwtAlgorithmNotImplemented ||
+          err instanceof JwtTokenInvalid ||
+          err instanceof JwtTokenNotBefore ||
+          err instanceof JwtTokenExpired ||
+          err instanceof JwtTokenIssuedAt ||
+          err instanceof JwtTokenSignatureMismatched
+        ) {
+          // log the JWT error
+          this.handler.getLog().warn(`JWT Error: ${err.message}`);
+          return RequestHelpers.sendJsonError(c, HttpStatusCode.Unauthorized, "unauthorized", err.message);
+        }
+        // otherwise log a generic error
         this.handler.getLog().error(`Request error: ${err.message}`);
         return RequestHelpers.sendJsonError(c, HttpStatusCode.InternalServerError, "requestError", err.message);
       });

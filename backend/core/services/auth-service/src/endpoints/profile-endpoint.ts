@@ -1,5 +1,7 @@
+// third party
 import type { Context } from "hono";
 
+// project
 import { Endpoint, EndpointMethod } from "@koru/base-service";
 import type { Handler } from "@koru/handler";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
@@ -13,7 +15,7 @@ export function profileEndpoint(_handler: Handler): Endpoint {
       // get the user from the context
       const user: User = c.get("user");
       // return the user from the request
-      return RequestHelpers.sendJsonResponse(c, { user });
+      return RequestHelpers.sendJsonResponse(c, { user: user.toReadResponse() });
     } catch (error) {
       console.error(error);
       return RequestHelpers.sendJsonError(c, HttpStatusCode.InternalServerError, "error", (error as Error).message);

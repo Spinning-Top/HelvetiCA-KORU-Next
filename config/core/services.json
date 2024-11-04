@@ -15,19 +15,19 @@
     "name": "Cron Job Service",
     "path": "backend/core/services/cron-job-service",
     "port": 9202,
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "Mail Service",
     "path": "backend/core/services/mail-service",
     "port": 9203,
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "Notification Service",
     "path": "backend/core/services/notification-service",
     "port": 9204,
-    "enabled": true
+    "enabled": false
   },
   {
     "name": "Role Service",
