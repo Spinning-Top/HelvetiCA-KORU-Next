@@ -11,7 +11,7 @@ import { UserController } from "../controllers/index.ts";
 
 export function userReadRabbit(handler: Handler): Rabbit<User | undefined> {
   // create a new rabbit instance for the user read
-  const rabbit: Rabbit<User | undefined> = new Rabbit<User | undefined>("userRead");
+  const rabbit: Rabbit<User | undefined> = new Rabbit<User | undefined>("userReadRequest");
   // set the response handler for the user read
   rabbit.setResponseHandler(async (msg: ConsumeMessage): Promise<User | undefined> => {
     // create a user controller instance
@@ -20,19 +20,14 @@ export function userReadRabbit(handler: Handler): Rabbit<User | undefined> {
     const parameters: Record<string, unknown> = JSON.parse(msg.content.toString());
     // if id is provided in the parameters
     if (parameters.id !== undefined) {
-      handler.getLog().info(`Searching for user with id: ${parameters.id}`);
       // find the user by id
       const user: User | undefined = await userController.getEntityById(Number(parameters.id));
+      if (user === undefined) handler.getLog().warn(`User with id ${parameters.id} not found`);
       return user;
     } else if (parameters.email !== undefined) {
-      handler.getLog().info(`Searching for user with email: ${parameters.email}`);
       // otherwise if email is provided, find the user by email
       const user: User | undefined = await userController.getEntityByField("email", parameters.email as string);
-      if (user !== undefined) {
-        handler.getLog().info(`User found: ${user.email}`);
-      } else {
-        handler.getLog().warn(`User not found with email: ${parameters.email}`);
-      }
+      if (user === undefined) handler.getLog().warn(`User with email ${parameters.email} not found`);
       return user;
     }
     // no id or email provided, return undefined

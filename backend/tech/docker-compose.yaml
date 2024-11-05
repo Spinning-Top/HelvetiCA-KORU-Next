@@ -66,7 +66,7 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USERNAME}
       RABBITMQ_DEFAULT_PASS: ${DEV_RABBITMQ_PASSWORD}
     volumes:
-      - ./support/rabbitmq.dev.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./support/rabbitmq/rabbitmq.dev.conf:/etc/rabbitmq/rabbitmq.conf
 
   rabbitmq-prod:
     container_name: RabbitMQ-PROD
@@ -80,7 +80,18 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USERNAME}
       RABBITMQ_DEFAULT_PASS: ${PROD_RABBITMQ_PASSWORD}
     volumes:
-      - ./support/rabbitmq.prod.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./support/rabbitmq/rabbitmq.prod.conf:/etc/rabbitmq/rabbitmq.conf
+
+  postfix:
+    container_name: Postfix-Server
+    image: glavich/docker-postfix:latest
+    environment:
+      - DKIM_DOMAIN=${MAIL_DOMAIN}
+      - DKIM_SELECTOR=${MAIL_SELECTOR}
+    volumes:
+      - ./support/postfix/mail.private:/etc/opendkim/keys/mail.private
+    ports:
+      - "127.0.0.1:${MAIL_PORT}:25"
 
 volumes:
   portainer_data:

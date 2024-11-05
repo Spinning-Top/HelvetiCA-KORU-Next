@@ -7,6 +7,8 @@
     "dev": "ENV=development ENV_PATH=../../../ LOG_PATH=./logs/ deno run -ENRW ./src/index.ts --reload"
   },
   "imports": {
+    // jsr
+    "cron-schedule": "jsr:@p4sca1/cron-schedule@5.0.3",
     // npm
     "nodemailer": "npm:nodemailer@^6.9.14",
     "nodemailer-dkim": "npm:nodemailer-dkim@^1.0.5",

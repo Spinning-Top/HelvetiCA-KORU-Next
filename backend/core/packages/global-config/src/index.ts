@@ -42,7 +42,7 @@ export interface GlobalConfig {
     host: string;
     maxFailures: number;
     port: number;
-    privateKeyPath: string;
+    privateKey: string;
     selector: string;
     sendInterval: number;
     senderAddress: string;
@@ -73,7 +73,7 @@ export function getGlobalConfig(): GlobalConfig {
   if (conf.MAIL_HOST == undefined) throw new Error("MAIL_HOST is not defined");
   if (conf.MAIL_MAX_FAILURES == undefined) throw new Error("MAIL_MAX_FAILURES is not defined");
   if (conf.MAIL_PORT == undefined) throw new Error("MAIL_PORT is not defined");
-  if (conf.MAIL_PRIVATE_KEY_PATH == undefined) throw new Error("MAIL_PRIVATE_KEY_PATH is not defined");
+  if (conf.MAIL_PRIVATE_KEY == undefined) throw new Error("MAIL_PRIVATE_KEY is not defined");
   if (conf.MAIL_SELECTOR == undefined) throw new Error("MAIL_SELECTOR is not defined");
   if (conf.MAIL_SEND_INTERVAL == undefined) throw new Error("MAIL_SEND_INTERVAL is not defined");
   if (conf.MAIL_SENDER_ADDRESS == undefined) throw new Error("MAIL_SENDER_ADDRESS is not defined");
@@ -107,7 +107,7 @@ export function getGlobalConfig(): GlobalConfig {
       host: conf.MAIL_HOST,
       maxFailures: parseInt(conf.MAIL_MAX_FAILURES),
       port: parseInt(conf.MAIL_PORT),
-      privateKeyPath: conf.MAIL_PRIVATE_KEY_PATH,
+      privateKey: conf.MAIL_PRIVATE_KEY,
       selector: conf.MAIL_SELECTOR,
       sendInterval: parseInt(conf.MAIL_SEND_INTERVAL),
       senderAddress: conf.MAIL_SENDER_ADDRESS,

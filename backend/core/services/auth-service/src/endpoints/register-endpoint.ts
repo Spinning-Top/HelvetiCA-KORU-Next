@@ -2,10 +2,10 @@
 import type { Context } from "hono";
 
 // project
-import { DatabaseHelpers } from "@koru/database-helpers";
 import { Endpoint, EndpointMethod } from "@koru/base-service";
 import type { Handler } from "@koru/handler";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
+import { RabbitHelpers } from "@koru/rabbit-helpers";
 import { User } from "@koru/core-models";
 
 export function registerEndpoint(handler: Handler): Endpoint {
@@ -44,7 +44,7 @@ export function registerEndpoint(handler: Handler): Endpoint {
         return RequestHelpers.sendJsonError(c, HttpStatusCode.BadRequest, "passwordRequired", "Password field is required");
       }
       // check if the user with the same email already exists
-      const existingUser: User | undefined = await DatabaseHelpers.getEntityByField(handler, User, "email", email);
+      const existingUser: User | undefined = await RabbitHelpers.getEntityByField<User>(handler, "userReadRequest", User, "email", email);
       if (existingUser != undefined) {
         // return the validation error
         return RequestHelpers.sendJsonError(c, HttpStatusCode.BadRequest, "duplicatedEmail", "User with the same email already exists");
@@ -54,7 +54,7 @@ export function registerEndpoint(handler: Handler): Endpoint {
       // set the new user password
       newUser.password = password;
       // create the user
-      await DatabaseHelpers.createEntity(handler, User, newUser);
+      await RabbitHelpers.createEntity<User>(handler, "userCreateRequest", newUser);
       // TODOMAIL send email confirmation
       // return the success response
       return RequestHelpers.sendJsonCreated(c);

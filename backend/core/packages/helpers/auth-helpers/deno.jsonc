@@ -4,7 +4,5 @@
   "imports": {
     // jsr
     "hono": "jsr:/@hono/hono@^4.6.7"
-    // "hono/factory": "jsr:/@hono/hono@^4.6.7/factory", TODO
-    // "hono/jwt": "jsr:/@hono/hono@^4.6.7/jwt" TODO
   }
 }

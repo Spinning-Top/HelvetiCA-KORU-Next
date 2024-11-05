@@ -1,7 +1,8 @@
+// third party
 import { createTransport, type SendMailOptions, type SentMessageInfo, type Transporter } from "nodemailer";
 import dkim from "nodemailer-dkim";
-import { readFileSync } from "node:fs";
 
+// project
 import type { Handler } from "@koru/handler";
 
 export function sendEmail(
@@ -29,7 +30,7 @@ export function sendEmail(
         dkim.signer({
           domainName: handler.getGlobalConfig().mail.domain,
           keySelector: handler.getGlobalConfig().mail.selector,
-          privateKey: readFileSync(handler.getGlobalConfig().mail.privateKeyPath, "utf8"),
+          privateKey: handler.getGlobalConfig().mail.privateKey.replace(/\\n/g, "\n"),
         }),
       );
       // set mail options

@@ -3,10 +3,10 @@ import type { Context } from "hono";
 
 // project
 import { CryptoHelpers } from "@koru/crypto-helpers";
-import { DatabaseHelpers } from "@koru/database-helpers";
 import { Endpoint, EndpointMethod } from "@koru/base-service";
 import type { Handler } from "@koru/handler";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
+import { RabbitHelpers } from "@koru/rabbit-helpers";
 import { User } from "@koru/core-models";
 
 export function loginEndpoint(handler: Handler): Endpoint {
@@ -31,7 +31,7 @@ export function loginEndpoint(handler: Handler): Endpoint {
         return RequestHelpers.sendJsonError(c, HttpStatusCode.BadRequest, "passwordRequired", "Password field is required");
       }
       // get the user by email
-      const user: User | undefined = await DatabaseHelpers.getEntityByField(handler, User, "email", email);
+      const user: User | undefined = await RabbitHelpers.getEntityByField<User>(handler, "userReadRequest", User, "email", email);
       // if necessary fields are not defined
       if (user == undefined || user.id == undefined || user.email == undefined || user.password == undefined) {
         // return the error
@@ -51,7 +51,7 @@ export function loginEndpoint(handler: Handler): Endpoint {
       // add refresh token to the user
       user.addRefreshToken(refreshToken, expiresAt);
       // update the user
-      await DatabaseHelpers.updateEntity(handler, User, user);
+      await RabbitHelpers.updateEntity<User>(handler, "userUpdateRequest", user);
       // return the success response
       return RequestHelpers.sendJsonResponse(c, { accessToken, refreshToken });
     } catch (error) {

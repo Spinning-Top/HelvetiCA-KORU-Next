@@ -2,11 +2,11 @@
 import type { Context } from "hono";
 
 // project
-import { DatabaseHelpers } from "@koru/database-helpers";
 import { Endpoint, EndpointMethod } from "@koru/base-service";
 import type { Handler } from "@koru/handler";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
-import { User } from "@koru/core-models";
+import { RabbitHelpers } from "@koru/rabbit-helpers";
+import type { User } from "@koru/core-models";
 
 export function logoutEndpoint(handler: Handler): Endpoint {
   const endpoint: Endpoint = new Endpoint("/logout", EndpointMethod.POST, true);
@@ -27,7 +27,7 @@ export function logoutEndpoint(handler: Handler): Endpoint {
       // remove the refresh token from the user
       user.removeRefreshToken(refreshToken);
       // update the user
-      await DatabaseHelpers.updateEntity(handler, User, user);
+      await RabbitHelpers.updateEntity<User>(handler, "userUpdateRequest", user);
       // return the success response
       return RequestHelpers.sendJsonResponse(c, { status: "Logged out successfully" });
     } catch (error) {

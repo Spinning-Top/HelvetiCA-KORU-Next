@@ -12,7 +12,7 @@ import { UserController } from "../controllers/index.ts";
 
 export function userUpdateRabbit(handler: Handler): Rabbit<User | undefined> {
   // create a new rabbit instance for the user update
-  const rabbit: Rabbit<User | undefined> = new Rabbit<User>("userUpdate");
+  const rabbit: Rabbit<User | undefined> = new Rabbit<User>("userUpdateRequest");
   // set the response handler for the user update
   rabbit.setResponseHandler(async (msg: ConsumeMessage): Promise<User | undefined> => {
     try {

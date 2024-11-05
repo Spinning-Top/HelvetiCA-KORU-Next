@@ -4,7 +4,6 @@ import { createMiddleware } from "hono/factory";
 import { jwt } from "hono/jwt";
 
 // project
-import { DatabaseHelpers } from "@koru/database-helpers";
 import type { Handler } from "@koru/handler";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
 import { User } from "@koru/core-models";
@@ -16,9 +15,16 @@ export class AuthHelpers {
     const userMiddleware: MiddlewareHandler = createMiddleware(async (c: Context, next) => {
       try {
         const jwtPayload = c.get("jwtPayload") as Record<string, unknown>;
-        const user = await DatabaseHelpers.getEntityById(handler, User, Number(jwtPayload.id), ["roles"]);
-
-        if (user) {
+        // get user
+        const user: User | undefined = await handler.getRabbitBreeder().sendRequestAndAwaitResponse<User>(
+          "userReadRequest",
+          "userReadResponse",
+          { id: Number(jwtPayload.id) },
+          (data: Record<string, unknown>) => {
+            return User.createFromJsonData(data, new User());
+          },
+        );
+        if (user !== undefined) {
           // Aggiunge l'utente al contesto in modo che sia disponibile per le route successive
           c.set("user", user);
           await next();

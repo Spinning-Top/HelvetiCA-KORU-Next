@@ -1,8 +1,0 @@
-{
-  "name": "@koru/database-helpers",
-  "exports": "./src/index.ts",
-  "imports": {
-    // npm
-    "typeorm": "npm:typeorm@^0.3.20"
-  }
-}

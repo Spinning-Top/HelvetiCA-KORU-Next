@@ -3,10 +3,10 @@ import type { Context } from "hono";
 
 // project
 import { CryptoHelpers } from "@koru/crypto-helpers";
-import { DatabaseHelpers } from "@koru/database-helpers";
 import { Endpoint, EndpointMethod } from "@koru/base-service";
 import type { Handler } from "@koru/handler";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
+import { RabbitHelpers } from "@koru/rabbit-helpers";
 import { User } from "@koru/core-models";
 
 export function passwordResetEndpoint(handler: Handler): Endpoint {
@@ -40,7 +40,7 @@ export function passwordResetEndpoint(handler: Handler): Endpoint {
           return RequestHelpers.sendJsonError(c, HttpStatusCode.Unauthorized, "invalidRefreshToken", "Invalid or expired refresh token");
         }
         // get the user by id in the token
-        const user: User | undefined = await DatabaseHelpers.getEntityById(handler, User, tokenId);
+        const user: User | undefined = await RabbitHelpers.getEntityById<User>(handler, "userReadRequest", User, tokenId);
         // if the user is not found
         if (user === undefined) {
           // return the error
@@ -49,7 +49,7 @@ export function passwordResetEndpoint(handler: Handler): Endpoint {
         // set the user new password
         user.password = newPassword;
         // update the user
-        await DatabaseHelpers.updateEntity(handler, User, user);
+        await RabbitHelpers.updateEntity<User>(handler, "userUpdateRequest", user);
         // return the success response
         return RequestHelpers.sendJsonUpdated(c);
       } catch (_error: unknown) {
