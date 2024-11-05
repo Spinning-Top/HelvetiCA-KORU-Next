@@ -1,3 +1,4 @@
+// third party
 import type { Context } from "hono";
 
 export class RequestHelpers {
@@ -23,11 +24,17 @@ export class RequestHelpers {
     };
     if (details !== undefined) body.details = details;
 
-    return c.json(body, httpStatusCode);
+    c.status(httpStatusCode);
+    return c.json(body);
   }
 
-  public static sendJsonResponse(c: Context, body: Record<string, unknown> | Record<string, unknown>[]): Response {
-    return c.json(body, HttpStatusCode.Ok);
+  public static sendJsonResponse(
+    c: Context,
+    body: Record<string, unknown> | Record<string, unknown>[],
+    httpStatusCode: HttpStatusCode = HttpStatusCode.Ok,
+  ): Response {
+    c.status(httpStatusCode);
+    return c.json(body);
   }
 
   public static sendJsonUpdated(context: Context): Response {

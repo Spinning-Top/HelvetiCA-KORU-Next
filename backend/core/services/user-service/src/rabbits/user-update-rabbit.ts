@@ -1,9 +1,13 @@
+// third party
 import type { ConsumeMessage } from "amqplib";
 import { ValidationError } from "class-validator";
 
+// project
 import type { Handler } from "@koru/handler";
 import { Rabbit } from "@koru/micro-service";
 import { User } from "@koru/core-models";
+
+// local
 import { UserController } from "../controllers/index.ts";
 
 export function userUpdateRabbit(handler: Handler): Rabbit<User | undefined> {

@@ -1,8 +1,10 @@
+// project
 import { CrudTemplate } from "@koru/crud-template";
 import { EndpointType } from "@koru/base-service";
 import { MicroService } from "@koru/micro-service";
 import { Role } from "@koru/core-models";
 
+// local
 import { RoleController } from "./controllers/index.ts";
 
 const microService: MicroService = new MicroService("Role Service", 9205);

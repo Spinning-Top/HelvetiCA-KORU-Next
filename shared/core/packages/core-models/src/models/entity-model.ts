@@ -1,8 +1,11 @@
+// third party
 import { Expose, Transform } from "class-transformer";
 import { AfterInsert, AfterSoftRemove, AfterUpdate, JoinColumn, ManyToOne } from "typeorm";
 
+// project
 import { AuditLogHelpers } from "@koru/audit-log-helpers";
 
+// local
 import { AuditAction } from "./audit-action.ts";
 import { BaseModel } from "./base-model.ts";
 import { LinkedUser } from "./linked-user.ts";

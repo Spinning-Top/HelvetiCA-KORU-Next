@@ -8,7 +8,6 @@
   },
   "imports": {
     // jsr
-    "hono": "jsr:@hono/hono@^4.6.7",
-    "hono/jwt": "jsr:@hono/hono@^4.6.7/jwt"
+    "hono": "jsr:@hono/hono@^4.6.7"
   }
 }

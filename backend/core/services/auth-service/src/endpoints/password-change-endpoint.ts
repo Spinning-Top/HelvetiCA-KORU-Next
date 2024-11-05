@@ -1,9 +1,12 @@
+// third party
 import type { Context } from "hono";
 
+// project
 import { CryptoHelpers } from "@koru/crypto-helpers";
-import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
+import { DatabaseHelpers } from "@koru/database-helpers";
 import { Endpoint, EndpointMethod } from "@koru/base-service";
 import type { Handler } from "@koru/handler";
+import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
 import { User } from "@koru/core-models";
 
 export function passwordChangeEndpoint(handler: Handler): Endpoint {
@@ -38,17 +41,8 @@ export function passwordChangeEndpoint(handler: Handler): Endpoint {
       }
       // set the user new password
       user.password = newPassword;
-      // save user with rabbit
-      const savedUser: User | undefined = await handler
-        .getRabbitBreeder()
-        .sendRequestAndAwaitResponse<User>("userUpdate", "userUpdateResponse", user.toJson(), (data: Record<string, unknown>) => {
-          return User.createFromJsonData(data, new User());
-        });
-      // check if the user was saved
-      if (savedUser === undefined) {
-        // return the error
-        return RequestHelpers.sendJsonError(c, HttpStatusCode.InternalServerError, "error", "User update failed");
-      }
+      // update the user
+      await DatabaseHelpers.updateEntity(handler, User, user);
       // return the success response
       return RequestHelpers.sendJsonUpdated(c);
     } catch (error) {

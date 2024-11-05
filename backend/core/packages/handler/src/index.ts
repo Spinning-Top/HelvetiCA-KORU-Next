@@ -1,3 +1,4 @@
+// project
 import { Database } from "@koru/database";
 import { getGlobalConfig, type GlobalConfig } from "@koru/global-config";
 import { Log } from "@koru/log";

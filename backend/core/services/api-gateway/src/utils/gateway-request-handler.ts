@@ -1,9 +1,12 @@
+// third party
 import type { Context } from "hono";
 
+// project
 import { type Endpoint, EndpointMethod } from "@koru/base-service";
 import type { Handler } from "@koru/handler";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
 
+// local
 import type { GatewayService } from "../gateway-service.ts";
 
 export function gatewayRequestHandler(gatewayServices: GatewayService[], handler: Handler) {
@@ -85,7 +88,7 @@ export function gatewayRequestHandler(gatewayServices: GatewayService[], handler
 
       // Inoltra la risposta al client
       const responseBody = await response.json();
-      return RequestHelpers.sendJsonResponse(c, responseBody);
+      return RequestHelpers.sendJsonResponse(c, responseBody, response.status);
     } catch (error) {
       if (error instanceof Response && error.status) {
         // Se l'errore proviene dal sottoservizio, inoltra la risposta esatta

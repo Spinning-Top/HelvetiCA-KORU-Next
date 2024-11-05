@@ -1,7 +1,9 @@
+// project
 import { type BaseController, type Endpoint, EndpointType } from "@koru/base-service";
 import type { EntityModel } from "@koru/core-models";
 import type { Handler } from "@koru/handler";
 
+// local
 import {
   createEntityEndpoint,
   deleteEntityEndpoint,

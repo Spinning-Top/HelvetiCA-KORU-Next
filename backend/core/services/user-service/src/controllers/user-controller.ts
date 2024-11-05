@@ -1,5 +1,7 @@
+// third party
 import type { ValidationError } from "class-validator";
 
+// project
 import { BaseController } from "@koru/base-service";
 import type { Handler } from "@koru/handler";
 import { User } from "@koru/core-models";
@@ -20,9 +22,8 @@ export class UserController extends BaseController<User> {
 
     // check if the user with the same email already exists
     const existingUser: User | null = await this.repository.findOne({ where: { email: user.email } });
-    if (existingUser != null) {
-      return "duplicatedEmail";
-    }
+    if (existingUser != null) return "duplicatedEmail";
+
     // save the new user and return
     user = this.repository.create(user);
     return this.repository.save(user);
@@ -36,9 +37,8 @@ export class UserController extends BaseController<User> {
 
     // check if the user with the same email already exists
     const existingUser: User | null = await this.repository.findOne({ where: { email: user.email } });
-    if (existingUser !== null && existingUser.id != user.id) {
-      return "duplicatedEmail";
-    }
+    if (existingUser !== null && existingUser.id != user.id) return "duplicatedEmail";
+
     // save the new user and return
     return this.repository.save(user);
   }

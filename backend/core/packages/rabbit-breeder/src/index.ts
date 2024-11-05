@@ -1,9 +1,9 @@
+// third party
 import { Buffer } from "node:buffer";
-
 import { type Channel, connect, type Connection, type ConsumeMessage } from "amqplib";
-
 import { NAMESPACE_DNS, v5 } from "@std/uuid";
 
+// project
 import type { GlobalConfig } from "@koru/global-config";
 
 export class RabbitBreeder {

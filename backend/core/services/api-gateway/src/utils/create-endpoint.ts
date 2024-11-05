@@ -1,4 +1,7 @@
+// project
 import { Endpoint, type EndpointMethod } from "@koru/base-service";
+
+// local
 import type { GatewayService } from "../gateway-service.ts";
 
 export function createEndpoint(endpointData: Record<string, unknown>, gatewayService: GatewayService): Endpoint | undefined {

@@ -4,10 +4,7 @@
   "imports": {
     // jsr
     "hono": "jsr:@hono/hono@^4.6.7",
-    "hono/jwt": "jsr:@hono/hono@^4.6.7/jwt",
-    "hono/types": "jsr:@hono/hono@^4.6.7/types",
     // npm
-    "amqplib": "npm:amqplib@^0.10.4",
     "class-validator": "npm:class-validator@^0.14.1",
     "typeorm": "npm:typeorm@^0.3.20"
   }

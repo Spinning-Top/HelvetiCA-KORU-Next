@@ -1,10 +1,12 @@
+// third party
 import type { MiddlewareHandler } from "hono";
 
+// project
 import { AuthHelpers } from "@koru/auth-helpers";
+import { BaseService } from "@koru/base-service";
 import { EndpointMethod } from "@koru/base-service";
 
-import { BaseService } from "@koru/base-service";
-
+// local
 import type { Rabbit } from "./rabbit.ts";
 
 export class MicroService extends BaseService {

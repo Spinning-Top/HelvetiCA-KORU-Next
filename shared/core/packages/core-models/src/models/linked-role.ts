@@ -1,5 +1,7 @@
+// third party
 import { Expose } from "class-transformer";
 
+// local
 import type { Role } from "./role.ts";
 
 export class LinkedRole {

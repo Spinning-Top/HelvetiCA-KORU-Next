@@ -33,14 +33,14 @@ export function passwordResetEndpoint(handler: Handler): Endpoint {
 
       try {
         // verify the recovery token
-        const isTokenValid: boolean = await CryptoHelpers.verifyToken(handler, recoveryToken);
+        const tokenId: number | false = await CryptoHelpers.verifyToken(handler, recoveryToken);
         // if the token is not valid
-        if (isTokenValid === false) {
+        if (tokenId === false) {
           // return the error
           return RequestHelpers.sendJsonError(c, HttpStatusCode.Unauthorized, "invalidRefreshToken", "Invalid or expired refresh token");
         }
         // get the user by id in the token
-        const user: User | undefined = await DatabaseHelpers.getEntityById(handler, User, Number(decodedToken.id));
+        const user: User | undefined = await DatabaseHelpers.getEntityById(handler, User, tokenId);
         // if the user is not found
         if (user === undefined) {
           // return the error

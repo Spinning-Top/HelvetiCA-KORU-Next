@@ -1,7 +1,11 @@
+// third party
 import { BeforeInsert, BeforeUpdate, Column, Entity, Index, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Expose, Transform } from "class-transformer";
 
+// project
 import { CryptoHelpers } from "@koru/crypto-helpers";
+
+// local
 import { LinkedUser } from "./linked-user.ts";
 import { User } from "./user.ts";
 

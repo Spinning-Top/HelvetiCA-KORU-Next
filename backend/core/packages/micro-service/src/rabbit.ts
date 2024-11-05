@@ -1,3 +1,4 @@
+// third party
 import type { ConsumeMessage } from "amqplib";
 
 export class Rabbit<T = unknown> {

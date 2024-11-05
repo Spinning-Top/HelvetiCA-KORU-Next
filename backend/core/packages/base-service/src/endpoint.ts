@@ -1,3 +1,4 @@
+// third party
 import type { Handler as HonoHandler } from "hono/types";
 
 export class Endpoint {

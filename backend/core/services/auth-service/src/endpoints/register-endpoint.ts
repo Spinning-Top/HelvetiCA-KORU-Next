@@ -1,5 +1,8 @@
+// third party
 import type { Context } from "hono";
 
+// project
+import { DatabaseHelpers } from "@koru/database-helpers";
 import { Endpoint, EndpointMethod } from "@koru/base-service";
 import type { Handler } from "@koru/handler";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
@@ -40,21 +43,18 @@ export function registerEndpoint(handler: Handler): Endpoint {
         // return the validation error
         return RequestHelpers.sendJsonError(c, HttpStatusCode.BadRequest, "passwordRequired", "Password field is required");
       }
+      // check if the user with the same email already exists
+      const existingUser: User | undefined = await DatabaseHelpers.getEntityByField(handler, User, "email", email);
+      if (existingUser != undefined) {
+        // return the validation error
+        return RequestHelpers.sendJsonError(c, HttpStatusCode.BadRequest, "duplicatedEmail", "User with the same email already exists");
+      }
       // create the new user
       const newUser: User = new User(email, firstName, lastName);
       // set the new user password
       newUser.password = password;
-      // save user with rabbit
-      const savedUser: User | undefined = await handler
-        .getRabbitBreeder()
-        .sendRequestAndAwaitResponse<User>("userCreate", "userCreateResponse", newUser.toJson(), (data: Record<string, unknown>) => {
-          return User.createFromJsonData(data, new User());
-        });
-      // check if the user was saved
-      if (savedUser === undefined) {
-        // return the error
-        return RequestHelpers.sendJsonError(c, HttpStatusCode.InternalServerError, "error", "User create failed");
-      }
+      // create the user
+      await DatabaseHelpers.createEntity(handler, User, newUser);
       // TODOMAIL send email confirmation
       // return the success response
       return RequestHelpers.sendJsonCreated(c);

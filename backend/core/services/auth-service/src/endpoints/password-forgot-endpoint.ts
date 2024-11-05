@@ -33,7 +33,6 @@ export function passwordForgotEndpoint(handler: Handler): Endpoint {
       // create the recovery token
       const recoveryToken: string = await CryptoHelpers.createRecoveryToken(handler, user);
       // TODOMAIL Invia recoveryToken via email all'utente: sendRecoveryEmail(user.email, recoveryToken);
-      console.log(recoveryToken);
       // send the success response
       return RequestHelpers.sendJsonResponse(c, { status: "ok", recoveryToken });
     } catch (error) {

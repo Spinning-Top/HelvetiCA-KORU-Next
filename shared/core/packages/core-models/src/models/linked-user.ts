@@ -1,5 +1,7 @@
+// third party
 import { Expose } from "class-transformer";
 
+// local
 import type { User } from "./user.ts";
 
 export class LinkedUser {

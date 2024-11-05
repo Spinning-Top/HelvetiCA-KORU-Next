@@ -2,7 +2,11 @@
 
 ---
 
-externalUpdate e internalUpdate
+- externalUpdate e internalUpdate
+
+- questione del salvataggio da controller oppure autonomo
+
+- ma sti rabbit per user li uso o lascio stare?
 
 AUTH
 
@@ -11,3 +15,4 @@ AUTH
 - revoca i refreshTokens in caso di cambio password o attività sospette
 - la registrazione deve essere abilitata o meno da qualche parte
 - Utilizzare un campo tokenVersion per invalidare accessToken
+- invalidare il recoveryToken quando utilizzato

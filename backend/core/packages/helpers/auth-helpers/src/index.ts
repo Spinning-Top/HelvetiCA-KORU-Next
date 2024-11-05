@@ -1,7 +1,9 @@
+// third party
 import type { Context, MiddlewareHandler } from "hono";
 import { createMiddleware } from "hono/factory";
 import { jwt } from "hono/jwt";
 
+// project
 import { DatabaseHelpers } from "@koru/database-helpers";
 import type { Handler } from "@koru/handler";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
@@ -14,7 +16,7 @@ export class AuthHelpers {
     const userMiddleware: MiddlewareHandler = createMiddleware(async (c: Context, next) => {
       try {
         const jwtPayload = c.get("jwtPayload") as Record<string, unknown>;
-        const user = await DatabaseHelpers.getEntityById(handler, User, Number(jwtPayload.id));
+        const user = await DatabaseHelpers.getEntityById(handler, User, Number(jwtPayload.id), ["roles"]);
 
         if (user) {
           // Aggiunge l'utente al contesto in modo che sia disponibile per le route successive

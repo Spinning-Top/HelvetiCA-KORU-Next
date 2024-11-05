@@ -78,7 +78,7 @@ export class CryptoHelpers {
     return { refreshToken: await sign(refreshTokenPayload, handler.getGlobalConfig().auth.jwtSecret), expiresAt };
   }
 
-  public static async verifyToken(handler: Handler, token: string, user?: User): Promise<boolean> {
+  public static async verifyToken(handler: Handler, token: string, user?: User): Promise<number | false> {
     // verify the refresh token
     const decodedToken: JWTPayload = await jwtVerify(token, handler.getGlobalConfig().auth.jwtSecret);
     // check if the decoded token is an object
@@ -88,8 +88,8 @@ export class CryptoHelpers {
     // check if the decoded token contains the id
     if ("id" in decodedToken === false) return false;
     // if user is provided, check if the decoded token id is the same as the user id
-    if (user === undefined || decodedToken.id !== user.id) return false;
-    // return true if the token is valid
-    return true;
+    if (user !== undefined && decodedToken.id !== user.id) return false;
+    // return the decoded token id if the token is valid
+    return Number(decodedToken.id);
   }
 }

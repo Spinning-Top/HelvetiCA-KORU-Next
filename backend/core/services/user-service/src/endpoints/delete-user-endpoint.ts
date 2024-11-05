@@ -1,9 +1,13 @@
+// third party
 import type { Context } from "hono";
 
+// project
 import { Endpoint, EndpointMethod } from "@koru/base-service";
 import type { Handler } from "@koru/handler";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
 import type { User } from "@koru/core-models";
+
+// local
 import { UserController } from "../controllers/index.ts";
 
 export function deleteUserEndpoint(handler: Handler): Endpoint {

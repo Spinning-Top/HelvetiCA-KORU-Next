@@ -1,5 +1,7 @@
+// third party
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
+// local
 import type { AuditAction } from "./audit-action.ts";
 import { User } from "./user.ts";
 

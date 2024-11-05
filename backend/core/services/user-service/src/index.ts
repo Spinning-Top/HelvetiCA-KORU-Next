@@ -1,7 +1,8 @@
+// project
 import { MicroService } from "@koru/micro-service";
 
+// local
 import { createUserEndpoint, deleteUserEndpoint, readUserEndpoint, readUsersEndpoint, updateUserEndpoint } from "./endpoints/index.ts";
-
 import { userCreateRabbit, userReadRabbit, userUpdateRabbit } from "./rabbits/index.ts";
 
 const microService: MicroService = new MicroService("User Service", 9206);

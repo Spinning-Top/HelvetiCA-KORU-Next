@@ -1,6 +1,8 @@
+// third party
 import { Column, Entity } from "typeorm";
 import { Expose } from "class-transformer";
 
+// project
 import { EntityModel } from "@koru/core-models";
 
 @Entity()

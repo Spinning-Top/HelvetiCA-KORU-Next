@@ -34,7 +34,7 @@ export function refreshTokenEndpoint(handler: Handler): Endpoint {
       }
       try {
         // verify the refresh token
-        const isTokenValid: boolean = await CryptoHelpers.verifyToken(handler, refreshToken, user);
+        const isTokenValid: number | false = await CryptoHelpers.verifyToken(handler, refreshToken, user);
         // if the token is not valid
         if (isTokenValid === false) {
           // return the error

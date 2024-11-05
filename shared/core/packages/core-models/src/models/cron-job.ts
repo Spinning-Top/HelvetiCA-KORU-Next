@@ -1,6 +1,8 @@
+// third party
 import { Column, Entity } from "typeorm";
 import { Expose } from "class-transformer";
 
+// local
 import { EntityModel } from "./entity-model.ts";
 
 @Entity()

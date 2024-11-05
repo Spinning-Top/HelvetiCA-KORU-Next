@@ -85,4 +85,5 @@ lerna-debug.log*
 build
 deno.lock
 docker/images
+mail.private
 temp

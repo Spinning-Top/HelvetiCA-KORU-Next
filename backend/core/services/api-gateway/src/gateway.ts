@@ -1,8 +1,12 @@
+// third party
 import type { ConsumeMessage } from "amqplib";
 import type { Context } from "hono";
 
-import { createEndpoint, gatewayRequestHandler } from "./utils/index.ts";
+// project
 import { BaseService, type Endpoint } from "@koru/base-service";
+
+// local
+import { createEndpoint, gatewayRequestHandler } from "./utils/index.ts";
 import { GatewayService } from "./gateway-service.ts";
 
 export class Gateway extends BaseService {

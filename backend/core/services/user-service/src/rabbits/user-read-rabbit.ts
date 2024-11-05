@@ -1,8 +1,12 @@
+// third party
 import type { ConsumeMessage } from "amqplib";
 
+// project
 import type { Handler } from "@koru/handler";
 import { Rabbit } from "@koru/micro-service";
 import type { User } from "@koru/core-models";
+
+// local
 import { UserController } from "../controllers/index.ts";
 
 export function userReadRabbit(handler: Handler): Rabbit<User | undefined> {

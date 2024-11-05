@@ -1,3 +1,4 @@
+// local
 import { Gateway } from "./gateway.ts";
 
 const gateway: Gateway = new Gateway();

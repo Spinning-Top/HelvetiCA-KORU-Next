@@ -6,6 +6,15 @@ import type { BaseModel } from "@koru/core-models";
 import type { Handler } from "@koru/handler";
 
 export class DatabaseHelpers {
+  public static async createEntity<T extends BaseModel>(handler: Handler, EntityModelClass: { new (): T }, entity: T): Promise<T> {
+    // get the entity repository
+    const entityRepository: Repository<T> = handler.getDatabase().getDataSource().getRepository(EntityModelClass);
+    // create the entity
+    entity = entityRepository.create(entity);
+    // save the entity
+    return await entityRepository.save(entity);
+  }
+
   public static async getEntityByField<T extends BaseModel>(
     handler: Handler,
     EntityModelClass: { new (): T },

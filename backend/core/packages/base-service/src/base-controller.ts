@@ -1,6 +1,8 @@
+// third party
 import { type FindManyOptions, type FindOptionsRelations, type FindOptionsWhere, ILike, IsNull, Not, type Repository } from "typeorm";
 import type { ValidationError } from "class-validator";
 
+// project
 import { type BaseModel, EntityModel, type User } from "@koru/core-models";
 import type { Handler } from "@koru/handler";
 

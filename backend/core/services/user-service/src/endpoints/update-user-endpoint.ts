@@ -1,10 +1,14 @@
+// third party
 import type { Context } from "hono";
 import { ValidationError } from "class-validator";
 
+// project
 import { Endpoint, EndpointMethod } from "@koru/base-service";
 import type { Handler } from "@koru/handler";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
 import type { User } from "@koru/core-models";
+
+// local
 import { UserController } from "../controllers/index.ts";
 
 export function updateUserEndpoint(handler: Handler): Endpoint {
