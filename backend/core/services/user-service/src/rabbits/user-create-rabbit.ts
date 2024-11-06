@@ -22,6 +22,12 @@ export function userCreateRabbit(handler: Handler): Rabbit<User | undefined> {
       const parameters: Record<string, unknown> = JSON.parse(msg.content.toString());
       // create the new user from the request
       const newUser: User = User.createFromJsonData(parameters, new User());
+      // TODO take the new temporary password and send a welcome e-mail
+      // set immediate password expiration
+      newUser.passwordExpiresAt = new Date();
+      // set the user locale and theme
+      newUser.locale = handler.getGlobalConfig().koru.defaultLocale;
+      newUser.theme = handler.getGlobalConfig().koru.defaultTheme;
       // save the new user
       const saveResult: User | ValidationError[] | string = await userController.createEntity(newUser);
       // if the save result is an array of validation errors

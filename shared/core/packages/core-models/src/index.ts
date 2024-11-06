@@ -6,5 +6,6 @@ import "reflect-metadata";
 import { AuditAction, AuditLog, CronJob, Email, Notification, RefreshToken, Role, User } from "./models/index.ts";
 
 export * from "./models/index.ts";
+export * from "./utils/index.ts";
 
 export const coreModels: unknown[] = [AuditAction, AuditLog, CronJob, Email, Notification, RefreshToken, Role, User];

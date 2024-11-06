@@ -51,6 +51,9 @@ export function registerEndpoint(handler: Handler): Endpoint {
       }
       // create the new user
       const newUser: User = new User(email, firstName, lastName);
+      // set the user locale and theme
+      newUser.locale = handler.getGlobalConfig().koru.defaultLocale;
+      newUser.theme = handler.getGlobalConfig().koru.defaultTheme;
       // set the new user password
       newUser.password = password;
       // create the user

@@ -18,6 +18,8 @@ export async function userSeeder() {
     const roles: Role[] = await roleRepository.find();
 
     let masterUser: User = new User("marco@spinningtop.it", "Marco", "Lisatti");
+    masterUser.locale = handler.getGlobalConfig().koru.defaultLocale;
+    masterUser.theme = handler.getGlobalConfig().koru.defaultTheme;
     masterUser.password = "Password123!";
     masterUser.roles = [roles[0]];
     const newPassword: string = masterUser.password;

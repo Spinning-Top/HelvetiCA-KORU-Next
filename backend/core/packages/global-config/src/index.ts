@@ -2,6 +2,9 @@
 import { dirname, fromFileUrl, resolve } from "@std/path";
 import { loadSync } from "@std/dotenv";
 
+// project
+import type { Locale, Theme } from "@koru/core-models";
+
 let conf: Record<string, string> = {};
 
 export function initGlobalConfig(): void {
@@ -35,6 +38,8 @@ export interface GlobalConfig {
   };
   environment: "production" | "development";
   koru: {
+    defaultLocale: Locale;
+    defaultTheme: Theme;
     version: string;
   };
   mail: {
@@ -68,6 +73,8 @@ export function getGlobalConfig(): GlobalConfig {
   if (conf.DB_PORT == undefined) throw new Error("DB_PORT is not defined");
   if (conf.DB_USERNAME == undefined) throw new Error("DB_USERNAME is not defined");
   if (conf.ENV == undefined) throw new Error("ENV is not defined");
+  if (conf.KORU_DEFAULT_LOCALE == undefined) throw new Error("KORU_DEFAULT_LOCALE is not defined");
+  if (conf.KORU_DEFAULT_THEME == undefined) throw new Error("KORU_DEFAULT_THEME is not defined");
   if (conf.KORU_VERSION == undefined) throw new Error("KORU_VERSION is not defined");
   if (conf.MAIL_DOMAIN == undefined) throw new Error("MAIL_DOMAIN is not defined");
   if (conf.MAIL_HOST == undefined) throw new Error("MAIL_HOST is not defined");
@@ -100,6 +107,8 @@ export function getGlobalConfig(): GlobalConfig {
     },
     environment: conf.ENV as "production" | "development",
     koru: {
+      defaultLocale: conf.KORU_DEFAULT_LOCALE as Locale,
+      defaultTheme: conf.KORU_DEFAULT_THEME as Theme,
       version: conf.KORU_VERSION,
     },
     mail: {

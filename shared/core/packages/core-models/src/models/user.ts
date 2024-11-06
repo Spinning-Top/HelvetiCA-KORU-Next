@@ -9,6 +9,7 @@ import { CryptoHelpers } from "@koru/crypto-helpers";
 // local
 import { BaseModel } from "./base-model.ts";
 import { LinkedRole } from "./linked-role.ts";
+import { Locale, Theme } from "../utils/index.ts";
 import { RefreshToken } from "./refresh-token.ts";
 import { Role } from "./role.ts";
 
@@ -56,6 +57,14 @@ export class User extends BaseModel {
   @Expose({ groups: ["update", "fromJson", "toJson"] })
   refreshTokens!: RefreshToken[];
 
+  @Column({ type: "enum", enum: Locale, default: Locale.English })
+  @Expose({ groups: ["read", "update", "fromJson", "toJson"] })
+  locale!: Locale;
+
+  @Column({ type: "enum", enum: Theme, default: Theme.Light })
+  @Expose({ groups: ["read", "update", "fromJson", "toJson"] })
+  theme!: Theme;
+
   @BeforeInsert()
   @BeforeUpdate()
   hashPassword() {
@@ -72,6 +81,8 @@ export class User extends BaseModel {
     this.password = CryptoHelpers.generatePassword();
     this.lastSeen = undefined;
     this.isActive = true;
+    this.locale = Locale.English;
+    this.theme = Theme.Light;
   }
 
   public addRefreshToken(token: string, expiresAt: Date): void {
