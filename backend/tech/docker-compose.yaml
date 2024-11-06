@@ -1,4 +1,4 @@
-name: koru-prod-tech
+name: koru-tech
 
 services:
   db-dev:
@@ -89,7 +89,7 @@ services:
       - DKIM_DOMAIN=${MAIL_DOMAIN}
       - DKIM_SELECTOR=${MAIL_SELECTOR}
     volumes:
-      - ./support/postfix/mail.private:/etc/opendkim/keys/mail.private
+      - ./support/postfix/${MAIL_SELECTOR}.private:/etc/opendkim/keys/${MAIL_SELECTOR}.private
     ports:
       - "127.0.0.1:${MAIL_PORT}:25"
 

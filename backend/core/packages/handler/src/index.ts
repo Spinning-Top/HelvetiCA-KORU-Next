@@ -38,4 +38,12 @@ export class Handler {
   public getRabbitTags(): string[] {
     return this.rabbitTags;
   }
+
+  public isDev(): boolean {
+    return this.globalConfig.environment === "development";
+  }
+
+  public isProd(): boolean {
+    return this.globalConfig.environment === "production";
+  }
 }

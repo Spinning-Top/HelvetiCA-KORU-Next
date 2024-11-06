@@ -45,14 +45,18 @@ certificates.helvetica.aero   verifica certificati
 
 DNS
 
-@                             A       [SERVER_IP]
 api.helvetica.aero            A       [SERVER_IP]
 api-dev.helvetica.aero        A       [SERVER_IP]
+app.helvetica.aero            A       [SERVER_IP]
+app-dev.helvetica.aero        A       [SERVER_IP]
 services.helvetica.aero       A       [SERVER_IP]
-www                           A       [SERVER_IP]
 
-@                             MX      mail.helvetica.aero
+@                             MX      korumail.helvetica.aero
 @                             TXT     v=spf1 a ip4:[SERVER_IP] mx -all
 _dmarc                        TXT     v=DMARC1; p=quarantine; rua=mailto:dmarc-reports@helvetica.aero; ruf=mailto:dmarc-failures@helvetica.aero; fo=1
-mail._domainkey               TXT     [KEY_DATA]
-mail                          A       [SERVER_IP]
+korumail._domainkey           TXT     [KEY_DATA]
+korumail                      A       [SERVER_IP]
+
+-------------------------------------------------------------------------------------------
+
+DEPLOY con PM2 + Grafana e Prometheus

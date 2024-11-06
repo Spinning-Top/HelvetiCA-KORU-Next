@@ -2,43 +2,50 @@
   {
     "name": "API Gateway",
     "path": "backend/core/services/api-gateway",
-    "port": 9100,
+    "devPort": 8100,
+    "prodPort": 9100,
     "enabled": true
   },
   {
     "name": "Auth Service",
     "path": "backend/core/services/auth-service",
-    "port": 9201,
+    "devPort": 8201,
+    "prodPort": 9201,
     "enabled": true
   },
   {
     "name": "Cron Job Service",
     "path": "backend/core/services/cron-job-service",
-    "port": 9202,
+    "devPort": 8202,
+    "prodPort": 9202,
     "enabled": false
   },
   {
     "name": "Mail Service",
     "path": "backend/core/services/mail-service",
-    "port": 9203,
+    "devPort": 8203,
+    "prodPort": 9203,
     "enabled": true
   },
   {
     "name": "Notification Service",
     "path": "backend/core/services/notification-service",
-    "port": 9204,
+    "devPort": 8204,
+    "prodPort": 9204,
     "enabled": false
   },
   {
     "name": "Role Service",
     "path": "backend/core/services/role-service",
-    "port": 9205,
+    "devPort": 8205,
+    "prodPort": 9205,
     "enabled": true
   },
   {
     "name": "User Service",
     "path": "backend/core/services/user-service",
-    "port": 9206,
+    "devPort": 8206,
+    "prodPort": 9206,
     "enabled": true
   }
 ]

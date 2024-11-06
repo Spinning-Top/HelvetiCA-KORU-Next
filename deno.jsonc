@@ -12,6 +12,7 @@
         "backend:tech:down": "docker compose -f ./backend/tech/docker-compose.yaml --env-file ./backend/tech/.env down",
         "backend:tech:up": "docker compose -f ./backend/tech/docker-compose.yaml --env-file ./backend/tech/.env up --build -d",
       // utils
+        "backend:utils:create-dkim-keys": "./backend/scripts/create-dkim-keys.sh",
         "backend:utils:create-dev-script": "deno -ENRW ./backend/core/utils/create-dev-script/src/index.ts",
         "backend:utils:seeder": "ENV_PATH=./backend/ deno -ENRW ./backend/core/utils/seeder/src/index.ts",
       // test
