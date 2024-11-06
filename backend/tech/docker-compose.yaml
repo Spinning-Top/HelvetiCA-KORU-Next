@@ -10,11 +10,12 @@ services:
       POSTGRES_PASSWORD: ${DEV_DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     ports:
-      - "127.0.0.1:${DEV_DB_PORT}:${DEV_DB_PORT}"
+      - "${DEV_DB_PORT}:${DEV_DB_PORT}"
     networks:
       koru-network:
         ipv4_address: 172.18.0.2
     command: postgres -c 'port=${DEV_DB_PORT}'
+    restart: unless-stopped
 
   # PostgreSQL-Database-PROD
   db-prod:
@@ -30,6 +31,7 @@ services:
       koru-network:
         ipv4_address: 172.18.0.3
     command: postgres -c 'port=${PROD_DB_PORT}'
+    restart: unless-stopped
 
   # PostgreSQL-Admin
   pgadmin:
@@ -46,6 +48,7 @@ services:
         ipv4_address: 172.18.0.4
     volumes:
       - ./support/pgadmin/servers.json:/pgadmin4/servers.json  
+    restart: unless-stopped
     depends_on:
       - db-dev
       - db-prod
@@ -63,7 +66,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
-    restart: always
+    restart: unless-stopped
 
   # Postfix-Server
   postfix:
@@ -79,6 +82,7 @@ services:
         ipv4_address: 172.18.0.6
     volumes:
       - ./support/postfix/${MAIL_SELECTOR}.private:/etc/opendkim/keys/${MAIL_SELECTOR}.private
+    restart: unless-stopped
 
   # RabbitMQ-DEV
   rabbitmq-dev:
@@ -88,13 +92,14 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USERNAME}
       RABBITMQ_DEFAULT_PASS: ${DEV_RABBITMQ_PASSWORD}
     ports:
-      - "127.0.0.1:${DEV_RABBITMQ_SERVICE_PORT}:${DEV_RABBITMQ_SERVICE_PORT}" # service port
+      - "${DEV_RABBITMQ_SERVICE_PORT}:${DEV_RABBITMQ_SERVICE_PORT}" # service port
       - "127.0.0.1:${DEV_RABBITMQ_UI_PORT}:15672" # UI port
     networks:
       koru-network:
         ipv4_address: 172.18.0.7
     volumes:
       - ./support/rabbitmq/rabbitmq.dev.conf:/etc/rabbitmq/rabbitmq.conf
+    restart: unless-stopped
 
   # RabbitMQ-PROD
   rabbitmq-prod:
@@ -111,6 +116,7 @@ services:
         ipv4_address: 172.18.0.8
     volumes:
       - ./support/rabbitmq/rabbitmq.prod.conf:/etc/rabbitmq/rabbitmq.conf
+    restart: unless-stopped
 
 volumes:
   portainer_data:
