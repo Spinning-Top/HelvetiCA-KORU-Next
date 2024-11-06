@@ -1,0 +1,26 @@
+{
+  "Servers": {
+      "1": {
+          "Name": "KORU DEV",
+          "Group": "Databases",
+          "Host": "db-dev",
+          "Port": 9010,
+          "MaintenanceDB": "postgres",
+          "Username": "koru",
+          "Password": "",
+          "SSLMode": "prefer",
+          "Comment": "KORU development database"
+      },
+      "2": {
+          "Name": "KORU PROD",
+          "Group": "Databases",
+          "Host": "db-prod",
+          "Port": 9020,
+          "MaintenanceDB": "postgres",
+          "Username": "koru",
+          "Password": "",
+          "SSLMode": "prefer",
+          "Comment": "KORU production database"
+      }
+  }
+}

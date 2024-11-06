@@ -1,0 +1,46 @@
+server {
+    listen 80;
+    server_name services.helvetica.aero;
+
+    # Landing page
+    location / {
+        root /srv/koru-tech/landing-page;
+        index index.html;
+    }
+
+    # PostgreSQL-Admin
+    location /pgadmin/ {
+        proxy_pass http://172.18.0.4/pgadmin/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Portainer
+    location /portainer/ {
+        proxy_pass http://172.18.0.5:9000/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # RabbitMQ-DEV
+    location /rabbitmq-dev/ {
+        proxy_pass http://172.18.0.7:15672/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # RabbitMQ-PROD
+    location /rabbitmq-prod/ {
+        proxy_pass http://172.18.0.8:15672/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}

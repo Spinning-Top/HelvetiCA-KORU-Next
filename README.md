@@ -60,3 +60,26 @@ korumail                      A       [SERVER_IP]
 -------------------------------------------------------------------------------------------
 
 DEPLOY con PM2 + Grafana e Prometheus
+
+-------------------------------------------------------------------------------------------
+
+Temporaneamente abilitare SMTP dall'esterno:
+
+- installa socat
+sudo apt install socat
+
+- abilita porta 8025 su firewall
+sudo ufw allow 8025/tcp
+
+- attiva il portforwarding
+socat TCP-LISTEN:8025,fork TCP:127.0.0.1:[PORTA_POSTFIX]
+
+- quando interrompi il comando socat con CTRL+C, anche il portforwarding si termina
+
+-------------------------------------------------------------------------------------------
+
+Rimuovere tutto da docker:
+
+docker system prune -a --volumes
+
+-------------------------------------------------------------------------------------------

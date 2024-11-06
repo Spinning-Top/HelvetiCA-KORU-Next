@@ -1,6 +1,7 @@
 name: koru-tech
 
 services:
+  # PostgreSQL-Database-DEV
   db-dev:
     container_name: PostgreSQL-Database-DEV
     image: postgres:13
@@ -10,10 +11,12 @@ services:
       POSTGRES_DB: ${DB_NAME}
     ports:
       - "127.0.0.1:${DEV_DB_PORT}:${DEV_DB_PORT}"
-    command: postgres -c 'port=${DEV_DB_PORT}'
     networks:
-      - koru-network
+      koru-network:
+        ipv4_address: 172.18.0.2
+    command: postgres -c 'port=${DEV_DB_PORT}'
 
+  # PostgreSQL-Database-PROD
   db-prod:
     container_name: PostgreSQL-Database-PROD
     image: postgres:13
@@ -23,79 +26,98 @@ services:
       POSTGRES_DB: ${DB_NAME}
     ports:
       - "127.0.0.1:${PROD_DB_PORT}:${PROD_DB_PORT}"
-    command: postgres -c 'port=${PROD_DB_PORT}'
     networks:
-      - koru-network
+      koru-network:
+        ipv4_address: 172.18.0.3
+    command: postgres -c 'port=${PROD_DB_PORT}'
 
+  # PostgreSQL-Admin
   pgadmin:
     container_name: PostgreSQL-Admin
     image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+      SCRIPT_NAME: /pgadmin
     ports:
-      - "${PGADMIN_PORT}:80"
+      - "127.0.0.1:${PGADMIN_PORT}:80"
     networks:
-      - koru-network
+      koru-network:
+        ipv4_address: 172.18.0.4
+    volumes:
+      - ./support/pgadmin/servers.json:/pgadmin4/servers.json  
     depends_on:
       - db-dev
       - db-prod
 
+  # Portainer
   portainer:
     container_name: Portainer
     image: portainer/portainer-ce
     command: -H unix:///var/run/docker.sock
+    ports:
+      - "127.0.0.1:${PORTAINER_PORT}:9000"
+    networks:
+      koru-network:
+        ipv4_address: 172.18.0.5
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
-    ports:
-      - "${PORTAINER_PORT}:9000"
-    networks:
-      - koru-network
     restart: always
 
-  rabbitmq-dev:
-    container_name: RabbitMQ-DEV
-    image: rabbitmq:3-management
-    ports:
-      - "127.0.0.1:${DEV_RABBITMQ_SERVICE_PORT}:${DEV_RABBITMQ_SERVICE_PORT}" # service port
-      - "${DEV_RABBITMQ_UI_PORT}:15672" # UI port
-    networks:
-      - koru-network
-    environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USERNAME}
-      RABBITMQ_DEFAULT_PASS: ${DEV_RABBITMQ_PASSWORD}
-    volumes:
-      - ./support/rabbitmq/rabbitmq.dev.conf:/etc/rabbitmq/rabbitmq.conf
-
-  rabbitmq-prod:
-    container_name: RabbitMQ-PROD
-    image: rabbitmq:3-management
-    ports:
-      - "127.0.0.1:${PROD_RABBITMQ_SERVICE_PORT}:${PROD_RABBITMQ_SERVICE_PORT}" # service port
-      - "${PROD_RABBITMQ_UI_PORT}:15672" # UI port
-    networks:
-      - koru-network
-    environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USERNAME}
-      RABBITMQ_DEFAULT_PASS: ${PROD_RABBITMQ_PASSWORD}
-    volumes:
-      - ./support/rabbitmq/rabbitmq.prod.conf:/etc/rabbitmq/rabbitmq.conf
-
+  # Postfix-Server
   postfix:
     container_name: Postfix-Server
     image: glavich/docker-postfix:latest
     environment:
       - DKIM_DOMAIN=${MAIL_DOMAIN}
       - DKIM_SELECTOR=${MAIL_SELECTOR}
-    volumes:
-      - ./support/postfix/${MAIL_SELECTOR}.private:/etc/opendkim/keys/${MAIL_SELECTOR}.private
     ports:
       - "127.0.0.1:${MAIL_PORT}:25"
+    networks:
+      koru-network:
+        ipv4_address: 172.18.0.6
+    volumes:
+      - ./support/postfix/${MAIL_SELECTOR}.private:/etc/opendkim/keys/${MAIL_SELECTOR}.private
+
+  # RabbitMQ-DEV
+  rabbitmq-dev:
+    container_name: RabbitMQ-DEV
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USERNAME}
+      RABBITMQ_DEFAULT_PASS: ${DEV_RABBITMQ_PASSWORD}
+    ports:
+      - "127.0.0.1:${DEV_RABBITMQ_SERVICE_PORT}:${DEV_RABBITMQ_SERVICE_PORT}" # service port
+      - "127.0.0.1:${DEV_RABBITMQ_UI_PORT}:15672" # UI port
+    networks:
+      koru-network:
+        ipv4_address: 172.18.0.7
+    volumes:
+      - ./support/rabbitmq/rabbitmq.dev.conf:/etc/rabbitmq/rabbitmq.conf
+
+  # RabbitMQ-PROD
+  rabbitmq-prod:
+    container_name: RabbitMQ-PROD
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USERNAME}
+      RABBITMQ_DEFAULT_PASS: ${PROD_RABBITMQ_PASSWORD}
+    ports:
+      - "127.0.0.1:${PROD_RABBITMQ_SERVICE_PORT}:${PROD_RABBITMQ_SERVICE_PORT}" # service port
+      - "127.0.0.1:${PROD_RABBITMQ_UI_PORT}:15672" # UI port
+    networks:
+      koru-network:
+        ipv4_address: 172.18.0.8
+    volumes:
+      - ./support/rabbitmq/rabbitmq.prod.conf:/etc/rabbitmq/rabbitmq.conf
 
 volumes:
   portainer_data:
 
 networks:
   koru-network:
-    external: true
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16

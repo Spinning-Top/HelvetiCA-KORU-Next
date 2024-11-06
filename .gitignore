@@ -84,6 +84,7 @@ lerna-debug.log*
 .env.prod
 build
 deno.lock
-docker/images
 temp
+
+# postfix
 *.private
