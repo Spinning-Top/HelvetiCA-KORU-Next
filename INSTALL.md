@@ -4,23 +4,24 @@
 
 ## Postfix external access
 
-```
-- installa socat
-sudo apt install socat
+To permit the access to Postfix server from outside, it is possible to use socat as a way to execute a port forwarding.
 
-- abilita porta 9090 su firewall
-sudo ufw allow 9090/tcp comment "KORU Postfix-Server"
+- Install socat with
 
-- attiva il portforwarding
-socat TCP-LISTEN:9091,fork TCP:127.0.0.1:9090
+  `sudo apt install socat`
 
-- quando interrompi il comando socat con CTRL+C, anche il portforwarding si termina
-```
+- Enable the 9091 TCP port on ufw firewall
+
+  `sudo ufw allow 9091/tcp comment "KORU Postfix-Server"`
+
+- Enable the port forwarding
+
+  `socat TCP-LISTEN:9091,fork TCP:127.0.0.1:9090`
+
+- The Postfix-Server is reachable on `[SERVER_IP]:9091` as long as the socat command is alive
 
 ## Docker delete all data
 
-```
-Rimuovere tutto da docker:
+To delete all containers, images, builds, volumes, networks it is possible to use the command
 
-docker system prune -a --volumes
-```
+`docker system prune -a --volumes`
