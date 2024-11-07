@@ -52,6 +52,7 @@ export function gatewayRequestHandler(gatewayServices: GatewayService[], handler
       */
 
       if (selectedGatewayService === undefined || selectedEndpoint === undefined) {
+        handler.getLog().error(`Endpoint not found for ${method} request to ${url}`);
         return RequestHelpers.sendJsonError(c, HttpStatusCode.NotFound, "notFound", "Endpoint not found");
       }
 

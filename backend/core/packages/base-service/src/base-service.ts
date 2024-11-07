@@ -1,5 +1,6 @@
 // third party
 import { type Context, Hono } from "hono";
+import { resolve } from "@std/path";
 import type { HTTPResponseError } from "hono/types";
 import {
   JwtAlgorithmNotImplemented,
@@ -24,19 +25,21 @@ export class BaseService {
   protected handler: Handler;
   protected hono: Hono<{ Variables: JwtVariables }>;
   protected name: string;
-  protected port: number;
+  protected port: number = 0;
 
-  public constructor(name: string, port: number = 0) {
+  public constructor(name: string) {
     this.abortController = new AbortController();
     this.endpoints = [];
     this.handler = new Handler(name);
     this.hono = new Hono<{ Variables: JwtVariables }>();
     this.name = name;
-    this.port = port;
   }
 
   protected async start(): Promise<void> {
     try {
+      // get the port from the config
+      this.getPortFromConfig();
+
       // initialize rabbit breeder
       await this.handler.getRabbitBreeder().initialize(this.name);
 
@@ -116,6 +119,36 @@ export class BaseService {
     } catch (error: unknown) {
       this.handler.getLog().error((error as Error).message);
     }
+  }
+
+  private getPortFromConfig(): void {
+    // set the port to zero
+    this.port = 0;
+    // get the env path
+    const envPath: string = Deno.env.get("ENV_PATH") || Deno.cwd();
+    // set the sections
+    const sections: string[] = ["core", "feature"];
+    // for each section
+    for (const section of sections) {
+      // set the config path
+      const configPath: string = resolve(envPath, `./config/${section}/services.json`);
+      // get the services
+      const services: { name: string; path: string; devPort: string; prodPort: string; enabled: boolean }[] = JSON.parse(
+        Deno.readTextFileSync(configPath),
+      );
+      // for each service
+      for (const service of services) {
+        // if the service name is the same as the current service
+        if (service.name === this.name) {
+          // set the port
+          this.port = this.handler.isProd() ? parseInt(service.prodPort) : parseInt(service.devPort);
+          // return
+          return;
+        }
+      }
+    }
+    // if the port is still zero
+    if (this.port === 0) throw new Error(`Port not found for service ${this.name}`);
   }
 
   public getHandler(): Handler {

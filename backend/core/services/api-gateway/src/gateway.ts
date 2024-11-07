@@ -13,7 +13,7 @@ export class Gateway extends BaseService {
   private gatewayServices: GatewayService[];
 
   public constructor() {
-    super("API Gateway", 9100);
+    super("API Gateway");
     this.gatewayServices = [];
   }
 
@@ -23,11 +23,20 @@ export class Gateway extends BaseService {
 
       // hono root info
       this.hono.get("/", (c: Context) => {
+        // favicon link
+        c.header("Link", '</favicon.ico>; rel="icon"');
         return c.json({
           name: "KORU API",
           version: this.handler.getGlobalConfig().koru.version,
         });
       });
+
+      // hono favicon
+      this.hono.get("/favicon.ico", async (c: Context) => {
+        const favicon = await Deno.readFile("./assets/favicon.ico");
+        return c.body(favicon, 200, { "Content-Type": "image/x-icon" });
+      });
+
       // hono endpoint setup
       this.hono.all("*", gatewayRequestHandler(this.gatewayServices, this.handler));
 

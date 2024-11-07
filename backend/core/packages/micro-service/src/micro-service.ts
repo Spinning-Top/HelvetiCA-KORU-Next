@@ -14,17 +14,18 @@ export class MicroService extends BaseService {
   private rabbits: Rabbit[];
   private serviceRoot: string;
 
-  public constructor(name: string, port: number, baseUrl: string = "") {
-    super(name, port);
+  public constructor(name: string, baseUrl: string = "") {
+    super(name);
     this.baseUrl = baseUrl;
     this.rabbits = [];
-
-    this.serviceRoot = `http://localhost:${this.port}`;
+    this.serviceRoot = "";
   }
 
   public override async start(): Promise<void> {
     try {
       await super.start();
+
+      this.serviceRoot = `http://localhost:${this.port}`;
 
       // register endpoints
       this.registerEndpoints();

@@ -19,24 +19,26 @@ AUTH
 MODULES
 
 core
-  - backup
-  - changelog
-  - feedback
-  - guide
-  - storage
+
+- backup
+- changelog
+- feedback
+- guide
+- storage
 
 feature
-  - article
-  - broadcast
-  - candidate
-  - emergencyDoc
-  - group
-  - inquiry
-  - language ???
-  - member
-  - section
-  - status
-  - unit
+
+- article
+- broadcast
+- candidate
+- emergencyDoc
+- group
+- inquiry
+- language
+- member
+- section
+- status
+- unit
 
 ---
 

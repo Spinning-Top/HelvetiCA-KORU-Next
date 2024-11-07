@@ -28,7 +28,7 @@
 
   `sudo nano /etc/ssh/sshd_config`
 
-  * Perform these modifications
+  - Perform these modifications
 
     `#PasswordAuthentication yes` to `PasswordAuthentication no`
 
@@ -36,15 +36,15 @@
 
     `PermitRootLogin yes` to `PermitRootLogin no`
 
-  * Check if additional edits are needed in files inside `/etc/ssh/sshd_config.d/`
+  - Check if additional edits are needed in files inside `/etc/ssh/sshd_config.d/`
 
-  * Apply updates with `sudo systemctl reload ssh`
+  - Apply updates with `sudo systemctl reload ssh`
 
 - Avoid sudo password by opening the file
 
   `sudo nano /etc/sudoers.d/90-cloud-init-users`
 
-  * Add this row to the end of the file
+  - Add this row to the end of the file
 
     `gavynsykes ALL=(ALL) NOPASSWD:ALL`
 
@@ -69,6 +69,12 @@ TODO
 TODO
 
 ## Install docker
+
+## Install PM2
+
+`npm install pm2@latest -g`
+
+---
 
 # Helpful Commands
 

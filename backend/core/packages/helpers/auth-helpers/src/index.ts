@@ -24,7 +24,7 @@ export class AuthHelpers {
             return User.createFromJsonData(data, new User());
           },
         );
-        if (user !== undefined) {
+        if (user != undefined && Object.keys(user).includes("id")) {
           // Aggiunge l'utente al contesto in modo che sia disponibile per le route successive
           c.set("user", user);
           await next();

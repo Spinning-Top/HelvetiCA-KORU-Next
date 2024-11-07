@@ -47,7 +47,7 @@ services:
       koru-network:
         ipv4_address: 172.18.0.4
     volumes:
-      - ./support/pgadmin/servers.json:/pgadmin4/servers.json  
+      - ./support/pgadmin/servers.json:/pgadmin4/servers.json
     restart: unless-stopped
     depends_on:
       - db-dev

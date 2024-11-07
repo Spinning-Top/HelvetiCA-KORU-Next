@@ -52,7 +52,7 @@ export class RabbitBreeder {
     requestQueue: string,
     responseQueue: string,
     requestParams: Record<string, unknown>,
-    responseCreator: (data: Record<string, unknown>) => T,
+    responseCreator: (data: Record<string, unknown>) => T | undefined,
   ): Promise<T | undefined> {
     if (this.channel === undefined) return undefined;
 
@@ -61,7 +61,7 @@ export class RabbitBreeder {
     const randomResponseQueue: string = `${responseQueue}-${await this.generateUUID()}`;
     await this.channel.assertQueue(randomResponseQueue, { autoDelete: true, exclusive: true });
 
-    const result: T = await new Promise((resolve, reject) => {
+    const result: T | undefined = await new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
         reject(new Error("timeout"));
       }, this.globalConfig.rabbitMq.requestTimeout);
@@ -69,13 +69,13 @@ export class RabbitBreeder {
       this.channel!.consume(
         randomResponseQueue,
         (msg: ConsumeMessage | null) => {
-          if (msg === null) return;
+          if (msg === null) resolve(undefined);
 
           if (msg.properties.correlationId === correlationId) {
             clearTimeout(timeout);
 
             const response = JSON.parse(msg.content.toString());
-            const object: T = responseCreator(response);
+            const object: T | undefined = responseCreator(response);
             resolve(object);
             this.channel!.ack(msg);
           }
@@ -99,12 +99,10 @@ export class RabbitBreeder {
 
     const { consumerTag } = await this.channel.consume(requestQueue, async (msg: ConsumeMessage | null) => {
       if (msg !== null) {
-        const objectToSend: T = await responseCreator(msg);
-        if (objectToSend != undefined) {
-          this.channel!.sendToQueue(msg.properties.replyTo, Buffer.from(JSON.stringify(objectToSend)), {
-            correlationId: msg.properties.correlationId,
-          });
-        }
+        const objectToSend: T | undefined = await responseCreator(msg);
+        this.channel!.sendToQueue(msg.properties.replyTo, Buffer.from(JSON.stringify(objectToSend ?? {})), {
+          correlationId: msg.properties.correlationId,
+        });
 
         this.channel!.ack(msg);
       }

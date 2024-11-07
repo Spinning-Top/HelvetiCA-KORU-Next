@@ -2,7 +2,7 @@ import { MicroService } from "@koru/micro-service";
 
 import { readNotificationEndpoint, readNotificationsEndpoint, updateNotificationEndpoint } from "./endpoints/index.ts";
 
-const microService: MicroService = new MicroService("Notification Service", 9238);
+const microService: MicroService = new MicroService("Notification Service");
 
 export function startService(): Promise<void> {
   // endpoints

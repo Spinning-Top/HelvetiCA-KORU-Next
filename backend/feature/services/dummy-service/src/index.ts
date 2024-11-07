@@ -5,7 +5,7 @@ import { Dummy } from "@koru/feature-models";
 
 import { DummyController } from "./controllers/index.ts";
 
-const microService: MicroService = new MicroService("Dummy Service", 9301);
+const microService: MicroService = new MicroService("Dummy Service");
 
 export function startService(): Promise<void> {
   // endpoints

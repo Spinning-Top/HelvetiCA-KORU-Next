@@ -22,7 +22,7 @@ export function createUserEndpoint(handler: Handler): Endpoint {
       const body: Record<string, unknown> = await c.req.parseBody();
       // create the new user from the request
       const newUser: User = User.createFromRequest(body, new User());
-      // TODO take the new temporary password and send a welcome e-mail
+      // TODOMAIL take the new temporary password and send a welcome e-mail
       // set immediate password expiration
       newUser.passwordExpiresAt = new Date();
       // set the user locale and theme

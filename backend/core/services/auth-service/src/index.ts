@@ -14,7 +14,7 @@ import {
   validateTokenEndpoint,
 } from "./endpoints/index.ts";
 
-const microService: MicroService = new MicroService("Auth Service", 9201, "/auth");
+const microService: MicroService = new MicroService("Auth Service", "/auth");
 
 export function startService(): Promise<void> {
   // endpoints

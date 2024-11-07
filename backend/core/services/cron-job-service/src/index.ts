@@ -5,7 +5,7 @@ import { MicroService } from "@koru/micro-service";
 
 import { CronJobController } from "./controllers/index.ts";
 
-const microService: MicroService = new MicroService("Cron Job Service", 9202);
+const microService: MicroService = new MicroService("Cron Job Service");
 
 export function startService(): Promise<void> {
   // endpoints

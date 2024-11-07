@@ -1,0 +1,4 @@
+{
+  "name": "@koru/create-build",
+  "exports": "./src/index.ts"
+}

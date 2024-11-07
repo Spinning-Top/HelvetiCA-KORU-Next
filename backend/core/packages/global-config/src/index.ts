@@ -1,5 +1,5 @@
 // third party
-import { dirname, fromFileUrl, resolve } from "@std/path";
+import { resolve } from "@std/path";
 import { loadSync } from "@std/dotenv";
 
 // project
@@ -8,7 +8,8 @@ import type { Locale, Theme } from "@koru/core-models";
 let conf: Record<string, string> = {};
 
 export function initGlobalConfig(): void {
-  const envPath: string = Deno.env.get("ENV_PATH") || Deno.cwd() || dirname(fromFileUrl(import.meta.url));
+  const envPath: string = Deno.env.get("ENV_PATH") || Deno.cwd();
+  // TODO
   const envFilePath: string = Deno.env.get("ENV") === "production" ? resolve(envPath, ".env.prod") : resolve(envPath, ".env.dev");
 
   try {

@@ -1,11 +1,12 @@
 // third party
 import { ConsoleHandler, debug, error, FileHandler, info, type LogRecord, setup, warn } from "@std/log";
-import { dirname, fromFileUrl, resolve } from "@std/path";
+import { resolve } from "@std/path";
 import { format } from "@std/datetime";
 
 export class Log {
   public constructor(serviceName: string = "") {
-    const logPath: string = Deno.env.get("LOG_PATH") || resolve(Deno.cwd(), "./logs") || resolve(dirname(fromFileUrl(import.meta.url)), "./logs");
+    const logPath: string = Deno.env.get("LOG_PATH") || resolve(Deno.cwd(), "./logs");
+    const logNamePrefix: string = serviceName.toLowerCase().replace(/ /g, "-");
 
     try {
       setup({
@@ -18,7 +19,7 @@ export class Log {
             },
           }),
           fileError: new FileHandler("WARN", {
-            filename: resolve(logPath, "./error.log"),
+            filename: resolve(logPath, `./${logNamePrefix}-error.log`),
             formatter: (logRecord: LogRecord) => {
               const timestamp = format(new Date(), "yyyy-MM-dd HH:mm:ss.SSS");
               const serviceNameRender: string = serviceName != "" ? `[${serviceName.toUpperCase().replace(/ /g, "-")}]` : "";
@@ -26,7 +27,7 @@ export class Log {
             },
           }),
           fileCombined: new FileHandler("DEBUG", {
-            filename: resolve(logPath, "./combined.log"),
+            filename: resolve(logPath, `./${logNamePrefix}-debug.log`),
             formatter: (logRecord: LogRecord) => {
               const timestamp = format(new Date(), "yyyy-MM-dd HH:mm:ss.SSS");
               const serviceNameRender: string = serviceName != "" ? `[${serviceName.toUpperCase().replace(/ /g, "-")}]` : "";

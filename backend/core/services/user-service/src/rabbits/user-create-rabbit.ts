@@ -22,7 +22,7 @@ export function userCreateRabbit(handler: Handler): Rabbit<User | undefined> {
       const parameters: Record<string, unknown> = JSON.parse(msg.content.toString());
       // create the new user from the request
       const newUser: User = User.createFromJsonData(parameters, new User());
-      // TODO take the new temporary password and send a welcome e-mail
+      // TODOMAIL take the new temporary password and send a welcome e-mail
       // set immediate password expiration
       newUser.passwordExpiresAt = new Date();
       // set the user locale and theme

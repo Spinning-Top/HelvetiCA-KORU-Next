@@ -5,7 +5,7 @@ import { MicroService } from "@koru/micro-service";
 import { createUserEndpoint, deleteUserEndpoint, readUserEndpoint, readUsersEndpoint, updateUserEndpoint } from "./endpoints/index.ts";
 import { userCreateRabbit, userReadRabbit, userUpdateRabbit } from "./rabbits/index.ts";
 
-const microService: MicroService = new MicroService("User Service", 9206);
+const microService: MicroService = new MicroService("User Service");
 
 export function startService(): Promise<void> {
   // endpoints
