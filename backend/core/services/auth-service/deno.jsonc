@@ -4,8 +4,8 @@
   "tasks": {
     "compile:local": "deno compile -ENRW --output ./build/koru-core-auth-service ./src/index.ts",
     "compile:server": "deno compile -ENRW --target x86_64-unknown-linux-gnu --output ./build/koru-core-auth-service ./src/index.ts",
-    "dev": "ENV=development ENV_PATH=../../../ LOG_PATH=./logs/ deno run -ENRW ./src/index.ts --reload",
-    "prod": "ENV=production ENV_PATH=../../../ LOG_PATH=./logs/ deno run -ENRW ./src/index.ts --reload"
+    "dev": "ENV=development ENV_PATH=../../../ LOG_PATH=../../../logs/ deno run -ENRW ./src/index.ts --reload",
+    "prod": "ENV=production ENV_PATH=../../../ LOG_PATH=../../../logs/ deno run -ENRW ./src/index.ts --reload"
   },
   "imports": {
     // jsr

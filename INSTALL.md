@@ -70,9 +70,21 @@ TODO
 
 ## Install docker
 
+TODO
+
+## Install deno
+
+`sudo apt install unzip`
+
+`curl -fsSL https://deno.land/install.sh | sh`
+
 ## Install PM2
 
 `npm install pm2@latest -g`
+
+`pm2 status`
+
+TODO
 
 ---
 

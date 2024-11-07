@@ -15,6 +15,7 @@
       // utils
         "backend:utils:create-build": "deno -ENRW --allow-run ./backend/core/utils/create-build/src/index.ts",
         "backend:utils:create-dkim-keys": "./backend/scripts/create-dkim-keys.sh",
+        "backend:utils:create-pm2-config": "deno -ENRW --allow-run ./backend/core/utils/create-pm2-config/src/index.ts",
         "backend:utils:create-run-scripts": "deno -ENRW ./backend/core/utils/create-run-scripts/src/index.ts",
         "backend:utils:killer": "./backend/scripts/killer.sh",
         "backend:utils:seeder": "ENV_PATH=./backend/ deno -ENRW ./backend/core/utils/seeder/src/index.ts",
@@ -54,6 +55,7 @@
           "backend/core/services/user-service",
         // utils
           "backend/core/utils/create-build",
+          "backend/core/utils/create-pm2-config",
           "backend/core/utils/create-run-scripts",
           "backend/core/utils/seeder",
       // feature

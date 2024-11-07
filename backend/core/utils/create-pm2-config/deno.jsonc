@@ -1,0 +1,4 @@
+{
+  "name": "@koru/create-pm2-config",
+  "exports": "./src/index.ts"
+}

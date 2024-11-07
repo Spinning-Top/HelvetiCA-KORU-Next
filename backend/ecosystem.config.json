@@ -1,0 +1,26 @@
+{
+  "apps": [
+    {
+      "name": "CORE - API Gateway",
+      "script": "./core/services/api-gateway/src/index.ts",
+      "interpreter": "deno",
+      "interpreter_args": "run --no-check -ENRW",
+      "env": {
+        "ENV": "production",
+        "ENV_PATH": "./",
+        "LOG_PATH": "./logs/"
+      }
+    },
+    {
+      "name": "CORE - Auth Service",
+      "script": "./core/services/auth-service/src/index.ts",
+      "interpreter": "deno",
+      "interpreter_args": "run --no-check -ENRW",
+      "env": {
+        "ENV": "production",
+        "ENV_PATH": "./",
+        "LOG_PATH": "./logs/"
+      }
+    }
+ ]
+}
