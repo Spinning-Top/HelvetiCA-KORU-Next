@@ -2,7 +2,73 @@
 
 ## Basic configuration
 
-Choose a VPS and install Ubuntu Server 24.04 LTS.
+- Choose a VPS and install Ubuntu Server 24.04 LTS
+
+- Generate a new SSH key with
+
+  `ssh-keygen -t rsa -b 4096 -C "marco@spinningtop.it"`
+
+- Install the keys to 1password and termius
+
+- Create new user
+
+  `adduser gavynsykes`
+
+- Add the user to sudo and root groups
+
+  `usermod -aG sudo gavynsykes`
+
+  `usermod -aG root gavynsykes`
+
+- Copy SSH key to server
+
+  `ssh-copy-id gavynsykes@[SERVER_IP]`
+
+- Disable password authentication by opening the file
+
+  `sudo nano /etc/ssh/sshd_config`
+
+  * Perform these modifications
+
+    `#PasswordAuthentication yes` to `PasswordAuthentication no`
+
+    `UsePAM yes` to `UsePAM no`
+
+    `PermitRootLogin yes` to `PermitRootLogin no`
+
+  * Check if additional edits are needed in files inside `/etc/ssh/sshd_config.d/`
+
+  * Apply updates with `sudo systemctl reload ssh`
+
+- Avoid sudo password by opening the file
+
+  `sudo nano /etc/sudoers.d/90-cloud-init-users`
+
+  * Add this row to the end of the file
+
+    `gavynsykes ALL=(ALL) NOPASSWD:ALL`
+
+## Install nginx
+
+`sudo apt install nginx`
+
+TODO
+
+## Firewall configuration
+
+`sudo ufw default deny incoming`
+
+`sudo ufw default allow outgoing`
+
+`sudo ufw allow OpenSSH`
+
+`sudo ufw allow "Nginx Full"`
+
+`sudo ufw enable`
+
+TODO
+
+## Install docker
 
 # Helpful Commands
 
