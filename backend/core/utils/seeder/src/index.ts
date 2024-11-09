@@ -1,12 +1,13 @@
-import { basename, extname, resolve } from "@std/path";
-import { sync } from "glob";
+// third party
+// import { basename, extname, resolve } from "@std/path";
+// import { sync } from "glob";
 
-import { Database } from "@koru/database";
-import { getGlobalConfig, type GlobalConfig, initGlobalConfig } from "@koru/global-config";
-import { InquiryHelpers } from "@koru/inquiry-helpers";
+// project
+// import { getGlobalConfig, type GlobalConfig, initGlobalConfig } from "@koru/global-config";
+// import { InquiryHelpers } from "@koru/inquiry-helpers";
 
-const CORE_SEEDERS_PATTERN = "./backend/core/**/*-seeder.ts";
-const FEATURE_SEEDERS_PATTERN = "./backend/feature/**/*-seeder.ts";
+// const CORE_SEEDERS_PATTERN = "./backend/core/**/*-seeder.ts";
+// const FEATURE_SEEDERS_PATTERN = "./backend/feature/**/*-seeder.ts";
 
 interface Seeder {
   name: string;
@@ -14,6 +15,7 @@ interface Seeder {
   dependsOn?: string;
 }
 
+/*
 async function main() {
   console.log("");
   console.log("#############################");
@@ -145,3 +147,4 @@ function topologicalSort(seeders: Seeder[]): Seeder[] {
 }
 
 main();
+*/

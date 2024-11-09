@@ -1,6 +1,9 @@
 {
   "name": "@koru/global-config",
   "exports": "./src/index.ts",
+  "tasks": {
+    "test": "ENV=development ENV_PATH=../../../ deno test -ENRW"
+  },
   "imports": {
     // jsr
     "@std/dotenv": "jsr:@std/dotenv@0.225.2",

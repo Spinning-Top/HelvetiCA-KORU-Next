@@ -1,33 +1,25 @@
 #!/bin/bash
 
-porta_inizio=8100
-porta_fine=8400
+start_port=8100
+end_port=8400
 
-# Loop attraverso l'intervallo di porte
-for ((porta=porta_inizio; porta<=porta_fine; porta++))
+for ((port=start_port; port<=end_port; port++))
 do
-  # Trova il PID del processo che sta usando la porta specifica
-  pid=$(lsof -t -i :$porta)
-
-  # Se esiste un PID, termina il processo
+  pid=$(lsof -t -i :$port)
   if [ -n "$pid" ]; then
-    echo "Killing process $pid on port $porta"
+    echo "Killing process $pid on port $port"
     kill -9 $pid
   fi
 done
 
-porta_inizio=9100
-porta_fine=9400
+start_port=9100
+end_port=9400
 
-# Loop attraverso l'intervallo di porte
-for ((porta=porta_inizio; porta<=porta_fine; porta++))
+for ((port=start_port; port<=end_port; port++))
 do
-  # Trova il PID del processo che sta usando la porta specifica
-  pid=$(lsof -t -i :$porta)
-
-  # Se esiste un PID, termina il processo
+  pid=$(lsof -t -i :$port)
   if [ -n "$pid" ]; then
-    echo "Killing process $pid on port $porta"
+    echo "Killing process $pid on port $port"
     kill -9 $pid
   fi
 done

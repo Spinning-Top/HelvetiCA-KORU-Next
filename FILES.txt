@@ -1,0 +1,51 @@
+backend/core/services/database-service
+  - rabbits di ascolto che interagiscono con il database
+
+backend/core/packages/rabbit-breeder/src/rabbit-breeder.ts
+  - verifica se i metodi vanno bene e implementa gestione errori e maxTries
+
+backend/core/packages/helpers/rabbit-helpers/src/index.ts
+  - scrivi le chiamate standard che utilizzerà anche il base controller
+
+backend/core/packages/base-service/src/base-controller.ts
+  - chiamate rabbit al database per interazioni
+
+shared/core/packages/core-entities/src/entities/root-entity.ts
+  - verifica funzioni con riferimento a gruppi
+
+backend/core/packages/core-models/src/models/base-model.ts
+backend/core/packages/helpers/audit-log-helpers/deno.jsonc
+backend/core/packages/helpers/audit-log-helpers/src/index.ts
+  - trova un modo per creare gli audit log
+
+backend/core/utils/seeder/deno.jsonc
+backend/core/utils/seeder/src/index.ts
+  - trova un modo per farlo funzionare
+
+---------------------------------------------------------------------------------------------
+
+backend/core/packages/crud-template/deno.jsonc
+backend/core/packages/crud-template/src/endpoints/read-entity-endpoint.ts
+backend/core/packages/crud-template/src/endpoints/delete-entity-endpoint.ts
+backend/core/packages/crud-template/src/endpoints/create-entity-endpoint.ts
+backend/core/packages/crud-template/src/endpoints/read-entities-endpoint.ts
+backend/core/packages/crud-template/src/endpoints/index.ts
+backend/core/packages/crud-template/src/endpoints/read-deleted-entities-endpoint.ts
+backend/core/packages/crud-template/src/endpoints/update-entity-endpoint.ts
+backend/core/packages/crud-template/src/index.ts
+
+backend/core/utils/create-pm2-config/deno.jsonc
+backend/core/utils/create-pm2-config/src/index.ts
+
+---------------------------------------------------------------------------------------------
+
+backend/core/services/auth-service
+backend/core/services/role-service
+backend/core/services/user-service
+
+backend/feature/services/dummy-service
+
+backend/core/services/cron-job-service
+backend/core/services/mail-service
+backend/core/services/mail-template-service
+backend/core/services/notification-service

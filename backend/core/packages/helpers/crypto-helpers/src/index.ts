@@ -5,7 +5,7 @@ import { sign, verify as jwtVerify } from "hono/jwt";
 
 // project
 import type { Handler } from "@koru/handler";
-import type { User } from "@koru/core-models";
+import type { User } from "@koru/core-entities";
 
 export class CryptoHelpers {
   public static compareStringWithHash(value: string, hash: string): boolean {

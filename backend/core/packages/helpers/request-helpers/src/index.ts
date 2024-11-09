@@ -2,6 +2,22 @@
 import type { Context } from "hono";
 
 export class RequestHelpers {
+  public static matchRoute(requestPath: string, endpointPath: string): Record<string, string> | undefined {
+    const requestSegments = requestPath.split("/");
+    const endpointSegments = endpointPath.split("/");
+    if (requestSegments.length !== endpointSegments.length) return undefined;
+    const params: Record<string, string> = {};
+    for (let i = 0; i < requestSegments.length; i++) {
+      if (endpointSegments[i].startsWith(":")) {
+        const paramName = endpointSegments[i].slice(1);
+        params[paramName] = requestSegments[i];
+      } else if (endpointSegments[i] !== requestSegments[i]) {
+        return undefined;
+      }
+    }
+    return params;
+  }
+
   public static sendJsonCreated(context: Context): Response {
     return context.json({ status: "created" }, HttpStatusCode.Created);
   }

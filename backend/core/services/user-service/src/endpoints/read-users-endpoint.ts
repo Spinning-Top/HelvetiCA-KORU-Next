@@ -5,6 +5,7 @@ import type { Context } from "hono";
 import { Endpoint, EndpointMethod } from "@koru/base-service";
 import type { Handler } from "@koru/handler";
 import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
+import type { ReadWithParamsResult } from "@koru/core-entities";
 
 // local
 import { UserController } from "../controllers/index.ts";
@@ -23,13 +24,9 @@ export function readUsersEndpoint(handler: Handler): Endpoint {
       // get the search from the request
       const search: string | undefined = c.req.query("search") != undefined ? c.req.query("search") : undefined;
       // get the users with the given parameters
-      const result: { entities: Record<string, unknown>[]; total: number; page: number; limit: number } = await userController.getEntitiesWithParams(
-        page,
-        limit,
-        search,
-      );
+      const result: ReadWithParamsResult = await userController.getEntitiesWithParams(page, limit, search);
       // return the users
-      return RequestHelpers.sendJsonResponse(c, result);
+      return RequestHelpers.sendJsonResponse(c, result.toJson());
     } catch (error) {
       console.error(error);
       return RequestHelpers.sendJsonError(c, HttpStatusCode.InternalServerError, "error", (error as Error).message);

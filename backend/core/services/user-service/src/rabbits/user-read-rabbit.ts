@@ -3,7 +3,7 @@ import type { ConsumeMessage } from "amqplib";
 
 // project
 import type { Handler } from "@koru/handler";
-import { Rabbit } from "@koru/micro-service";
+import { Rabbit } from "@koru/rabbit-breeder";
 import type { User } from "@koru/core-models";
 
 // local

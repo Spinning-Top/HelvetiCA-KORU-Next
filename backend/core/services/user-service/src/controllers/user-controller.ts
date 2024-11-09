@@ -20,6 +20,7 @@ export class UserController extends BaseController<User> {
     // check if there are any validation errors
     if (errors.length > 0) return errors;
 
+    /*
     // check if the user with the same email already exists
     const existingUser: User | null = await this.repository.findOne({ where: { email: user.email } });
     if (existingUser != null) return "duplicatedEmail";
@@ -27,6 +28,9 @@ export class UserController extends BaseController<User> {
     // save the new user and return
     user = this.repository.create(user);
     return this.repository.save(user);
+    */
+    // TODO
+    return "";
   }
 
   public override async updateEntity(user: User): Promise<User | ValidationError[] | string> {
@@ -35,11 +39,14 @@ export class UserController extends BaseController<User> {
     // check if there are any validation errors
     if (errors.length > 0) return errors;
 
+    /*
     // check if the user with the same email already exists
     const existingUser: User | null = await this.repository.findOne({ where: { email: user.email } });
     if (existingUser !== null && existingUser.id != user.id) return "duplicatedEmail";
 
     // save the new user and return
     return this.repository.save(user);
+    */
+    return "";
   }
 }

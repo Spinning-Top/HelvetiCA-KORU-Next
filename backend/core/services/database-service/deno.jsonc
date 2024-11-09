@@ -1,0 +1,16 @@
+{
+  "name": "@koru/database-service",
+  "exports": "./src/index.ts",
+  "tasks": {
+    "compile:local": "deno compile -ENRW --output ./build/koru-core-database-service ./src/index.ts",
+    "compile:server": "deno compile -ENRW --target x86_64-unknown-linux-gnu --output ./build/koru-core-database-service ./src/index.ts",
+    "dev": "ENV=development ENV_PATH=../../../ LOG_PATH=../../../logs/ deno run -ENRW ./src/index.ts --reload",
+    "prod": "ENV=production ENV_PATH=../../../ LOG_PATH=../../../logs/ deno run -ENRW ./src/index.ts --reload",
+    "test": "ENV=development ENV_PATH=../../../ deno test -ENRW"
+  },
+  "imports": {
+    // npm
+    "pg": "npm:pg@^8.12.0",
+    "typeorm": "npm:typeorm@^0.3.20"
+  }
+}

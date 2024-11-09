@@ -1,6 +1,9 @@
 // third party
 import type { Handler as HonoHandler } from "hono/types";
 
+// local
+import type { EndpointMethod } from "./endpoint-method.ts";
+
 export class Endpoint {
   private url: string;
   private fullUrl: string;
@@ -53,20 +56,4 @@ export class Endpoint {
   public setUrl(url: string): void {
     this.url = url;
   }
-}
-
-export enum EndpointMethod {
-  GET = "GET",
-  POST = "POST",
-  PUT = "PUT",
-  DELETE = "DELETE",
-}
-
-export enum EndpointType {
-  Create = "Create",
-  ReadAll = "ReadAll",
-  Read = "Read",
-  ReadDeleted = "ReadDeleted",
-  Update = "Update",
-  Delete = "Delete",
 }

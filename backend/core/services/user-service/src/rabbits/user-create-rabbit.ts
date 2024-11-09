@@ -4,7 +4,7 @@ import { ValidationError } from "class-validator";
 
 // project
 import type { Handler } from "@koru/handler";
-import { Rabbit } from "@koru/micro-service";
+import { Rabbit } from "@koru/rabbit-breeder";
 import { User } from "@koru/core-models";
 
 // local

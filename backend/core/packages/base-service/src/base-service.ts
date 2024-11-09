@@ -1,104 +1,50 @@
-// third party
-import { type Context, Hono } from "hono";
-import { resolve } from "@std/path";
-import type { HTTPResponseError } from "hono/types";
-import {
-  JwtAlgorithmNotImplemented,
-  JwtTokenExpired,
-  JwtTokenInvalid,
-  JwtTokenIssuedAt,
-  JwtTokenNotBefore,
-  JwtTokenSignatureMismatched,
-} from "hono/utils/jwt/types";
-import type { JwtVariables } from "hono/jwt";
-
 // project
 import { Handler } from "@koru/handler";
-import { HttpStatusCode, RequestHelpers } from "@koru/request-helpers";
+import type { Rabbit } from "@koru/rabbit-breeder";
 
-// local
-import type { Endpoint } from "./endpoint.ts";
-
-export class BaseService {
+export abstract class BaseService {
   protected abortController: AbortController;
-  protected endpoints: Endpoint[];
   protected handler: Handler;
-  protected hono: Hono<{ Variables: JwtVariables }>;
   protected name: string;
-  protected port: number = 0;
+  private rabbits: Rabbit[];
+  private rabbitTags: string[];
 
   public constructor(name: string) {
     this.abortController = new AbortController();
-    this.endpoints = [];
     this.handler = new Handler(name);
-    this.hono = new Hono<{ Variables: JwtVariables }>();
     this.name = name;
+    this.rabbits = [];
+    this.rabbitTags = [];
   }
 
   protected async start(): Promise<void> {
-    try {
-      // get the port from the config
-      this.getPortFromConfig();
+    // initialize rabbit breeder
+    await this.handler.getRabbitBreeder().initialize(this.name);
 
-      // initialize rabbit breeder
-      await this.handler.getRabbitBreeder().initialize(this.name);
+    // register rabbits
+    await this.registerRabbits();
 
-      // connect to database
-      await this.handler.getDatabase().connect();
-
-      // not found handler
-      this.hono.notFound((c: Context) => {
-        return RequestHelpers.sendJsonError(c, HttpStatusCode.NotFound, "notFound", "Endpoint not found");
-      });
-
-      // error handler
-      this.hono.onError((err: Error | HTTPResponseError, c: Context) => {
-        // check if the error is an instance of a JWT error
-        if (
-          err instanceof JwtAlgorithmNotImplemented ||
-          err instanceof JwtTokenInvalid ||
-          err instanceof JwtTokenNotBefore ||
-          err instanceof JwtTokenExpired ||
-          err instanceof JwtTokenIssuedAt ||
-          err instanceof JwtTokenSignatureMismatched
-        ) {
-          // log the JWT error
-          this.handler.getLog().warn(`JWT Error: ${err.message}`);
-          return RequestHelpers.sendJsonError(c, HttpStatusCode.Unauthorized, "unauthorized", err.message);
-        }
-        // otherwise log a generic error
-        this.handler.getLog().error(`Request error: ${err.message}`);
-        return RequestHelpers.sendJsonError(c, HttpStatusCode.InternalServerError, "requestError", err.message);
-      });
-    } catch (error: unknown) {
-      this.handler.getLog().error((error as Error).message);
-    }
+    // register the signal listeners
+    this.registerSignalListeners();
   }
 
-  protected bootServer(): void {
+  protected async boot(): Promise<void> {
+    // log that the service is running
+    this.handler.getLog().info(`${this.name} is running`),
+      // listen for abort signal
+      await new Promise((resolve) => this.abortController.signal.addEventListener("abort", resolve));
+
+    // log that the service has been stopped
+    this.handler.getLog().info(`${this.name} has been stopped`);
+  }
+
+  public async startAndBoot(): Promise<void> {
     try {
-      const server: Deno.HttpServer = Deno.serve(
-        {
-          onListen: () => this.handler.getLog().info(`${this.name} is running on port ${this.port}`),
-          port: this.port,
-          signal: this.abortController.signal,
-        },
-        this.hono.fetch,
-      );
+      // start the service
+      await this.start();
 
-      server.finished.then(() => this.handler.getLog().info(`${this.name} has been stopped`));
-
-      // Ascolta il segnale SIGTERM
-      Deno.addSignalListener("SIGTERM", () => {
-        console.log("SIGTERM received: shutting down gracefully...");
-        this.stop();
-      });
-
-      // Ascolta il segnale SIGINT (CTRL+C) se vuoi supportarlo
-      Deno.addSignalListener("SIGINT", () => {
-        console.log("SIGINT received: shutting down gracefully...");
-        this.stop();
-      });
+      // boot the service
+      await this.boot();
     } catch (error: unknown) {
       this.handler.getLog().error((error as Error).message);
     }
@@ -107,13 +53,13 @@ export class BaseService {
   public async stop(): Promise<void> {
     try {
       // stop rabbits listeners
-      for (const rabbitTag of this.handler.getRabbitTags()) {
+      for (const rabbitTag of this.getRabbitTags()) {
         await this.handler.getRabbitBreeder().stopRequestListener(rabbitTag);
       }
-      // stop rabbit
+
+      // stop rabbit breeder
       await this.handler.getRabbitBreeder().destroy();
-      // disconnect from database
-      await this.handler.getDatabase().disconnect();
+
       // stop server
       this.abortController.abort();
     } catch (error: unknown) {
@@ -121,41 +67,42 @@ export class BaseService {
     }
   }
 
-  private getPortFromConfig(): void {
-    // set the port to zero
-    this.port = 0;
-    // get the env path
-    const envPath: string = Deno.env.get("ENV_PATH") || Deno.cwd();
-    // set the sections
-    const sections: string[] = ["core", "feature"];
-    // for each section
-    for (const section of sections) {
-      // set the config path
-      const configPath: string = resolve(envPath, `./config/${section}/services.json`);
-      // get the services
-      const services: { name: string; path: string; devPort: string; prodPort: string; enabled: boolean }[] = JSON.parse(
-        Deno.readTextFileSync(configPath),
-      );
-      // for each service
-      for (const service of services) {
-        // if the service name is the same as the current service
-        if (service.name === this.name) {
-          // set the port
-          this.port = this.handler.isProd() ? parseInt(service.prodPort) : parseInt(service.devPort);
-          // return
-          return;
-        }
-      }
+  private async registerRabbits(): Promise<void> {
+    for (const rabbit of this.rabbits) {
+      // if the rabbit has no response handler, skip it
+      if (rabbit.getResponseHandler() === undefined) continue;
+
+      // start request listener and get the rabbit tag
+      const rabbitTag: string | undefined = await this.handler
+        .getRabbitBreeder()
+        .startRequestListener(rabbit.getRequestQueue(), rabbit.getResponseHandler()!);
+
+      // if the rabbit tag is defined, add it to the handler
+      if (rabbitTag !== undefined) this.addRabbitTag(rabbitTag);
     }
-    // if the port is still zero
-    if (this.port === 0) throw new Error(`Port not found for service ${this.name}`);
+  }
+
+  private registerSignalListeners(): void {
+    // listen for SIGTERM signal
+    Deno.addSignalListener("SIGTERM", () => this.stop());
+
+    // listen for SIGINT signal (CTRL+C)
+    Deno.addSignalListener("SIGINT", () => this.stop());
   }
 
   public getHandler(): Handler {
     return this.handler;
   }
 
-  public setEndpoints(endpoints: Endpoint[]): void {
-    this.endpoints = endpoints;
+  public setRabbits(rabbits: Rabbit[]): void {
+    this.rabbits = rabbits;
+  }
+
+  public getRabbitTags(): string[] {
+    return this.rabbitTags;
+  }
+
+  public addRabbitTag(tag: string): void {
+    this.rabbitTags.push(tag);
   }
 }

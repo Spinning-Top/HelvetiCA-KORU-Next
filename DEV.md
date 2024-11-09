@@ -48,13 +48,8 @@ feature
 
 ---
 
-{
-  name: "app",
-  script: "./deno.js",
-  interpreter: "deno",
-  interpreter_args: "run --allow-net --allow-read",
-},
+{ name: "app", script: "./deno.js", interpreter: "deno", interpreter_args: "run --allow-net --allow-read", },
 
-	3.	cwd: La directory di lavoro del processo.
-	12.	error_file: Percorso per il file di log degli errori.
-	13.	out_file: Percorso per il file di log dell’output.
+    3.	cwd: La directory di lavoro del processo.
+    12.	error_file: Percorso per il file di log degli errori.
+    13.	out_file: Percorso per il file di log dell’output.

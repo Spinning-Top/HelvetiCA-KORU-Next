@@ -1,6 +1,9 @@
 {
   "name": "@koru/crypto-helpers",
   "exports": "./src/index.ts",
+  "tasks": {
+    "test": "ENV=development ENV_PATH=../../../ deno test -ENRW"
+  },
   "imports": {
     // jsr
     "@stdext/crypto/hash": "jsr:@stdext/crypto/hash",

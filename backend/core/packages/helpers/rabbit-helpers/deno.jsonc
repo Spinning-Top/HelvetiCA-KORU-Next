@@ -1,6 +1,4 @@
 {
   "name": "@koru/rabbit-helpers",
-  "exports": "./src/index.ts",
-  "imports": {
-  }
+  "exports": "./src/index.ts"
 }

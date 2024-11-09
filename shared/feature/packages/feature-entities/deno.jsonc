@@ -1,0 +1,9 @@
+{
+  "name": "@koru/feature-entities",
+  "exports": "./src/index.ts",
+  "imports": {
+    // npm
+    "class-transformer": "npm:class-transformer@^0.4.0",
+    "class-validator": "npm:class-validator@^0.13.1"
+  }
+}

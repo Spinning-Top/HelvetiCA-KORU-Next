@@ -21,38 +21,45 @@
     "enabled": false
   },
   {
-    "name": "Mail Service",
-    "path": "backend/core/services/mail-service",
+    "name": "Database Service",
+    "path": "backend/core/services/database-service",
     "devPort": 8203,
     "prodPort": 9203,
     "enabled": true
   },
   {
-    "name": "Mail Template Service",
-    "path": "backend/core/services/mail-template-service",
+    "name": "Mail Service",
+    "path": "backend/core/services/mail-service",
     "devPort": 8204,
     "prodPort": 9204,
     "enabled": true
   },
   {
-    "name": "Notification Service",
-    "path": "backend/core/services/notification-service",
+    "name": "Mail Template Service",
+    "path": "backend/core/services/mail-template-service",
     "devPort": 8205,
     "prodPort": 9205,
+    "enabled": true
+  },
+  {
+    "name": "Notification Service",
+    "path": "backend/core/services/notification-service",
+    "devPort": 8206,
+    "prodPort": 9206,
     "enabled": false
   },
   {
     "name": "Role Service",
     "path": "backend/core/services/role-service",
-    "devPort": 8206,
-    "prodPort": 9206,
+    "devPort": 8207,
+    "prodPort": 9207,
     "enabled": true
   },
   {
     "name": "User Service",
     "path": "backend/core/services/user-service",
-    "devPort": 8207,
-    "prodPort": 9207,
+    "devPort": 8208,
+    "prodPort": 9208,
     "enabled": true
   }
 ]

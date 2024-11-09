@@ -3,13 +3,12 @@ import { resolve } from "@std/path";
 import { loadSync } from "@std/dotenv";
 
 // project
-import type { Locale, Theme } from "@koru/core-models";
+import type { Locale, Theme } from "@koru/core-entities";
 
 let conf: Record<string, string> = {};
 
 export function initGlobalConfig(): void {
   const envPath: string = Deno.env.get("ENV_PATH") || Deno.cwd();
-  // TODO
   const envFilePath: string = Deno.env.get("ENV") === "production" ? resolve(envPath, ".env.prod") : resolve(envPath, ".env.dev");
 
   try {
